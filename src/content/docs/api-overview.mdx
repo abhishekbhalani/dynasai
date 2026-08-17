@@ -1,0 +1,23 @@
+---
+title: API overview
+description: How the DynasAI API will be versioned, authenticated, and documented as the platform launches.
+order: 2
+---
+
+## Status
+
+The HTTP API is not generally available yet. This page is the contract shape we will publish against.
+
+## Planned surface
+
+- `https://api.dynasai.ai` for programmatic access (later)
+- `https://app.dynasai.ai` for the human workspace
+- This docs site for reference pages that search engines can index
+
+## Auth (planned)
+
+Bearer tokens issued in the workspace. Rotate keys without a code change on this marketing site.
+
+## Errors
+
+JSON error objects with a stable `code` and human `message`. Exact schema will land with the first public endpoint.

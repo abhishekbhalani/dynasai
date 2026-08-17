@@ -1,0 +1,32 @@
+---
+import Logo from './Logo.astro';
+import ThemeToggle from './ThemeToggle.astro';
+import { site, nav } from '../config';
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <Logo />
+    <nav class="nav" id="primary-nav" data-nav aria-label="Primary">
+      {
+        nav.map((item) => (
+          <a href={item.href} aria-current={path === item.href ? 'page' : undefined}>
+            {item.label}
+          </a>
+        ))
+      }
+      <a href="/contact">Contact</a>
+      <a href={site.appUrl}>Open app</a>
+    </nav>
+    <div class="header-actions">
+      <ThemeToggle />
+      <a class="btn btn-secondary" href={site.appUrl}>Open app</a>
+      <a class="btn btn-primary" href="/contact">Book a demo</a>
+      <button class="menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="primary-nav">
+        Menu
+      </button>
+    </div>
+  </div>
+</header>

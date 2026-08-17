@@ -1,0 +1,32 @@
+# dependencies
+node_modules/
+
+# build
+dist/
+.astro/
+.wrangler/
+
+# local snippets
+google/
+
+# env & secrets
+.env
+.env.*
+!.env.example
+.dev.vars
+
+# editor / local MCP (contains API keys)
+.cursor/mcp.json
+.vscode/
+.idea/
+
+# os
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log

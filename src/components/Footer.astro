@@ -1,0 +1,44 @@
+---
+import Logo from './Logo.astro';
+import { site, nav, companyNav } from '../config';
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <Logo />
+        <p class="muted">{site.tagline}</p>
+      </div>
+      <div class="footer-col">
+        <h2>Product</h2>
+        <ul>
+          {nav.map((item) => (
+            <li><a href={item.href}>{item.label}</a></li>
+          ))}
+          <li><a href={site.appUrl}>Workspace</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>Company</h2>
+        <ul>
+          {companyNav.map((item) => (
+            <li><a href={item.href}>{item.label}</a></li>
+          ))}
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>Legal</h2>
+        <ul>
+          <li><a href="/legal/privacy">Privacy</a></li>
+          <li><a href="/legal/terms">Terms</a></li>
+          <li><a href="/legal/cookies">Cookies</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© {new Date().getFullYear()} {site.legalName}. All rights reserved.</p>
+      <p><a href={`mailto:${site.email}`}>{site.email}</a></p>
+    </div>
+  </div>
+</footer>

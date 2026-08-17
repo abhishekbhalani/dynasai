@@ -1,0 +1,50 @@
+---
+import { site } from '../config';
+
+interface Props {
+  extra?: Record<string, unknown>;
+}
+
+const { extra } = Astro.props;
+
+const data = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': ['Organization', 'ProfessionalService'],
+      '@id': `${site.url}/#org`,
+      name: site.name,
+      url: site.url,
+      email: site.email,
+      description: site.description,
+      sameAs: site.sameAs,
+      areaServed: 'Worldwide',
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${site.url}/#website`,
+      url: site.url,
+      name: site.name,
+      description: site.description,
+      publisher: { '@id': `${site.url}/#org` },
+      inLanguage: 'en-US',
+    },
+    {
+      '@type': 'SoftwareApplication',
+      name: `${site.name} Workspace`,
+      applicationCategory: 'DeveloperApplication',
+      operatingSystem: 'Web',
+      url: site.appUrl,
+      offers: {
+        '@type': 'Offer',
+        url: `${site.url}/pricing`,
+        priceCurrency: 'USD',
+        availability: 'https://schema.org/PreOrder',
+      },
+    },
+    extra,
+  ].filter(Boolean),
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(data)} />

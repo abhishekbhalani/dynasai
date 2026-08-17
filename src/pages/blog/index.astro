@@ -1,0 +1,44 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const posts = (await getCollection('blog')).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+
+const title = 'Blog';
+const description = 'Notes on AI delivery, developer platforms, and how DynasAI ships production systems.';
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="hero">
+    <div class="container">
+      <p class="kicker">Blog</p>
+      <h1>Field notes from delivery and platform work</h1>
+      <p class="lede">Long-form writing for operators and builders. Indexed, canonical, and available as RSS.</p>
+    </div>
+  </section>
+  <section class="section">
+    <div class="container card-grid">
+      {
+        posts.map((post) => (
+          <article class="card">
+            <p class="muted">
+              <time datetime={post.data.pubDate.toISOString()}>
+                {post.data.pubDate.toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric',
+                })}
+              </time>
+            </p>
+            <h2>
+              <a href={`/blog/${post.id}`}>{post.data.title}</a>
+            </h2>
+            <p class="muted">{post.data.description}</p>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

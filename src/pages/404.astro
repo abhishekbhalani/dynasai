@@ -1,0 +1,20 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const title = 'Page not found';
+const description = 'The page you requested does not exist on dynasai.ai.';
+---
+
+<BaseLayout title={title} description={description} noindex>
+  <section class="hero">
+    <div class="container">
+      <p class="kicker">404</p>
+      <h1>This page is not here</h1>
+      <p class="lede">The URL may be outdated. Try the homepage, docs, or blog.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="/">Go home</a>
+        <a class="btn btn-secondary" href="/docs">Open docs</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

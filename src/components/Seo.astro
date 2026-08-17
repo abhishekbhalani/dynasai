@@ -1,0 +1,41 @@
+---
+import { site } from '../config';
+
+interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+  type?: 'website' | 'article';
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  canonical,
+  type = 'website',
+  noindex = false,
+} = Astro.props;
+
+const url = new URL(Astro.url.pathname, site.url).toString().replace(/\/$/, '') || site.url;
+const canonicalUrl = canonical ?? url;
+const fullTitle = title.includes(site.name) ? title : `${title} · ${site.name}`;
+---
+
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalUrl} />
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+<meta property="og:site_name" content={site.name} />
+<meta property="og:type" content={type} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonicalUrl} />
+<meta property="og:locale" content={site.locale} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:site" content={site.twitter} />
+<meta name="theme-color" content="#0a5f5c" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#0c0e12" media="(prefers-color-scheme: dark)" />
+<link rel="alternate" type="application/rss+xml" title={`${site.name} Blog`} href="/rss.xml" />

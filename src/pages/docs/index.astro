@@ -1,0 +1,35 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const docs = (await getCollection('docs')).sort((a, b) => a.data.order - b.data.order);
+const title = 'Documentation';
+const description = 'DynasAI developer docs: getting started, API overview, and how the app subdomain will work.';
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="hero">
+    <div class="container">
+      <p class="kicker">Docs</p>
+      <h1>Build against a stable contract</h1>
+      <p class="lede">
+        These pages are static MDX. The live workspace will be served from app.dynasai.ai when the
+        product app ships.
+      </p>
+    </div>
+  </section>
+  <section class="section">
+    <div class="container card-grid">
+      {
+        docs.map((doc) => (
+          <article class="card">
+            <h2>
+              <a href={`/docs/${doc.id}`}>{doc.data.title}</a>
+            </h2>
+            <p class="muted">{doc.data.description}</p>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

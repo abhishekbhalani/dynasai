@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CtaBand from '../components/CtaBand.astro';
+
+const title = 'Product';
+const description =
+  'DynasAI services for AI delivery and a developer platform with APIs, SDKs, and a customer workspace.';
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="hero">
+    <div class="container">
+      <p class="kicker">Product</p>
+      <h1>Services that ship. APIs that stay.</h1>
+      <p class="lede">
+        Use DynasAI as a delivery studio, a developer platform, or both. The marketing site stays
+        fast and indexable; the product UI will run on app.dynasai.ai.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container card-grid">
+      <article class="card">
+        <h2>AI delivery</h2>
+        <p class="muted">Strategy, architecture, custom agents, and integration into your stack.</p>
+      </article>
+      <article class="card">
+        <h2>Operated systems</h2>
+        <p class="muted">Monitoring, evals, and iteration after go-live — not a one-off demo.</p>
+      </article>
+      <article class="card">
+        <h2>Developer APIs</h2>
+        <p class="muted">Stable contracts, auth, and SDKs so engineering can build without waiting.</p>
+      </article>
+      <article class="card">
+        <h2>Workspace</h2>
+        <p class="muted">Customer login, projects, keys, and usage on the app subdomain.</p>
+      </article>
+      <article class="card">
+        <h2>Docs &amp; blog</h2>
+        <p class="muted">MDX content collections for technical SEO and a living knowledge base.</p>
+      </article>
+      <article class="card">
+        <h2>Analytics ready</h2>
+        <p class="muted">GTM in production. Add GA4, ads, and conversion tags without a rebuild.</p>
+      </article>
+    </div>
+  </section>
+
+  <div class="container">
+    <CtaBand title="See if this fits your stack" body="Share the problem. We’ll recommend studio, platform, or a sequence of both." />
+  </div>
+</BaseLayout>

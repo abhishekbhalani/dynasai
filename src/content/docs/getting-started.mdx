@@ -1,0 +1,34 @@
+---
+title: Getting started
+description: How DynasAI is structured today and how to reach the future workspace on app.dynasai.ai.
+order: 1
+---
+
+## What exists now
+
+The public site is a static Astro build deployed as Cloudflare Workers static assets. There is no origin server for HTML.
+
+## What comes next
+
+`app.dynasai.ai` will host:
+
+1. Demo environment
+2. Customer login
+3. API keys and usage
+
+Until that Worker is live, use [contact](/contact) for access.
+
+## Local development
+
+```bash
+npm install
+cp .env.example .env
+npm run dev
+```
+
+Build and deploy:
+
+```bash
+npm run build
+npx wrangler deploy
+```

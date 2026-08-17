@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const title = 'Cookie Policy';
+const description = 'Cookies and similar technologies used on dynasai.ai, including Google Tag Manager.';
+const updated = '17 August 2026';
+---
+
+<BaseLayout title={title} description={description}>
+  <article class="hero">
+    <div class="container prose">
+      <p class="kicker">Legal · Updated {updated}</p>
+      <h1>Cookie Policy</h1>
+      <h2>Essential</h2>
+      <p>
+        We store a <code>theme</code> preference in localStorage so light/dark mode survives a
+        reload. That is not a tracking cookie.
+      </p>
+      <h2>Google Tag Manager</h2>
+      <p>
+        In production we load Google Tag Manager (GTM-KDPPRVV2). GTM itself is a container. Tags you
+        publish inside it (Analytics, ads, heatmaps) may set cookies. Configure Consent Mode in GTM
+        before enabling advertising tags.
+      </p>
+      <h2>Control</h2>
+      <p>Use your browser settings to block cookies. Do-not-track signals are not universally honored by third-party tags.</p>
+    </div>
+  </article>
+</BaseLayout>

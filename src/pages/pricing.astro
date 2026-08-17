@@ -1,0 +1,89 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CtaBand from '../components/CtaBand.astro';
+
+const title = 'Pricing';
+const description =
+  'DynasAI pricing for delivery retainers and developer platform plans. Start with a scoped engagement or an API workspace.';
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="hero">
+    <div class="container">
+      <p class="kicker">Pricing</p>
+      <h1>Clear tracks. Scoped to the work.</h1>
+      <p class="lede">
+        Delivery is quoted from the problem. Platform plans unlock the workspace and APIs. Final
+        numbers are confirmed after a short discovery call.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2>Delivery studio</h2>
+      <div class="data-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Track</th>
+              <th scope="col">Best for</th>
+              <th scope="col">Includes</th>
+              <th scope="col">Starting at</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Discovery</th>
+              <td>Teams validating an AI bet</td>
+              <td>Workshops, architecture, delivery plan</td>
+              <td>Project quote</td>
+            </tr>
+            <tr>
+              <th scope="row">Build</th>
+              <td>Shipping a production system</td>
+              <td>Agents, integrations, evals, launch</td>
+              <td>Project quote</td>
+            </tr>
+            <tr>
+              <th scope="row">Operate</th>
+              <td>Running after go-live</td>
+              <td>Monitoring, iteration, on-call cadence</td>
+              <td>Monthly retainer</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2>Developer platform</h2>
+      <div class="card-grid">
+        <article class="card">
+          <p class="badge">Soon</p>
+          <h3>Starter</h3>
+          <p class="price">Free</p>
+          <p class="muted">Sandbox keys, docs, and limited API calls for evaluation.</p>
+        </article>
+        <article class="card">
+          <p class="badge">Soon</p>
+          <h3>Growth</h3>
+          <p class="price">Usage</p>
+          <p class="muted">Production workspace, team seats, and standard rate limits.</p>
+        </article>
+        <article class="card">
+          <p class="badge">Soon</p>
+          <h3>Scale</h3>
+          <p class="price">Custom</p>
+          <p class="muted">SSO, higher limits, dedicated support, and contract terms.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <div class="container">
+    <CtaBand title="Get a scoped quote" body="Tell us whether you need delivery, API access, or both. We’ll reply with a recommended track." />
+  </div>
+</BaseLayout>

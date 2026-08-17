@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../config';
+
+const title = 'Contact';
+const description = 'Book a DynasAI demo or start a delivery conversation. We reply to studio and API enquiries.';
+const email = import.meta.env.PUBLIC_CONTACT_EMAIL || site.email;
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="hero">
+    <div class="container split">
+      <div>
+        <p class="kicker">Contact</p>
+        <h1>Tell us what you want to ship</h1>
+        <p class="lede">
+          Studio work, API access, or a demo workspace. Email
+          <a href={`mailto:${email}`}>{email}</a>
+          or send the form. Submissions currently open mail until the app subdomain handles leads.
+        </p>
+      </div>
+      <form class="form panel" method="post" action={`mailto:${email}`} enctype="text/plain">
+        <label>
+          Name
+          <input type="text" name="name" autocomplete="name" required />
+        </label>
+        <label>
+          Work email
+          <input type="email" name="email" autocomplete="email" required />
+        </label>
+        <label>
+          I am interested in
+          <select name="interest" required>
+            <option value="studio">AI delivery studio</option>
+            <option value="api">Developer APIs</option>
+            <option value="both">Both</option>
+            <option value="demo">Product demo</option>
+          </select>
+        </label>
+        <label>
+          Project notes
+          <textarea name="notes" required></textarea>
+        </label>
+        <button class="btn btn-primary" type="submit">Send</button>
+      </form>
+    </div>
+  </section>
+</BaseLayout>

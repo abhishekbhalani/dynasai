@@ -1,0 +1,8 @@
+# DynasAI
+
+AI systems for operators. APIs for builders.
+
+Site: https://dynasai.ai
+App (later): https://app.dynasai.ai
+Docs: https://dynasai.ai/docs
+Contact: hello@dynasai.ai

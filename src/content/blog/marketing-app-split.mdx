@@ -1,0 +1,18 @@
+---
+title: Why marketing and the product app should live on different hosts
+description: Keep dynasai.ai static and indexable. Put demos and customer workspaces on app.dynasai.ai.
+pubDate: 2026-08-17
+author: DynasAI
+tags:
+  - architecture
+  - seo
+---
+
+Search engines reward stable HTML. Product apps reward frequent iteration. Those two velocities should not share a render path.
+
+DynasAI therefore splits:
+
+- **dynasai.ai** — Astro static pages, sitemap, schema, blog, docs.
+- **app.dynasai.ai** — authenticated workspace, demos, API keys, billing.
+
+Cloudflare Workers can host both. They should be two projects with two hostnames, not one SPA pretending to be a marketing site.

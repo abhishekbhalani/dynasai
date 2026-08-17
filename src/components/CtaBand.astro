@@ -1,0 +1,21 @@
+---
+interface Props {
+  title: string;
+  body: string;
+}
+
+const { title, body } = Astro.props;
+---
+
+<section class="cta-band" aria-labelledby="cta-heading">
+  <div class="cta-band-inner">
+    <div>
+      <h2 id="cta-heading">{title}</h2>
+      <p class="muted">{body}</p>
+    </div>
+    <div class="inline-actions">
+      <a class="btn btn-primary" href="/contact">Talk to us</a>
+      <a class="btn btn-secondary" href="/docs">Read the docs</a>
+    </div>
+  </div>
+</section>
