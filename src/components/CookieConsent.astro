@@ -1,0 +1,238 @@
+---
+import { site } from '../config';
+---
+
+<script is:inline>
+  (function () {
+    try {
+      if (localStorage.getItem('dynasai_cookie_consent')) {
+        document.documentElement.setAttribute('data-cookie-ok', '1');
+      }
+    } catch (e) {}
+  })();
+</script>
+
+<div class="cookie-root" data-cookie-root>
+  <div class="cookie-banner" role="region" aria-label="Cookie notice" data-cookie-banner>
+    <p class="cookie-banner-copy">
+      This website uses cookies to enhance your digital experience. For additional details please visit
+      <a href="/legal/privacy">Privacy Policy</a>
+      and
+      <a href="/legal/cookies">Cookie Policy</a>.
+    </p>
+    <div class="cookie-banner-actions">
+      <button class="cookie-btn cookie-btn-primary" type="button" data-cookie-accept>
+        Accept all cookies
+      </button>
+      <button class="cookie-banner-settings" type="button" data-cookie-open>
+        Cookie settings
+      </button>
+    </div>
+  </div>
+
+  <div class="cookie-overlay" data-cookie-overlay hidden>
+    <div
+      class="cookie-dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="cookie-dialog-title"
+      data-cookie-dialog
+    >
+      <div class="cookie-dialog-head">
+        <img class="cookie-dialog-logo" src={site.logo} alt="" width="140" height="36" />
+        <button class="cookie-dialog-close" type="button" data-cookie-close aria-label="Close cookie settings">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+      <div class="cookie-dialog-body">
+        <h2 id="cookie-dialog-title">Privacy Preference Center</h2>
+        <p>
+          We use cookies to run dynasai.ai, measure performance, and — only if you allow — support marketing tags in Google Tag Manager.
+          See the
+          <a href="/legal/privacy">Privacy Policy</a>
+          and
+          <a href="/legal/cookies">Cookie Policy</a>.
+        </p>
+
+        <h3>Manage Consent Preferences</h3>
+
+        <section class="cookie-cat">
+          <div class="cookie-cat-row">
+            <h4>Strictly Necessary Cookies</h4>
+            <p class="cookie-always">Always Active</p>
+          </div>
+          <p>Required for security, load balancing, and remembering this consent choice. These cannot be switched off.</p>
+          <details>
+            <summary>Cookies Details</summary>
+            <p><code>dynasai_cookie_consent</code> — stores your cookie preferences (localStorage).</p>
+            <p><code>theme</code> — light or dark mode (localStorage, not a tracking cookie).</p>
+          </details>
+        </section>
+
+        <section class="cookie-cat">
+          <div class="cookie-cat-row">
+            <h4 id="cookie-perf-label">Performance cookies</h4>
+            <label class="cookie-switch">
+              <input type="checkbox" role="switch" data-cookie-performance aria-labelledby="cookie-perf-label" />
+              <span class="cookie-switch-ui" aria-hidden="true"></span>
+            </label>
+          </div>
+          <p>Help us understand how the site is used (for example analytics loaded through GTM) so we can improve pages and performance.</p>
+          <details>
+            <summary>Cookies Details</summary>
+            <p>Set only after you opt in. Typically Google Analytics 4 via GTM, if that tag is published.</p>
+          </details>
+        </section>
+
+        <section class="cookie-cat">
+          <div class="cookie-cat-row">
+            <h4 id="cookie-mkt-label">Marketing / Targeting Cookies</h4>
+            <label class="cookie-switch">
+              <input type="checkbox" role="switch" data-cookie-marketing aria-labelledby="cookie-mkt-label" />
+              <span class="cookie-switch-ui" aria-hidden="true"></span>
+            </label>
+          </div>
+          <p>Used for advertising measurement and personalization if you enable those tags in GTM. Off by default until you confirm.</p>
+          <details>
+            <summary>Cookies Details</summary>
+            <p>Advertising / conversion cookies from GTM tags, only when marketing consent is granted.</p>
+          </details>
+        </section>
+      </div>
+
+      <div class="cookie-dialog-foot">
+        <button class="cookie-btn cookie-btn-primary" type="button" data-cookie-reject>Reject All</button>
+        <button class="cookie-btn cookie-btn-primary" type="button" data-cookie-confirm>Confirm My Choices</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const KEY = 'dynasai_cookie_consent';
+  const root = document.querySelector('[data-cookie-root]');
+  const banner = document.querySelector('[data-cookie-banner]');
+  const overlay = document.querySelector('[data-cookie-overlay]');
+  const dialog = document.querySelector('[data-cookie-dialog]');
+  const perf = document.querySelector<HTMLInputElement>('[data-cookie-performance]');
+  const mkt = document.querySelector<HTMLInputElement>('[data-cookie-marketing]');
+
+  type Prefs = { necessary: true; performance: boolean; marketing: boolean };
+
+  function applyGtm(prefs: Prefs) {
+    const gtag = (window as Window & { gtag?: (...args: unknown[]) => void }).gtag;
+    gtag?.('consent', 'update', {
+      analytics_storage: prefs.performance ? 'granted' : 'denied',
+      ad_storage: prefs.marketing ? 'granted' : 'denied',
+      ad_user_data: prefs.marketing ? 'granted' : 'denied',
+      ad_personalization: prefs.marketing ? 'granted' : 'denied',
+      functionality_storage: 'granted',
+      security_storage: 'granted',
+    });
+  }
+
+  function readPrefs(): Prefs | null {
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw) as Prefs;
+      if (typeof parsed.performance !== 'boolean' || typeof parsed.marketing !== 'boolean') return null;
+      return { necessary: true, performance: parsed.performance, marketing: parsed.marketing };
+    } catch {
+      return null;
+    }
+  }
+
+  function save(prefs: Prefs) {
+    localStorage.setItem(KEY, JSON.stringify({ ...prefs, savedAt: new Date().toISOString() }));
+    document.documentElement.setAttribute('data-cookie-ok', '1');
+    applyGtm(prefs);
+  }
+
+  function hideBanner() {
+    if (banner) banner.hidden = true;
+    if (root && overlay?.hidden) root.hidden = true;
+  }
+
+  function showBanner() {
+    if (!root || !banner) return;
+    root.hidden = false;
+    banner.hidden = false;
+  }
+
+  function openSettings() {
+    if (!root || !overlay || !dialog || !perf || !mkt) return;
+    const prefs = readPrefs() || { necessary: true as const, performance: false, marketing: false };
+    perf.checked = prefs.performance;
+    mkt.checked = prefs.marketing;
+    root.hidden = false;
+    overlay.hidden = false;
+    document.body.style.overflow = 'hidden';
+    const close = dialog.querySelector<HTMLButtonElement>('[data-cookie-close]');
+    close?.focus();
+  }
+
+  function closeSettings() {
+    if (!overlay) return;
+    overlay.hidden = true;
+    document.body.style.overflow = '';
+    if (readPrefs() && banner) {
+      banner.hidden = true;
+      if (root) root.hidden = true;
+    }
+  }
+
+  function acceptAll() {
+    save({ necessary: true, performance: true, marketing: true });
+    closeSettings();
+    hideBanner();
+  }
+
+  function rejectAll() {
+    save({ necessary: true, performance: false, marketing: false });
+    closeSettings();
+    hideBanner();
+  }
+
+  function confirmChoices() {
+    save({
+      necessary: true,
+      performance: Boolean(perf?.checked),
+      marketing: Boolean(mkt?.checked),
+    });
+    closeSettings();
+    hideBanner();
+  }
+
+  if (root && banner && overlay) {
+    const existing = readPrefs();
+    if (existing) {
+      applyGtm(existing);
+      root.hidden = true;
+    } else {
+      showBanner();
+    }
+
+    document.querySelector('[data-cookie-accept]')?.addEventListener('click', acceptAll);
+    document.querySelector('[data-cookie-open]')?.addEventListener('click', openSettings);
+    document.querySelector('[data-cookie-close]')?.addEventListener('click', closeSettings);
+    document.querySelector('[data-cookie-reject]')?.addEventListener('click', rejectAll);
+    document.querySelector('[data-cookie-confirm]')?.addEventListener('click', confirmChoices);
+
+    overlay.addEventListener('click', (event) => {
+      if (event.target === overlay) closeSettings();
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && !overlay.hidden) closeSettings();
+    });
+
+    document.querySelectorAll('[data-open-cookie-settings]').forEach((el) => {
+      el.addEventListener('click', (event) => {
+        event.preventDefault();
+        openSettings();
+      });
+    });
+  }
+</script>
