@@ -2,10 +2,27 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import MarketingPage from '../components/MarketingPage.astro';
 import { partnersPage } from '../content/stitch-pages';
+import { site } from '../config';
 
 const page = partnersPage;
+
+const jsonLd = {
+  '@type': 'Service',
+  '@id': `${site.url}/partners#service`,
+  name: 'DynasAI multi-cloud architecture',
+  serviceType: 'AWS, Azure, and Google Cloud integration for enterprise AI',
+  url: `${site.url}/partners`,
+  description: page.description,
+  provider: { '@id': `${site.url}/#org` },
+  areaServed: ['United States', 'European Union'],
+  brand: [
+    { '@type': 'Brand', name: 'Amazon Web Services' },
+    { '@type': 'Brand', name: 'Microsoft Azure' },
+    { '@type': 'Brand', name: 'Google Cloud' },
+  ],
+};
 ---
 
-<BaseLayout title={page.title} description={page.description}>
+<BaseLayout title={page.title} description={page.description} jsonLd={jsonLd}>
   <MarketingPage page={page} />
 </BaseLayout>

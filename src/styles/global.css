@@ -196,7 +196,9 @@ a:hover {
 }
 
 .nav-chevron {
-  font-size: 10px;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
   transition: transform 0.2s ease;
 }
 
@@ -382,8 +384,51 @@ a:hover {
   border-radius: 6px;
   background: var(--accent-soft);
   color: var(--accent);
-  font-size: 11px;
-  font-weight: 700;
+}
+
+.mega-menu-visual-icon {
+  color: var(--accent);
+  opacity: 0.7;
+}
+
+.mega-link-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.capability-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.cloud-trust-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin-inline: auto;
+  border-radius: 8px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.icon {
+  display: block;
+  flex-shrink: 0;
 }
 
 .mega-menu-col ul {
@@ -437,12 +482,6 @@ a:hover {
   background: linear-gradient(135deg, var(--accent-soft), var(--bg-elevated));
 }
 
-.mega-menu-visual-icon {
-  font-size: 2rem;
-  color: var(--accent);
-  opacity: 0.5;
-}
-
 .btn-block {
   width: 100%;
 }
@@ -471,10 +510,14 @@ a:hover {
   font-size: 14px;
 }
 
-.mega-menu-list span {
+.mega-menu-list a > span:not(.mega-link-icon) {
   font-size: 13px;
   color: var(--text-muted);
   font-weight: 400;
+}
+
+.mega-menu-list .mega-link-icon {
+  color: var(--accent);
 }
 
 .mega-menu-list--grid {
@@ -1372,6 +1415,24 @@ tbody tr:active {
   color: var(--accent);
 }
 
+.legal-nav-note {
+  margin: 16px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.legal-content ul {
+  margin: 0 0 var(--space-3);
+  padding-left: 1.25rem;
+}
+
+.legal-content li {
+  margin-bottom: 8px;
+}
+
 .legal-content h2 {
   scroll-margin-top: calc(var(--header-h) + 16px);
   margin-top: var(--space-5);
@@ -2082,6 +2143,13 @@ tbody tr:active {
   border-radius: var(--radius-lg);
   background: var(--bg);
   box-shadow: var(--shadow);
+}
+
+.capability-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 .capability-num {

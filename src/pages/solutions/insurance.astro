@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
+import Icon from '../../components/Icon.astro';
+import { iconForTitle } from '../../lib/icon-map';
 import { insuranceIndustry } from '../../content/site-content';
 
 const { meta, breadcrumb, hero, promo, intro, capabilities, stories, cta } = insuranceIndustry;
@@ -51,7 +53,12 @@ const { meta, breadcrumb, hero, promo, intro, capabilities, stories, cta } = ins
         {
           capabilities.map((item) => (
             <li class="capability-card">
-              <span class="capability-num" aria-hidden="true">{item.num}</span>
+              <div class="capability-head">
+                <span class="capability-num" aria-hidden="true">{item.num}</span>
+                <span class="capability-icon" aria-hidden="true">
+                  <Icon name={iconForTitle(item.title)} size={22} />
+                </span>
+              </div>
               <h3>{item.title}</h3>
               <p>{item.body}</p>
             </li>
@@ -72,7 +79,7 @@ const { meta, breadcrumb, hero, promo, intro, capabilities, stories, cta } = ins
           stories.map((story) => (
             <article class="story-card">
               <div class="story-card-visual" aria-hidden="true">
-                <span>◈</span>
+                <Icon name={iconForTitle(story.title)} size={40} />
               </div>
               <h3>{story.title}</h3>
               <p>{story.body}</p>

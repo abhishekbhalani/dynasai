@@ -102,6 +102,7 @@ export const companyMegaMenu = {
   links: [
     { label: 'About', href: '/about', description: 'Our story, mission, and leadership.', icon: 'users' },
     { label: 'Careers', href: '/careers', description: 'Open roles and culture.', icon: 'briefcase' },
+    { label: 'Partners', href: '/partners', description: 'AWS, Azure, GCP — your cloud, our front layer.', icon: 'cloud' },
     { label: 'Contact', href: '/contact', description: 'Talk to an AI expert.', icon: 'phone' },
   ],
 } as const;

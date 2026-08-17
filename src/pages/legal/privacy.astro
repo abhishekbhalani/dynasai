@@ -1,17 +1,27 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
+import { site } from '../../config';
 
 const title = 'Privacy Policy';
-const description = 'How DynasAI collects, uses, and protects personal data on dynasai.ai and related services.';
+const description =
+  'How DynasAI handles personal data for dynasai.ai and the customer workspace — GDPR, US state privacy, customer-controlled data on AWS, Azure, or GCP.';
 const updated = '17 August 2026';
 
 const sections = [
   { id: 'who', label: 'Who we are' },
+  { id: 'model', label: 'Two layers of data' },
   { id: 'collect', label: 'What we collect' },
   { id: 'use', label: 'How we use data' },
+  { id: 'legal-basis', label: 'GDPR legal basis' },
+  { id: 'ai', label: 'AI, agents, and training' },
+  { id: 'sharing', label: 'Sharing and subprocessors' },
+  { id: 'transfers', label: 'International transfers' },
+  { id: 'retention', label: 'Retention' },
+  { id: 'rights', label: 'Your rights (EU & US)' },
+  { id: 'security', label: 'Security' },
   { id: 'cookies', label: 'Cookies' },
-  { id: 'rights', label: 'Retention and rights' },
+  { id: 'contact', label: 'Contact' },
 ];
 ---
 
@@ -20,7 +30,7 @@ const sections = [
     badge={`Legal · Updated ${updated}`}
     title="Privacy"
     highlight="Policy"
-    description="This is an operational draft for launch. Have counsel review before you process customer data at scale."
+    description="This policy explains how DynasAI processes personal data on the marketing site and in customer workspaces. It is written to match our platform model: you keep data control; we operate the governed front layer. Have counsel review before you process customer data at scale."
   />
 
   <section class="section">
@@ -32,35 +42,169 @@ const sections = [
             <li><a href={`#${id}`}>{label}</a></li>
           ))}
         </ul>
+        <p class="legal-nav-note">
+          Related: <a href="/platform/governance">Governance &amp; GDPR</a> ·
+          <a href="/legal/cookies">Cookies</a> ·
+          <a href="/legal/terms">Terms</a>
+        </p>
       </nav>
 
       <article class="legal-content prose">
         <h2 id="who">Who we are</h2>
         <p>
-          DynasAI operates the website at dynasai.ai. The product workspace will be served from
-          app.dynasai.ai. Contact: hello@dynasai.ai.
+          DynasAI ({site.legalName}) operates the website at <a href={site.url}>{site.url.replace('https://', '')}</a>
+          and the product workspace at <a href={site.appUrl}>app.dynasai.ai</a>. Contact:
+          <a href={`mailto:${site.email}`}>{site.email}</a>.
         </p>
+        <p>
+          For the marketing site and sales enquiries, DynasAI is the <strong>controller</strong> of the
+          personal data you send us. For customer workspace content (your documents, systems, prompts,
+          and agent logs in a paid or trial tenant), DynasAI typically acts as a <strong>processor</strong>
+          on your instructions. You remain controller of that customer data. A data processing agreement
+          (DPA) is available on request for enterprise contracts.
+        </p>
+
+        <h2 id="model">Two layers of data</h2>
+        <p>
+          DynasAI is a <strong>front layer</strong>: identity, workflows, evaluation, and governance.
+          Backend compute, storage, and model APIs run on <strong>Amazon Web Services, Microsoft Azure,
+          or Google Cloud</strong> — either in a DynasAI-managed template or in <strong>your own account
+          / VPC</strong>, as you choose.
+        </p>
+        <ul>
+          <li>
+            <strong>Site &amp; sales data</strong> (this website, contact forms, analytics) is processed
+            by DynasAI as controller.
+          </li>
+          <li>
+            <strong>Customer workspace data</strong> stays under your control. We do not use it to train
+            public foundation models. Residency (for example EU or US regions) follows the cloud and
+            region you select. See <a href="/platform/governance">Governance</a> and
+            <a href="/partners">cloud partners</a>.
+          </li>
+        </ul>
 
         <h2 id="collect">What we collect</h2>
-        <p>
-          If you contact us, we receive the details you send (name, email, message). Production
-          analytics are loaded through Google Tag Manager. Tags configured in GTM — including Google
-          Analytics 4 if you enable them — may set cookies or collect usage data.
-        </p>
+        <p>Depending on how you use DynasAI, we may process:</p>
+        <ul>
+          <li>
+            <strong>Enquiry data</strong> — name, email, company, and message if you contact us or
+            request a sprint.
+          </li>
+          <li>
+            <strong>Account data</strong> — workspace identity (SSO or email), role, and audit metadata
+            when you use app.dynasai.ai.
+          </li>
+          <li>
+            <strong>Usage data</strong> — pages viewed on this site via Google Tag Manager. Tags
+            configured in GTM (including Google Analytics 4 if enabled) may collect device and
+            approximate location data.
+          </li>
+          <li>
+            <strong>Customer content</strong> — files, connectors, prompts, retrieval context, and
+            agent traces that you or your users put in a workspace. That content is processed to
+            provide the service, not for DynasAI’s own marketing.
+          </li>
+        </ul>
+        <p>We do not require special-category data for the marketing site. Do not send it in contact forms.</p>
 
         <h2 id="use">How we use data</h2>
-        <p>We use enquiry data to respond to you. We use analytics to understand site performance and content.</p>
+        <ul>
+          <li>Respond to sales and support requests.</li>
+          <li>Provide, secure, and improve the workspace (including evals, logging, and abuse prevention).</li>
+          <li>Understand site performance and content (analytics, subject to cookies/consent).</li>
+          <li>Meet legal duties (tax, accounting, GDPR/US privacy requests, security incidents).</li>
+        </ul>
+        <p>We do not sell personal data. We do not share it for cross-context advertising unless you enable advertising tags in GTM after consent.</p>
+
+        <h2 id="legal-basis">GDPR legal basis</h2>
+        <p>
+          The EU AI Act does <strong>not</strong> replace GDPR. Where GDPR applies, we rely on:
+        </p>
+        <ul>
+          <li><strong>Contract</strong> (Art. 6(1)(b)) — to provide a workspace or respond to a requested demo.</li>
+          <li><strong>Legitimate interests</strong> (Art. 6(1)(f)) — site security, product improvement of the marketing site, B2B outreach where permitted. You may object.</li>
+          <li><strong>Consent</strong> (Art. 6(1)(a)) — non-essential cookies/analytics once Consent Mode is configured.</li>
+          <li><strong>Legal obligation</strong> (Art. 6(1)(c)) — where we must retain or disclose records.</li>
+        </ul>
+        <p>
+          Customer content in a tenant is processed under your instructions (Art. 28). You are
+          responsible for a lawful basis for the personal data you load into agents — including
+          training, retrieval, and monitoring. DynasAI does not create that basis for you.
+        </p>
+
+        <h2 id="ai">AI, agents, and training</h2>
+        <ul>
+          <li>Agents may send prompts and retrieved snippets to model APIs on the cloud you select (for example Bedrock, Azure OpenAI, Vertex AI).</li>
+          <li>We design the service so <strong>customer content is not used to train public models</strong> operated by DynasAI.</li>
+          <li>Third-party model providers have their own terms. Enterprise deployments should use provider options that disable training on your prompts where available.</li>
+          <li>Human-in-the-loop gates and traces support GDPR Art. 22 (no solely automated decision with legal or similarly significant effect without a human path) and EU AI Act logging/transparency duties. Product detail: <a href="/platform/governance">governance</a>.</li>
+        </ul>
+
+        <h2 id="sharing">Sharing and subprocessors</h2>
+        <p>We share personal data only as needed to run the service:</p>
+        <ul>
+          <li><strong>Cloud backends</strong> — AWS, Azure, or GCP for hosting, storage, and model APIs, in the account/region you choose or a managed template.</li>
+          <li><strong>Google Tag Manager</strong> — container for site tags in production (GTM-KDPPRVV2).</li>
+          <li><strong>Professional advisers</strong> — lawyers, accountants, under confidentiality.</li>
+          <li><strong>Authorities</strong> — when required by law.</li>
+        </ul>
+        <p>A current subprocessor list for enterprise customers is available on request.</p>
+
+        <h2 id="transfers">International transfers</h2>
+        <p>
+          If you are in the EEA/UK and data is processed in the US or another third country, we use
+          appropriate safeguards (for example Standard Contractual Clauses and supplementary measures)
+          with subprocessors. You can keep EU personal data in EU cloud regions when you select that
+          residency model.
+        </p>
+
+        <h2 id="retention">Retention</h2>
+        <ul>
+          <li>Enquiry email — as long as needed to handle the request, then deleted or archived per our mail retention practice.</li>
+          <li>Analytics — per GTM/GA configuration (typically 2–14 months for event data unless you set otherwise).</li>
+          <li>Workspace traces and content — per your tenant settings and contract; default designed to support audit windows (including six-month+ logging patterns used for AI Act-style record-keeping) unless you configure shorter retention.</li>
+        </ul>
+
+        <h2 id="rights">Your rights (EU &amp; US)</h2>
+        <p>
+          <strong>GDPR / UK GDPR:</strong> access, rectification, erasure, restriction, portability,
+          and objection (including to legitimate-interests processing). You may lodge a complaint with
+          your supervisory authority. For automated decisions that produce legal or similarly
+          significant effects, you can request human review.
+        </p>
+        <p>
+          <strong>US (including CCPA/CPRA and other state laws where they apply):</strong> you may have
+          the right to know, delete, correct, and opt out of sale/share. DynasAI does not sell personal
+          information as those laws define sale. We do not discriminate for exercising privacy rights.
+        </p>
+        <p>
+          To exercise rights, email <a href={`mailto:${site.email}`}>{site.email}</a> with enough
+          detail to locate your data. For workspace content, we may redirect you to your organization’s
+          admin (the controller).
+        </p>
+
+        <h2 id="security">Security</h2>
+        <p>
+          We use encryption in transit, access controls, logging, and environment isolation. Customer
+          deployments can use customer-managed keys where the chosen cloud supports them. No method of
+          transmission is 100% secure. See <a href="/platform/governance">Governance &amp; Security</a>
+          for product controls. We do not claim a completed SOC 2 audit on this page; enterprise
+          questionnaires and control descriptions are available on request.
+        </p>
 
         <h2 id="cookies">Cookies</h2>
         <p>
-          See the <a href="/legal/cookies">Cookie Policy</a>. You can control non-essential tags in
-          Google Tag Manager / Consent Mode once consent is configured.
+          See the <a href="/legal/cookies">Cookie Policy</a>. Theme preference is stored in
+          localStorage (not a tracking cookie). Production GTM may set cookies once tags and Consent
+          Mode are configured.
         </p>
 
-        <h2 id="rights">Retention and rights</h2>
+        <h2 id="contact">Contact</h2>
         <p>
-          We keep enquiry mail as long as needed to handle the request. Depending on your location you
-          may have rights to access, correct, or delete personal data. Email hello@dynasai.ai.
+          Privacy requests: <a href={`mailto:${site.email}`}>{site.email}</a>.<br />
+          Product security review: <a href="/contact">Contact</a>.<br />
+          We will update this policy when our processing changes. The date above is the latest revision.
         </p>
       </article>
     </div>

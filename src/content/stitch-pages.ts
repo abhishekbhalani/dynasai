@@ -168,31 +168,107 @@ export const impactPage: MarketingPage = {
 };
 
 export const partnersPage: MarketingPage = {
-  title: 'Partners & Ecosystem',
-  description: 'DynasAI partners with cloud, data, and AI platforms to deliver enterprise agent automation.',
+  title: 'Cloud Partners — AWS, Azure & GCP',
+  description:
+    'DynasAI is the front layer for enterprise AI. Backend services run on Amazon Web Services, Microsoft Azure, or Google Cloud — in your account or a managed template, with cost-aware architecture.',
   badge: 'Partners',
-  headline: 'Built for your',
-  highlight: 'enterprise stack',
-  subhead: 'We integrate with the platforms you already trust — and co-deliver with leading cloud and data partners.',
+  headline: 'Your cloud. Our front layer.',
+  highlight: 'No lock-in.',
+  subhead:
+    'Customers choose AWS, Azure, or GCP for compute, storage, and models. DynasAI makes agents, data processing, and governance easy on top — with residency and cost recommendations, not a forced hyperscaler.',
+  breadcrumb: [
+    { label: 'Home', href: '/' },
+    { label: 'Partners', href: '/partners' },
+  ],
   sections: [
     {
-      type: 'grid',
-      title: 'Technology partners',
-      subtitle: 'Native integrations and co-selling with major cloud and data platforms.',
+      type: 'stats',
+      title: 'Why enterprises keep three clouds in play',
+      subtitle:
+        'Agent workloads follow data gravity, identity, and sovereignty — not a single vendor logo. We architect for the mix you already have.',
       items: [
-        { title: 'Microsoft Azure', body: 'Identity, OpenAI, and enterprise app integrations.' },
-        { title: 'Google Cloud', body: 'Vertex AI, BigQuery, and workspace connectors.' },
-        { title: 'AWS', body: 'Bedrock, Lambda, and secure VPC deployments.' },
-        { title: 'Databricks', body: 'Lakehouse data and MLflow model operations.' },
-        { title: 'Snowflake', body: 'Secure data sharing and analytics pipelines.' },
-        { title: 'Enterprise SaaS', body: 'Salesforce, ServiceNow, SAP, and custom APIs.' },
+        { value: '3', label: 'Primary backends we design for: AWS, Azure, and Google Cloud' },
+        { value: 'BYO', label: 'Bring your own VPC, tenant, or data lake — or start from a managed template' },
+        { value: 'EU / US', label: 'Region and residency follow your GDPR or US privacy requirements' },
+        { value: 'Cost', label: 'We recommend the cheaper fit for each workload — models, storage, and pipelines' },
+      ],
+    },
+    {
+      type: 'split',
+      title: 'Simple for users. Serious in the backend.',
+      paragraphs: [
+        'Business and engineering teams work in DynasAI: visual workflows, data evaluation, templates, and audit trails. They should not have to assemble Bedrock, Vertex, and Azure OpenAI by hand.',
+        'Underneath, we wire the hyperscaler you select. Identity can follow Entra ID, IAM, or Cloud Identity. Data can stay in S3, ADLS, or GCS / BigQuery. Models stay behind your private endpoints. That is how we avoid lock-in and keep customer data control.',
+      ],
+    },
+    {
+      type: 'grid',
+      title: 'Hyperscaler backends',
+      subtitle: 'We suggest the cost-effective service mix for each use case — you approve the account and region.',
+      items: [
+        {
+          title: 'Amazon Web Services',
+          body: 'Bedrock, S3, Lambda, VPC, KMS, and PrivateLink-style patterns for agents and pipelines in your AWS account.',
+          href: '/platform/data-processing',
+          icon: 'cloud',
+        },
+        {
+          title: 'Microsoft Azure',
+          body: 'Azure OpenAI, Entra ID, Fabric / ADLS, and enterprise app connectors for teams already on Microsoft 365.',
+          href: '/platform/governance',
+          icon: 'cloud',
+        },
+        {
+          title: 'Google Cloud',
+          body: 'Vertex AI, BigQuery, Cloud Storage, and document AI-style processing for analytics-heavy estates.',
+          href: '/platform/data-processing',
+          icon: 'cloud',
+        },
+        {
+          title: 'Databricks',
+          body: 'Lakehouse context and model ops alongside the DynasAI front layer — not a replacement for your lake.',
+          icon: 'database',
+        },
+        {
+          title: 'Snowflake',
+          body: 'Secure data sharing and warehouse retrieval so agents read governed tables instead of shadow copies.',
+          icon: 'database',
+        },
+        {
+          title: 'Enterprise SaaS',
+          body: 'Salesforce, ServiceNow, SAP, and custom APIs — connected with identity-aware tool access.',
+          href: '/platform/integrations',
+          icon: 'plug',
+        },
+      ],
+    },
+    {
+      type: 'numbered',
+      title: 'How we pick a cost-effective stack',
+      subtitle: 'Advisory first, then implementation on the same platform you will operate.',
+      items: [
+        { num: '01', title: 'Map data gravity', body: 'Where the raw sources already live usually wins. Moving petabytes to a new cloud is rarely the cheapest AI plan.' },
+        { num: '02', title: 'Match identity & compliance', body: 'Entra-centric enterprises often stay on Azure. GDPR residency may pin EU data to EU regions on any of the three.' },
+        { num: '03', title: 'Right-size models & pipelines', body: 'Batch processing, RAG indexes, and agent calls have different cost curves. We recommend managed vs self-hosted per workload.' },
+        { num: '04', title: 'Keep an exit ramp', body: 'Open connectors, your VPC, and no training on your corpus. Switching a model provider should not mean rewriting the business layer.' },
+      ],
+    },
+    {
+      type: 'grid',
+      title: 'Engagement models',
+      items: [
+        { title: 'Customer-owned cloud', body: 'Agents and data processing run in your AWS, Azure, or GCP project. DynasAI is the control plane you log into.', icon: 'key' },
+        { title: 'Managed template', body: 'We provision a reference architecture in a dedicated tenant. You still choose region and can migrate to BYO later.', icon: 'layers' },
+        { title: 'Hybrid', body: 'Sensitive stores stay on-prem or private cloud; the front layer and selected models run in public cloud with private networking.', icon: 'globe' },
+        { title: 'SI & ISV partners', body: 'Systems integrators and software vendors can co-deliver on DynasAI. Talk to us about a partner motion.', icon: 'users' },
       ],
     },
     {
       type: 'cta',
-      title: 'Partner with DynasAI',
-      body: 'ISVs, SIs, and cloud partners — let\'s build together.',
-      primary: { label: 'Become a partner', href: '/contact' },
+      title: 'Get a cloud and residency recommendation',
+      body: 'Bring your current AWS, Azure, or GCP footprint. We will map a cost-aware architecture and a governed DynasAI front layer.',
+      primary: { label: 'Talk to an expert', href: '/contact' },
+      secondary: { label: 'Governance & GDPR', href: '/platform/governance' },
     },
   ],
 };
