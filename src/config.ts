@@ -11,8 +11,10 @@ export const site = {
   gtmId: 'GTM-KDPPRVV2',
   twitter: '@dynasai',
   logo: '/img/transparent-logo.svg',
+  logoMark: '/img/logo-mark.svg',
   logoColored: '/img/colored-logo.svg',
-  ogImage: '/img/colored-logo.svg',
+  logoMarkColored: '/img/logo-mark-colored.svg',
+  ogImage: '/img/logo-mark-colored.svg',
   sameAs: [
     'https://github.com/abhishekbhalani/dynasai',
   ],
