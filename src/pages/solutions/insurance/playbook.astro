@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import PlaybookViewer from '../../../components/PlaybookViewer.astro';
+import { insurancePlaybook } from '../../../content/stitch-pages';
+
+const page = insurancePlaybook;
+---
+
+<BaseLayout title={page.title} description={page.description}>
+  <section class="industry-hero bg-grid-pattern">
+    <div class="container">
+      {page.breadcrumb && <Breadcrumb items={page.breadcrumb} />}
+      <p class="hero-badge">{page.badge}</p>
+      <div class="industry-hero-copy">
+        <h1>
+          {page.headline}
+          <span class="gradient-text">{page.highlight}</span>
+        </h1>
+        <p class="lede">{page.subhead}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <PlaybookViewer />
+    </div>
+  </section>
+</BaseLayout>

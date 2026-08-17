@@ -1,0 +1,181 @@
+---
+import { playbookMeta } from '../content/playbook-pages';
+---
+
+<div class="playbook-shell is-locked" data-playbook-gate>
+  <aside class="playbook-gate panel" data-playbook-lock>
+    <p class="label-sm">Gated playbook</p>
+    <h2>Verify your work email to open the PDF</h2>
+    <p class="muted">
+      We email a 6-digit code. After you confirm, the playbook unlocks on this page and you can download the PDF. We store this as a sales enquiry —
+      <a href="/legal/privacy">Privacy Policy</a>.
+    </p>
+
+    <form class="form" data-playbook-email-form>
+      <label>
+        Full name
+        <input type="text" name="name" autocomplete="name" required minlength="2" />
+      </label>
+      <label>
+        Work email
+        <input type="email" name="email" autocomplete="email" required />
+      </label>
+      <label>
+        Company
+        <input type="text" name="company" autocomplete="organization" required minlength="2" />
+      </label>
+      <button class="btn btn-primary" type="submit">Send one-time code</button>
+    </form>
+
+    <form class="form" data-playbook-otp-form hidden>
+      <label>
+        6-digit code
+        <input type="text" name="code" inputmode="numeric" autocomplete="one-time-code" required minlength="6" maxlength="6" pattern="[0-9]{6}" />
+      </label>
+      <button class="btn btn-primary" type="submit">Verify and open PDF</button>
+      <button class="btn btn-secondary" type="button" data-playbook-resend>Resend code</button>
+    </form>
+
+    <p class="playbook-status" data-playbook-status role="status"></p>
+  </aside>
+
+  <div class="playbook-viewer">
+    <div class="playbook-toolbar">
+      <p class="label-sm">{playbookMeta.title}</p>
+      <a class="btn btn-secondary" href="/api/playbook/file" data-playbook-download hidden>Download PDF</a>
+    </div>
+    <div class="pdf-stage" data-playbook-stage aria-label="Playbook pages">
+      <article class="pdf-page pdf-page--placeholder" aria-hidden="true"></article>
+      <article class="pdf-page pdf-page--placeholder" aria-hidden="true"></article>
+    </div>
+  </div>
+</div>
+
+<script>
+  type PlaybookPage = { number: string; kicker: string; title: string; body: string[] };
+
+  const root = document.querySelector('[data-playbook-gate]');
+  const lock = document.querySelector('[data-playbook-lock]');
+  const statusEl = document.querySelector('[data-playbook-status]');
+  const emailForm = document.querySelector<HTMLFormElement>('[data-playbook-email-form]');
+  const otpForm = document.querySelector<HTMLFormElement>('[data-playbook-otp-form]');
+  const download = document.querySelector<HTMLAnchorElement>('[data-playbook-download]');
+  const stage = document.querySelector('[data-playbook-stage]');
+
+  if (root && lock && statusEl && emailForm && otpForm && stage) {
+    let lastEmail = '';
+
+    function setStatus(message: string) {
+      statusEl!.textContent = message;
+    }
+
+    function renderPages(pages: PlaybookPage[]) {
+      stage!.replaceChildren();
+      pages.forEach((page) => {
+        const article = document.createElement('article');
+        article.className = 'pdf-page';
+        const kicker = document.createElement('p');
+        kicker.className = 'pdf-kicker';
+        kicker.textContent = page.kicker;
+        const title = document.createElement('h3');
+        title.textContent = page.title;
+        article.append(kicker, title);
+        page.body.forEach((para) => {
+          const p = document.createElement('p');
+          p.textContent = para;
+          article.append(p);
+        });
+        const folio = document.createElement('p');
+        folio.className = 'pdf-folio';
+        folio.textContent = `DynasAI · Page ${page.number} of ${String(pages.length).padStart(2, '0')}`;
+        article.append(folio);
+        stage!.append(article);
+      });
+    }
+
+    async function api(path: string, init?: RequestInit) {
+      const response = await fetch(path, {
+        credentials: 'same-origin',
+        headers: { 'content-type': 'application/json', ...(init?.headers || {}) },
+        ...init,
+      });
+      if (response.status === 404) {
+        throw new Error('OTP is not available in static preview. Run npm run preview:cf or use production.');
+      }
+      const data = (await response.json()) as {
+        ok?: boolean;
+        error?: string;
+        debugOtp?: string;
+        message?: string;
+        pages?: PlaybookPage[];
+      };
+      if (!response.ok || !data.ok) throw new Error(data.error || 'Request failed.');
+      return data;
+    }
+
+    async function loadPages() {
+      const data = await api('/api/playbook/pages');
+      if (data.pages) renderPages(data.pages);
+      root!.classList.remove('is-locked');
+      lock!.hidden = true;
+      if (download) download.hidden = false;
+    }
+
+    async function sendOtp() {
+      const data = new FormData(emailForm!);
+      lastEmail = String(data.get('email') || '').trim();
+      const result = await api('/api/playbook/request-otp', {
+        method: 'POST',
+        body: JSON.stringify({
+          name: data.get('name'),
+          email: lastEmail,
+          company: data.get('company'),
+        }),
+      });
+      emailForm!.hidden = true;
+      otpForm!.hidden = false;
+      setStatus(result.debugOtp ? `Dev code: ${result.debugOtp}` : result.message || 'Code sent.');
+    }
+
+    fetch('/api/playbook/session', { credentials: 'same-origin' })
+      .then(async (response) => {
+        if (!response.ok) return;
+        const data = (await response.json()) as { ok?: boolean };
+        if (data.ok) await loadPages();
+      })
+      .catch(() => {
+        setStatus('Use Cloudflare preview or production to receive a real email code.');
+      });
+
+    emailForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      setStatus('Sending code…');
+      try {
+        await sendOtp();
+      } catch (error) {
+        setStatus(error instanceof Error ? error.message : 'Could not send code.');
+      }
+    });
+
+    otpForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const data = new FormData(otpForm);
+      setStatus('Verifying…');
+      try {
+        await api('/api/playbook/verify-otp', {
+          method: 'POST',
+          body: JSON.stringify({ email: lastEmail, code: data.get('code') }),
+        });
+        await loadPages();
+      } catch (error) {
+        setStatus(error instanceof Error ? error.message : 'Could not verify code.');
+      }
+    });
+
+    document.querySelector('[data-playbook-resend]')?.addEventListener('click', () => {
+      emailForm.hidden = false;
+      otpForm.hidden = true;
+      setStatus('Send a new code when ready.');
+    });
+  }
+</script>

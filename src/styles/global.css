@@ -2242,6 +2242,97 @@ tbody tr:active {
   margin-top: var(--space-3);
 }
 
+.playbook-shell {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.playbook-gate {
+  max-width: 520px;
+}
+
+.playbook-status {
+  min-height: 1.5em;
+  margin: 0;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.playbook-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.pdf-stage {
+  display: grid;
+  gap: var(--space-4);
+  justify-items: center;
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: #5c6570;
+}
+
+.pdf-page {
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 720px);
+  min-height: 920px;
+  padding: 48px 56px;
+  background: #ffffff;
+  color: #0b1f3a;
+  border-radius: 2px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+}
+
+.pdf-kicker,
+.pdf-folio {
+  margin: 0;
+  color: #64748b;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.pdf-page h3 {
+  margin: 16px 0 24px;
+  color: #0b1f3a;
+  font-size: 1.75rem;
+  line-height: 1.2;
+}
+
+.pdf-page p {
+  margin: 0 0 16px;
+  color: #334155;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.pdf-page--placeholder {
+  min-height: 280px;
+}
+
+.playbook-shell.is-locked .pdf-stage {
+  max-height: 420px;
+  overflow: hidden;
+  pointer-events: none;
+  filter: blur(7px);
+  user-select: none;
+}
+
+[data-theme="dark"] .pdf-stage {
+  background: #070b12;
+}
+
+@media (max-width: 860px) {
+  .pdf-page {
+    min-height: auto;
+    padding: 32px 24px;
+  }
+}
+
 .promo-band {
   padding: var(--space-4) 0;
   background: var(--accent);

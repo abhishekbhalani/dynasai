@@ -90,6 +90,7 @@ export const resourcesMegaMenu = {
   description: 'Delivery notes, documentation, and tools for builders and operators.',
   links: [
     { label: 'Dynas Toolkit', href: '/platform/toolkit', description: 'Modular accelerators for agent delivery.', icon: 'wrench' },
+    { label: 'Insurance playbook', href: '/solutions/insurance/playbook', description: 'Data streamlining for carriers — original DynasAI guide.', icon: 'shield' },
     { label: 'Blog', href: '/blog', description: 'Delivery notes and platform updates.', icon: 'book' },
     { label: 'Documentation', href: '/docs', description: 'Getting started and API overview.', icon: 'file-text' },
     { label: 'RSS Feed', href: '/rss.xml', description: 'Subscribe to new articles.', icon: 'rss' },

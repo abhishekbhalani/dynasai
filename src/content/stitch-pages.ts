@@ -78,7 +78,7 @@ export const solutionsHub: MarketingPage = {
       title: 'Industries we serve',
       subtitle: 'Start with a proven vertical playbook, then customize on the DynasAI workspace.',
       items: [
-        { title: 'Insurance', body: 'Underwriting prefill, claims automation, telematics, and customer analytics.', href: '/solutions/insurance' },
+        { title: 'Insurance', body: 'Data streamlining for underwriting, claims, and telematics — on your cloud.', href: '/solutions/insurance' },
         { title: 'Financial Services', body: 'Risk assessment, compliance workflows, and customer operations.', href: '/solutions/financial-services' },
         { title: 'Healthcare', body: 'Clinical ops, prior auth, and document intelligence at scale.', href: '/contact' },
         { title: 'Manufacturing', body: 'Supply chain agents, quality inspection, and planning automation.', href: '/contact' },
@@ -140,21 +140,23 @@ export const financialServices: MarketingPage = {
 };
 
 export const impactPage: MarketingPage = {
-  title: 'Impact & Case Studies',
-  description: 'Production outcomes from DynasAI agent deployments across insurance, financial services, and enterprise operations.',
+  title: 'Impact',
+  description:
+    'How DynasAI streamlines industry data and runs governed agents on AWS, Azure, or GCP you already use — without claiming third-party case stats as our own.',
   badge: 'Impact',
-  headline: 'Measured outcomes from',
-  highlight: 'production AI',
-  subhead: 'Real deployments — not slide decks. See how teams ship governed agents and operate them at scale.',
+  headline: 'Industry data, streamlined.',
+  highlight: 'Automation you can audit.',
+  subhead:
+    'We publish patterns and platform capabilities. Named ROI stays off this site until we have permissioned DynasAI outcomes.',
   sections: [
     {
       type: 'grid',
-      title: 'Customer stories',
+      title: 'What we put in production',
       items: [
-        { title: '85%+ underwriting prefill for US SME carrier', body: 'Workers comp underwriting transformed with governed data enrichment agents.', href: '/solutions/insurance' },
-        { title: '36 claims use cases for US P&C insurer', body: 'Computer vision agents accelerated auto damage estimation and reduced manual touch.', href: '/solutions/insurance' },
-        { title: '39% savings with AI/ML underwriting', body: 'Document intelligence and automated risk assessment improved accuracy and throughput.', href: '/solutions/insurance' },
-        { title: 'Enterprise data foundation', body: 'Centralized data platform reduced quality improvement effort by 50%.', href: '/contact' },
+        { title: 'Insurance data streamlining', body: 'Collect policy, claims, and documents; evaluate quality; then automate with governed agents on your cloud.', href: '/solutions/insurance' },
+        { title: 'Underwriting context layer', body: 'One working packet for submissions — systems of record stay in your AWS, Azure, or GCP account.', href: '/solutions/insurance/playbook' },
+        { title: 'Claims intake without shadow copies', body: 'FNOL and correspondence processed in place, with evals and human gates.', href: '/platform/data-processing' },
+        { title: 'Regulated operations', body: 'GDPR / US privacy patterns, audit logs, and no public-model training on customer content.', href: '/platform/governance' },
       ],
     },
     {
@@ -579,6 +581,62 @@ export const workflowBuilderPage: MarketingPage = {
       body: 'Build your first flow in the DynasAI workspace.',
       primary: { label: 'Start building', href: 'https://app.dynasai.ai' },
       secondary: { label: 'Getting started', href: '/docs/getting-started' },
+    },
+  ],
+};
+
+export const insurancePlaybook: MarketingPage = {
+  title: 'Insurance data streamlining playbook',
+  description:
+    'Original DynasAI guide: collect, evaluate, process, and automate insurance data on AWS, Azure, or GCP you already operate. Not a reprint of any third-party playbook.',
+  badge: 'Playbook',
+  headline: 'Make insurance data usable',
+  highlight: 'before you automate.',
+  subhead:
+    'Policy admin, claims, billing, documents, and telematics rarely share a trusted packet. DynasAI is the front layer that streamlines that data in your cloud, then attaches governed agents.',
+  breadcrumb: [
+    { label: 'Home', href: '/' },
+    { label: 'Solutions', href: '/solutions' },
+    { label: 'Insurance', href: '/solutions/insurance' },
+    { label: 'Playbook', href: '/solutions/insurance/playbook' },
+  ],
+  sections: [
+    {
+      type: 'split',
+      title: 'Why carriers stall on AI',
+      paragraphs: [
+        'The problem is usually not “we need another model.” It is that FNOL files, submissions, loss runs, and bureau extracts live in different systems, with different quality, and no evaluation before an agent sees them.',
+        'DynasAI does not replace your policy or claims core. We collect a working set, evaluate it, process a versioned context layer, and only then automate — with human gates. Compute and storage stay on the AWS, Azure, or GCP footprint you already have.',
+      ],
+    },
+    {
+      type: 'numbered',
+      title: 'The DynasAI streamlining loop',
+      subtitle: 'Same four steps as the rest of the platform — applied to insurance sources.',
+      items: [
+        { num: '01', title: 'Collect', body: 'Connect cores, document stores, APIs, and batch files. Leave systems of record in place. No public form asks for your network diagram.' },
+        { num: '02', title: 'Evaluate', body: 'Score completeness, freshness, duplicates, and retrieval quality. If the packet is not ready, the workflow stops instead of hallucinating coverage.' },
+        { num: '03', title: 'Process', body: 'Normalize, enrich, and version transforms so underwriters and adjusters share one audit-ready context — not a shadow warehouse copy of the estate.' },
+        { num: '04', title: 'Automate', body: 'Attach agents for prefill, intake, and routing with approval gates, evals, and logs. EU or US residency follows the regions you approve.' },
+      ],
+    },
+    {
+      type: 'grid',
+      title: 'Where the loop attaches',
+      subtitle: 'Patterns we implement. Named customer ROI is published only with permission.',
+      items: [
+        { title: 'Underwriting packets', body: 'Application data, documents, and third-party enrichments in one review file.', href: '/solutions/insurance', icon: 'clipboard' },
+        { title: 'Claims intake', body: 'FNOL, images, and notes classified and routed with evidence in your tenant.', href: '/platform/data-processing', icon: 'camera' },
+        { title: 'Telematics & bureau feeds', body: 'Land external data next to policy records; evaluate before pricing or claims use.', href: '/platform/data-processing', icon: 'car' },
+        { title: 'Your cloud backend', body: 'Stay on AWS, Azure, or GCP. We recommend cost-aware services; we do not force a hyperscaler.', href: '/partners', icon: 'cloud' },
+      ],
+    },
+    {
+      type: 'cta',
+      title: 'Get a cloud and residency path',
+      body: 'Five questions. We recommend a service and whether to stay on your existing AWS, Azure, or GCP — then a data-readiness sprint if the sources are not ready.',
+      primary: { label: 'Get a recommended path', href: '/start' },
+      secondary: { label: 'Insurance solutions', href: '/solutions/insurance' },
     },
   ],
 };

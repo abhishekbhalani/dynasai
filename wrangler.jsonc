@@ -1,12 +1,29 @@
 {
   "name": "dynasai-web",
+  "main": "workers/site.ts",
   "compatibility_date": "2026-08-17",
+  "compatibility_flags": ["nodejs_compat"],
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
     "not_found_handling": "404-page",
     "html_handling": "auto-trailing-slash"
   },
   "observability": {
     "enabled": true
-  }
+  },
+  "vars": {
+    "ENVIRONMENT": "production",
+    "PLAYBOOK_FROM": "hello@dynasai.ai",
+    "LEAD_NOTIFY": "hello@dynasai.ai"
+  },
+  "send_email": [
+    { "name": "EMAIL" }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "LEADS",
+      "id": "ca0206ce0e284d1e85b08f04c30c447a"
+    }
+  ]
 }

@@ -161,9 +161,9 @@ export const insuranceIndustry = {
   slug: 'insurance',
   title: 'Insurance',
   meta: {
-    title: 'Insurance — AI Agents for Underwriting, Claims & Risk',
+    title: 'Insurance data processing — streamlining for underwriting, claims, and risk',
     description:
-      'Transform insurance decision-making with governed AI agents across underwriting, claims, telematics, and customer operations.',
+      'DynasAI is the front layer for insurance data: collect, evaluate, process, and automate on AWS, Azure, or GCP you already run. Policy, claims, and documents stay in your account.',
   },
   breadcrumb: [
     { label: 'Home', href: '/' },
@@ -171,78 +171,78 @@ export const insuranceIndustry = {
     { label: 'Insurance', href: '/solutions/insurance' },
   ],
   hero: {
-    headline: 'Transform decision-making in insurance with',
-    highlight: 'AI agents and analytics',
+    headline: 'Streamline insurance data.',
+    highlight: 'Then automate with control.',
     subhead:
-      'See how DynasAI helps insurers drive operational excellence across the value chain with governed agent workflows.',
+      'Carriers sit on policy, claims, billing, documents, and telematics that never meet. DynasAI ingests those sources, scores quality, and feeds governed agents — on your AWS, Azure, or GCP.',
   },
   promo: {
-    title: 'Bridge the AI gap in 3 steps',
-    body: 'Proven agent automation patterns from production insurance deployments.',
-    cta: 'Get the playbook',
-    href: '/contact',
+    title: 'Insurance data streamlining playbook',
+    body: 'How we collect, evaluate, process, and automate insurance data without moving it off your cloud.',
+    cta: 'Read the playbook',
+    href: '/solutions/insurance/playbook',
   },
   intro: {
-    title: 'AI for enhanced effectiveness across the insurance value chain',
+    title: 'Industry data processing, not a black-box model dump',
     body:
-      'In a competitive insurance landscape with rising customer expectations, AI-powered agents are becoming essential to maintain a leading edge. From risk assessment and accelerated underwriting to claims management and customer service, a governed, data-driven approach helps uncover hidden insights, identify new opportunities, and deliver measurable value.',
+      'Insurance AI fails when submissions, FNOL packs, policy admin extracts, and third-party files are incomplete or untrusted. DynasAI is the easy front layer: one workspace to connect sources, evaluate quality, and streamline context for underwriting, claims, and operations.',
     body2:
-      'DynasAI combines deep expertise in agent orchestration, generative AI, enterprise integrations, and insurance domain patterns — so you can make informed decisions, optimize processes, and unlock growth while reducing cost and manual effort.',
+      'Backend compute, storage, and models stay in the cloud you choose. We do not ask you to pick a server on a marketing form. Production uses least-privilege access to your tenant — with EU or US residency you approve.',
   },
   capabilities: [
     {
       num: '01',
-      title: 'Underwriting data prefill',
-      body: 'Reimagine small-business underwriting with AI agents that enrich applications, validate sources, and deliver high fill rates with human review gates.',
+      title: 'Multi-source collection',
+      body: 'Connect policy admin, claims systems, document stores, APIs, and batch files. Keep systems of record where they are; DynasAI collects a governed working set.',
     },
     {
       num: '02',
-      title: 'Accelerated underwriting',
-      body: 'Reduce evidence requests and manual effort in life and specialty lines. Improve quote-to-bind ratios with governed automation and clear escalation paths.',
+      title: 'Quality evaluation',
+      body: 'Score completeness, freshness, duplicates, and retrieval quality before an agent or underwriter uses the data. Fail closed when the packet is not ready.',
     },
     {
       num: '03',
-      title: 'Telematics & risk signals',
-      body: 'Integrate TSP data, build feature stores, and orchestrate ML use cases for pricing, risk assessment, and claims — with end-to-end data governance.',
+      title: 'Streamlining & context',
+      body: 'Normalize, enrich, and version transforms so submissions, loss runs, and correspondence become one audit-ready context layer.',
     },
     {
       num: '04',
-      title: 'Computer vision for claims',
-      body: 'Automate damage assessment workflows, shorten cycle times, and make risk evaluation more objective with vision agents and audit trails.',
+      title: 'Underwriting workflows',
+      body: 'Prefill and risk packets with human review gates. Agents propose; underwriters decide. Every enrichment is traced.',
     },
     {
       num: '05',
-      title: 'Customer interaction analytics',
-      body: 'Analyze call, chat, and email interactions to find coverage gaps, compliance issues, and coaching opportunities for representatives.',
+      title: 'Claims & document intake',
+      body: 'Classify FNOL, photos, and correspondence; route exceptions; keep evidence with the claim file in your cloud.',
     },
     {
       num: '06',
-      title: 'Agent & model operations',
-      body: 'Monitor production agents and models with drift alerts, eval suites, and automated retraining triggers — built for regulated environments.',
+      title: 'Governed automation',
+      body: 'Evals, approval gates, and logs for EU GDPR and US privacy. No training public models on customer insurance content.',
     },
   ],
   stories: [
     {
-      title: 'Workers comp underwriting transformed for US SME',
-      body: 'DynasAI agents achieved 85%+ data prefill with 90% accuracy, optimizing underwriting throughput for a regional carrier.',
-      href: '/contact',
+      title: 'Underwriting packets',
+      body: 'Unify application data, third-party enrichments, and documents into a review-ready file — then attach an agent with a human gate.',
+      href: '/solutions/insurance/playbook',
     },
     {
-      title: '36 claims use cases for a US P&C insurer',
-      body: 'Computer-vision agents accelerated auto damage estimation and reduced manual intervention across the claims lifecycle.',
-      href: '/contact',
+      title: 'Claims intake',
+      body: 'Streamline FNOL, images, and notes into structured context so adjusters spend time on judgment, not hunting files.',
+      href: '/platform/data-processing',
     },
     {
-      title: '39% savings with governed AI/ML underwriting',
-      body: 'Document intelligence and automated risk assessment improved accuracy while cutting manual extraction effort.',
-      href: '/contact',
+      title: 'Telematics & third-party feeds',
+      body: 'Land TSP and bureau data next to policy records, evaluate quality, and only then activate pricing or claims workflows.',
+      href: '/platform/data-processing',
     },
   ],
   cta: {
-    title: 'Revamp insurance operations with governed agents',
-    body: 'Talk to our team about underwriting, claims, or full-stack agent delivery on the DynasAI platform.',
-    primary: { label: 'Let\'s connect', href: '/contact' },
-    secondary: { label: 'Explore platform', href: '/features' },
+    title: 'Map your insurance data path',
+    body: 'Tell us where policy, claims, and documents live today. We recommend a streamlining path on your existing cloud.',
+    primary: { label: 'Get a recommended path', href: '/start' },
+    secondary: { label: 'Read the playbook', href: '/solutions/insurance/playbook' },
   },
 } as const;
 
@@ -253,9 +253,9 @@ export const homeHero = {
   lede:
     'DynasAI orchestrates AI agents, enterprise data, and human intelligence into one governed execution layer — build yourself, implement with our studio, or run both in parallel.',
   stats: [
-    { value: '4×', label: 'Faster agent delivery' },
-    { value: '85%+', label: 'Prefill accuracy' },
-    { value: '36+', label: 'Production use cases' },
+    { value: '3', label: 'Cloud backends: AWS, Azure, GCP' },
+    { value: 'BYO', label: 'VPC and data stay in your account' },
+    { value: 'EU / US', label: 'Residency you approve' },
   ],
   primaryCta: { label: 'Start Building', href: 'https://app.dynasai.ai' },
   secondaryCta: { label: 'Insurance solutions', href: '/solutions/insurance' },
