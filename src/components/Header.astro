@@ -1,28 +1,147 @@
 ---
 import Logo from './Logo.astro';
 import ThemeToggle from './ThemeToggle.astro';
-import { site, nav } from '../config';
+import { site, nav, platformMegaMenu, resourcesMegaMenu, companyMegaMenu } from '../config';
 
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+
+function isActive(href: string) {
+  if (href === '/') return path === '/';
+  return path === href || path.startsWith(`${href}/`);
+}
 ---
 
 <header class="site-header">
   <div class="container header-inner">
     <Logo />
+
     <nav class="nav" id="primary-nav" data-nav aria-label="Primary">
       {
-        nav.map((item) => (
-          <a href={item.href} aria-current={path === item.href ? 'page' : undefined}>
-            {item.label}
-          </a>
-        ))
+        nav.map((item) =>
+          'mega' in item && item.mega === 'platform' ? (
+            <div class="nav-item nav-item--mega" data-mega-item>
+              <button
+                type="button"
+                class="nav-trigger"
+                data-mega-trigger
+                aria-expanded="false"
+                aria-controls="mega-platform"
+                aria-current={isActive(item.href) ? 'page' : undefined}
+              >
+                {item.label}
+                <span class="nav-chevron" aria-hidden="true">▾</span>
+              </button>
+              <div class="mega-menu mega-menu--platform" id="mega-platform" data-mega-panel hidden>
+                <div class="mega-menu-inner container">
+                  <div class="mega-menu-grid">
+                    <div class="mega-menu-intro">
+                      <h2>{platformMegaMenu.title}</h2>
+                      <p>{platformMegaMenu.description}</p>
+                    </div>
+                    {
+                      platformMegaMenu.columns.map((column) => (
+                        <div class="mega-menu-col">
+                          <h3>
+                            <span class="mega-menu-icon" aria-hidden="true">{column.icon}</span>
+                            {column.label}
+                          </h3>
+                          <ul>
+                            {column.links.map((link) => (
+                              <li>
+                                <a href={link.href}>{link.label}</a>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))
+                    }
+                  </div>
+                  <aside class="mega-menu-featured">
+                    <h3>{platformMegaMenu.featured.title}</h3>
+                    <div class="mega-menu-visual" aria-hidden="true">
+                      <span class="mega-menu-visual-icon">⬡</span>
+                    </div>
+                    <p>{platformMegaMenu.featured.description}</p>
+                    <a class="btn btn-primary btn-block" href={platformMegaMenu.featured.href}>
+                      {platformMegaMenu.featured.cta}
+                    </a>
+                  </aside>
+                </div>
+              </div>
+            </div>
+          ) : 'mega' in item && item.mega === 'resources' ? (
+            <div class="nav-item nav-item--mega nav-item--compact" data-mega-item>
+              <button
+                type="button"
+                class="nav-trigger"
+                data-mega-trigger
+                aria-expanded="false"
+                aria-controls="mega-resources"
+                aria-current={isActive(item.href) ? 'page' : undefined}
+              >
+                {item.label}
+                <span class="nav-chevron" aria-hidden="true">▾</span>
+              </button>
+              <div class="mega-menu mega-menu--compact" id="mega-resources" data-mega-panel hidden>
+                <div class="mega-menu-inner container">
+                  <ul class="mega-menu-list">
+                    {
+                      resourcesMegaMenu.links.map((link) => (
+                        <li>
+                          <a href={link.href}>
+                            <strong>{link.label}</strong>
+                            <span>{link.description}</span>
+                          </a>
+                        </li>
+                      ))
+                    }
+                  </ul>
+                </div>
+              </div>
+            </div>
+          ) : 'mega' in item && item.mega === 'company' ? (
+            <div class="nav-item nav-item--mega nav-item--compact" data-mega-item>
+              <button
+                type="button"
+                class="nav-trigger"
+                data-mega-trigger
+                aria-expanded="false"
+                aria-controls="mega-company"
+                aria-current={isActive(item.href) ? 'page' : undefined}
+              >
+                {item.label}
+                <span class="nav-chevron" aria-hidden="true">▾</span>
+              </button>
+              <div class="mega-menu mega-menu--compact" id="mega-company" data-mega-panel hidden>
+                <div class="mega-menu-inner container">
+                  <ul class="mega-menu-list">
+                    {
+                      companyMegaMenu.links.map((link) => (
+                        <li>
+                          <a href={link.href}>
+                            <strong>{link.label}</strong>
+                            <span>{link.description}</span>
+                          </a>
+                        </li>
+                      ))
+                    }
+                  </ul>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>
+              {item.label}
+            </a>
+          ),
+        )
       }
-      <a href="/contact">Contact</a>
     </nav>
+
     <div class="header-actions">
       <ThemeToggle />
-      <a class="btn btn-secondary" href="/contact">Contact Sales</a>
-      <a class="btn btn-primary" href="/contact">Start Building</a>
+      <a class="btn btn-secondary header-cta-secondary" href="/contact">Contact Sales</a>
+      <a class="btn btn-primary" href={site.appUrl}>Start Building</a>
       <button class="menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="primary-nav">
         Menu
       </button>

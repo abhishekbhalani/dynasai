@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { site } from '../config';
+import { servicePillars, differentiators } from '../content/site-content';
 
 const title = 'Turn Enterprise Complexity Into Intelligent Action';
 const description = site.description;
@@ -8,45 +9,43 @@ const description = site.description;
 const lifecycle = [
   {
     title: 'Discover',
-    body: 'Identify automation bottlenecks across your enterprise architecture. Our analysis engines map complex operational inefficiencies and pinpoint high-ROI agentic opportunities.',
+    body: 'Map operational bottlenecks, data constraints, and high-ROI automation opportunities across your enterprise.',
     icon: '◎',
   },
   {
     title: 'Design',
-    body: 'Architect intelligent workflows on our visual canvas. Connect data sources, assign AI agent capabilities, and define complex logic gates without extensive code.',
+    body: 'Architect agent workflows, tool access, and human-in-the-loop controls on a governed visual canvas.',
     icon: '◇',
   },
   {
     title: 'Deploy',
-    body: 'Push workflows to production instantly. DynasAI handles infrastructure scaling, version control, and secure environment management for agentic solutions.',
+    body: 'Ship to production with versioned agents, secure integrations, and environment-aware rollout.',
     icon: '↑',
   },
   {
-    title: 'Optimize',
-    body: 'Monitor performance in real-time. Gain actionable insights into agent decisions, token usage, and execution speed to refine your intelligence layer.',
+    title: 'Operate',
+    body: 'Monitor traces, eval scores, and drift — iterate continuously with AgentOps, not one-off pilots.',
     icon: '≋',
   },
 ];
 
-const trustItems = [
-  'Cloud Infrastructure',
-  'Data Warehouses',
-  'API Gateways',
-  'Enterprise Security',
-];
+const trustItems = ['Cloud platforms', 'Data warehouses', 'Enterprise identity', 'API ecosystems'];
 ---
 
 <BaseLayout title={title} description={description}>
   <section class="hero-enterprise bg-grid-pattern">
     <div class="container">
-      <p class="hero-badge">Enterprise-Ready Agentic Automation</p>
+      <p class="hero-badge">AI Delivery Studio + Developer Platform</p>
       <h1>
         Turn Enterprise Complexity Into <span class="gradient-text">Intelligent Action</span>
       </h1>
-      <p class="lede">{description}</p>
+      <p class="lede">
+        DynasAI combines a governed agent platform with delivery expertise — so you can build yourself,
+        implement with our team, or run both in parallel on the same stack.
+      </p>
       <div class="hero-actions hero-actions--center">
-        <a class="btn btn-primary btn-lg" href="/contact">Start Building</a>
-        <a class="btn btn-secondary btn-lg" href="/features">View Platform</a>
+        <a class="btn btn-primary btn-lg" href={site.appUrl}>Start Building</a>
+        <a class="btn btn-secondary btn-lg" href="/platform/toolkit">Explore Toolkit</a>
       </div>
 
       <div class="orchestration bg-grid-pattern" aria-label="Orchestration visualization">
@@ -85,7 +84,7 @@ const trustItems = [
 
   <section class="trust-bar" aria-label="Trusted ecosystem">
     <div class="container">
-      <p class="label-sm muted">Trusted Ecosystem</p>
+      <p class="label-sm muted">Built for the modern enterprise stack</p>
       <div class="trust-items">
         {trustItems.map((item) => (
           <div class="trust-item">
@@ -97,12 +96,36 @@ const trustItems = [
     </div>
   </section>
 
+  <section class="section" aria-labelledby="services-heading">
+    <div class="container">
+      <div class="section-header section-header--center">
+        <h2 id="services-heading">Transform data into intelligent action</h2>
+        <p class="section-copy section-copy--center">
+          Four delivery pillars — from strategy through operated production — on one platform.
+        </p>
+      </div>
+      <div class="card-grid">
+        {servicePillars.map((pillar) => (
+          <article class="card">
+            <h3><a href={pillar.href}>{pillar.title}</a></h3>
+            <p class="muted">{pillar.summary}</p>
+            <ul class="list-compact">
+              {pillar.items.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
   <section class="section" aria-labelledby="lifecycle-heading">
     <div class="container">
       <div class="section-header section-header--center">
-        <h2 id="lifecycle-heading">The Automation Lifecycle</h2>
+        <h2 id="lifecycle-heading">The agent automation lifecycle</h2>
         <p class="section-copy section-copy--center">
-          A comprehensive toolkit to transform manual processes into sophisticated, agentic workflows.
+          A repeatable path from discovery to continuous operation — supported by the Dynas Toolkit and workspace.
         </p>
       </div>
       <div class="bento-grid">
@@ -118,6 +141,25 @@ const trustItems = [
             </div>
           </article>
         ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--compact">
+    <div class="container">
+      <div class="cta-band">
+        <div class="cta-band-inner">
+          <div class="cta-band-copy">
+            <h2>Own your AI journey with modular accelerators</h2>
+            <p class="muted">
+              Dynas Toolkit modules — templates, evals, deployment pipelines — speed delivery whether you self-serve or work with our studio.
+            </p>
+          </div>
+          <div class="cta-band-actions">
+            <a class="btn btn-primary" href="/platform/toolkit">View toolkit</a>
+            <a class="btn btn-secondary" href="/contact">Talk to an expert</a>
+          </div>
+        </div>
       </div>
     </div>
   </section>

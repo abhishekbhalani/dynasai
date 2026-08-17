@@ -25,8 +25,8 @@ const loadGtm = Boolean(gtmId) && import.meta.env.PROD;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/png" href="/img/dynasai_logo_system.png" />
-    <link rel="apple-touch-icon" href="/img/dynasai_logo_system.png" />
+    <link rel="icon" type="image/svg+xml" href="/img/colored-logo.svg" />
+    <link rel="apple-touch-icon" href="/img/colored-logo.svg" />
     <meta name="generator" content={Astro.generator} />
     <script is:inline>
       (function () {
@@ -91,6 +91,62 @@ const loadGtm = Boolean(gtmId) && import.meta.env.PROD;
       toggle?.addEventListener('click', () => {
         const open = nav?.classList.toggle('is-open');
         toggle.setAttribute('aria-expanded', String(Boolean(open)));
+      });
+
+      const megaItems = Array.from(document.querySelectorAll('[data-mega-item]'));
+
+      function closeMegaMenus(except?: Element | null) {
+        megaItems.forEach((item) => {
+          if (except && item === except) return;
+          item.classList.remove('is-open');
+          const trigger = item.querySelector('[data-mega-trigger]');
+          const panel = item.querySelector('[data-mega-panel]');
+          trigger?.setAttribute('aria-expanded', 'false');
+          panel?.setAttribute('hidden', '');
+        });
+      }
+
+      megaItems.forEach((item) => {
+        const trigger = item.querySelector('[data-mega-trigger]');
+        const panel = item.querySelector('[data-mega-panel]');
+        if (!trigger || !panel) return;
+
+        trigger.addEventListener('click', (event) => {
+          event.preventDefault();
+          const willOpen = !item.classList.contains('is-open');
+          closeMegaMenus(willOpen ? item : null);
+          item.classList.toggle('is-open', willOpen);
+          trigger.setAttribute('aria-expanded', String(willOpen));
+          if (willOpen) panel.removeAttribute('hidden');
+          else panel.setAttribute('hidden', '');
+        });
+
+        item.addEventListener('mouseenter', () => {
+          if (window.matchMedia('(min-width: 861px)').matches) {
+            closeMegaMenus(item);
+            item.classList.add('is-open');
+            trigger.setAttribute('aria-expanded', 'true');
+            panel.removeAttribute('hidden');
+          }
+        });
+
+        item.addEventListener('mouseleave', () => {
+          if (window.matchMedia('(min-width: 861px)').matches) {
+            item.classList.remove('is-open');
+            trigger.setAttribute('aria-expanded', 'false');
+            panel.setAttribute('hidden', '');
+          }
+        });
+      });
+
+      document.addEventListener('click', (event) => {
+        const target = event.target;
+        if (!(target instanceof Element)) return;
+        if (!target.closest('[data-mega-item]')) closeMegaMenus();
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') closeMegaMenus();
       });
     </script>
   </body>

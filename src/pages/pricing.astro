@@ -1,42 +1,56 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
+import { servicePillars } from '../content/site-content';
 
-const title = 'AI Engineering Services';
+const title = 'Services';
 const description =
-  'Strategy, agent engineering, generative AI applications, and automation engineering — from advisory to production.';
+  'AI strategy, agent engineering, data integration, and operated production — from advisory through AgentOps.';
 
-const capabilities = [
-  ['AI Strategy & Advisory', 'Roadmaps, operating models, and portfolio prioritization for enterprise AI.'],
-  ['AI Agent Engineering', 'Custom agents, tool use, evals, and integration into your stack.'],
-  ['Generative AI Apps', 'Production applications with governance, UX, and observability built in.'],
-  ['Automation Engineering', 'Workflow automation, orchestration, and operated systems after go-live.'],
-];
-
-const methodology = [
-  ['Assess', 'Current state, constraints, and highest-value automation bets.'],
-  ['Design', 'Architecture, security model, and delivery plan.'],
-  ['Build', 'Agents, integrations, and platform configuration.'],
-  ['Operate', 'Monitoring, iteration, and continuous improvement.'],
+const engagements = [
+  {
+    name: 'Discovery sprint',
+    bestFor: 'Teams validating AI strategy and platform fit',
+    outcome: 'Prioritized roadmap, architecture, and ROI model',
+    duration: '2–4 weeks',
+  },
+  {
+    name: 'Build program',
+    bestFor: 'Shipping production agents and workflows',
+    outcome: 'Live automations on DynasAI with integrations and evals',
+    duration: '6–16 weeks',
+  },
+  {
+    name: 'Operate retainer',
+    bestFor: 'Teams running automation after go-live',
+    outcome: 'Monitoring, iteration, drift response, and governance cadence',
+    duration: 'Ongoing',
+  },
 ];
 ---
 
 <BaseLayout title={title} description={description}>
   <PageHero
     badge="Services"
-    title="AI Engineering"
-    highlight="Services"
-    description="Engagements that complement the DynasAI platform — or stand alone while you evaluate."
+    title="AI delivery,"
+    highlight="end to end"
+    description="Consulting engagements that run on the DynasAI platform — or standalone while you evaluate. Same stack, no throwaway pilots."
   />
 
   <section class="section">
     <div class="container">
-      <h2>Engineering Capabilities</h2>
+      <h2>What we deliver</h2>
+      <p class="section-copy">Four pillars modeled for enterprise agentic automation — aligned to how modern teams actually ship.</p>
       <div class="feature-grid" style="margin-top: 24px;">
-        {capabilities.map(([title, body]) => (
-          <article class="info-card">
-            <h3>{title}</h3>
-            <p>{body}</p>
+        {servicePillars.map((pillar) => (
+          <article class="info-card" id={pillar.id}>
+            <h3>{pillar.title}</h3>
+            <p>{pillar.summary}</p>
+            <ul class="list-compact">
+              {pillar.items.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
           </article>
         ))}
       </div>
@@ -45,50 +59,49 @@ const methodology = [
 
   <section class="section">
     <div class="container">
-      <h2>Our Methodology: Strategy to Production</h2>
-      <div class="feature-grid feature-grid--4" style="margin-top: 24px;">
-        {methodology.map(([title, body]) => (
-          <article class="info-card">
-            <div class="icon-box">{title.slice(0, 1)}</div>
-            <h3>{title}</h3>
-            <p>{body}</p>
-          </article>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <div class="data-table-wrap">
+      <h2>Engagement models</h2>
+      <div class="data-table-wrap" style="margin-top: 24px;">
         <table>
           <thead>
             <tr>
               <th scope="col">Engagement</th>
               <th scope="col">Best for</th>
               <th scope="col">Outcome</th>
+              <th scope="col">Typical duration</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <th scope="row">Discovery</th>
-              <td>Teams validating AI strategy</td>
-              <td>Prioritized roadmap and architecture</td>
-            </tr>
-            <tr>
-              <th scope="row">Build</th>
-              <td>Shipping production automation</td>
-              <td>Agents, workflows, and integrations live</td>
-            </tr>
-            <tr>
-              <th scope="row">Operate</th>
-              <td>Running after go-live</td>
-              <td>Monitoring, evals, and iteration retainer</td>
-            </tr>
+            {engagements.map((row) => (
+              <tr>
+                <th scope="row">{row.name}</th>
+                <td>{row.bestFor}</td>
+                <td>{row.outcome}</td>
+                <td>{row.duration}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
-      <p class="muted" style="margin-top: 16px;">Pricing is scoped per engagement. <a href="/contact">Contact sales</a> for a quote.</p>
+      <p class="muted" style="margin-top: 16px;">
+        Scoped per engagement. Platform access is included where applicable. <a href="/contact">Contact sales</a> for a proposal.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--compact">
+    <div class="container">
+      <div class="cta-band">
+        <div class="cta-band-inner">
+          <div class="cta-band-copy">
+            <h2>Platform + services on one stack</h2>
+            <p class="muted">Self-serve in the workspace, or pair delivery with the Dynas Toolkit accelerators.</p>
+          </div>
+          <div class="cta-band-actions">
+            <a class="btn btn-primary" href="/platform/toolkit">Dynas Toolkit</a>
+            <a class="btn btn-secondary" href="/contact">Request a quote</a>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 </BaseLayout>

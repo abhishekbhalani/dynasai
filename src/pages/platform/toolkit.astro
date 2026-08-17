@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import { site } from '../../config';
+import { toolkitModules, toolkitAccess, differentiators } from '../../content/site-content';
+
+const title = 'Dynas Toolkit';
+const description =
+  'Modular accelerators for agent development — templates, evals, deployment pipelines, and governance. The agentic counterpart to classic ML toolkits.';
+---
+
+<BaseLayout title={title} description={description}>
+  <PageHero
+    badge="Open Accelerators"
+    title="Accelerate the path from"
+    highlight="agent concept to production"
+    description="Lego-block modules for knowledge prep, agent builds, evaluation, deployment, and governance — usable standalone or as part of the DynasAI platform."
+  />
+
+  <section class="section">
+    <div class="container">
+      <div class="section-header section-header--center">
+        <h2>Toolkit modules</h2>
+        <p class="section-copy section-copy--center">
+          Cover the full agent lifecycle: context, build, evaluate, deploy, and operate at scale.
+        </p>
+      </div>
+      <div class="feature-grid" style="margin-top: 24px;">
+        {toolkitModules.map((mod) => (
+          <article class="info-card" id={mod.id}>
+            <h3>{mod.title}</h3>
+            <p>{mod.body}</p>
+            <ul class="list-compact">
+              {mod.items.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2>{toolkitAccess.headline}</h2>
+      <p class="lede">{toolkitAccess.intro}</p>
+      <div class="card-grid" style="margin-top: 24px;">
+        {toolkitAccess.channels.map((channel) => (
+          <article class="card">
+            <p class="label-sm muted">{channel.status}</p>
+            <h3>
+              <a href={channel.href}>{channel.label}</a>
+            </h3>
+            <p class="muted">{channel.description}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2>Why teams choose Dynas Toolkit</h2>
+      <div class="feature-grid feature-grid--4" style="margin-top: 24px;">
+        {differentiators.map((item) => (
+          <article class="info-card">
+            <h3>{item.title}</h3>
+            <p>{item.body}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--compact">
+    <div class="container">
+      <div class="cta-band">
+        <div class="cta-band-inner">
+          <div class="cta-band-copy">
+            <h2>Start in the workspace</h2>
+            <p class="muted">Open a demo environment on {site.appUrl.replace('https://', '')} or talk to our team about a guided rollout.</p>
+          </div>
+          <div class="cta-band-actions">
+            <a class="btn btn-primary" href={site.appUrl}>Open workspace</a>
+            <a class="btn btn-secondary" href="/contact">Talk to an expert</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
