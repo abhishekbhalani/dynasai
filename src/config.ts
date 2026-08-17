@@ -10,6 +10,8 @@ export const site = {
   email: 'hello@dynasai.ai',
   gtmId: 'GTM-KDPPRVV2',
   twitter: '@dynasai',
+  logo: '/img/dynasai_logo_system.png',
+  ogImage: '/img/dynasai_logo_system.png',
   sameAs: [
     'https://github.com/abhishekbhalani/dynasai',
   ],

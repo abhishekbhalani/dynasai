@@ -36,6 +36,10 @@ const fullTitle = title.includes(site.name) ? title : `${title} · ${site.name}`
 <meta name="twitter:title" content={fullTitle} />
 <meta name="twitter:description" content={description} />
 <meta name="twitter:site" content={site.twitter} />
-<meta name="theme-color" content="#0a5f5c" media="(prefers-color-scheme: light)" />
-<meta name="theme-color" content="#0c0e12" media="(prefers-color-scheme: dark)" />
+<meta property="og:image" content={`${site.url}${site.ogImage}`} />
+<meta property="og:image:alt" content={`${site.name} logo`} />
+<meta name="twitter:image" content={`${site.url}${site.ogImage}`} />
+<meta name="twitter:image:alt" content={`${site.name} logo`} />
+<meta name="theme-color" content="#050816" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#050816" media="(prefers-color-scheme: dark)" />
 <link rel="alternate" type="application/rss+xml" title={`${site.name} Blog`} href="/rss.xml" />

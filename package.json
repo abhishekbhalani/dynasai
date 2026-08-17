@@ -11,7 +11,10 @@
     "preview": "astro preview",
     "astro": "astro",
     "preview:cf": "astro build && wrangler dev",
-    "deploy": "astro build && wrangler deploy"
+    "deploy": "astro build && wrangler deploy",
+    "release": "node scripts/release.mjs",
+    "release:dry": "node scripts/release.mjs --dry-run",
+    "cf:check": "node scripts/check-cloudflare.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.5",

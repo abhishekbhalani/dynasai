@@ -20,18 +20,64 @@ cp .env.example .env
 npm run dev
 ```
 
-## Deploy
+## Release (Cloudflare)
+
+### Option A — API token (recommended)
+
+1. Open [Cloudflare API Tokens](https://dash.cloudflare.com/profile/api-tokens)
+2. **Create Token** → **Edit Cloudflare Workers** template  
+   (or custom: **Account → Workers Scripts → Edit**)
+3. Copy token and account ID:
+
+```powershell
+copy .env.example .env
+# Edit .env — set CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID
+```
+
+4. Verify and deploy:
+
+```powershell
+npx wrangler whoami
+npm run release
+```
+
+`npm run release` loads `CLOUDFLARE_*` from `.env` automatically.
+
+### Option B — Browser login
 
 ```bash
 npx wrangler login
-npm run deploy
+npm run release
+```
+
+Other commands:
+
+```bash
+npm run release:dry   # build only, no deploy
+npm run deploy        # build + wrangler deploy (no auth check)
+npm run preview:cf    # local preview via wrangler dev
 ```
 
 Then in Cloudflare: attach custom domain `dynasai.ai` (and `www`) to this Worker. Later, create a second Worker for `app.dynasai.ai`.
 
 ## Env
 
-See `.env.example`. GTM is omitted in `astro dev` so local traffic does not pollute analytics.
+See `.env.example`:
+
+- `PUBLIC_*` — Astro site config
+- `CLOUDFLARE_API_TOKEN` — wrangler deploy auth (gitignored)
+- `CLOUDFLARE_ACCOUNT_ID` — optional; wrangler can infer from token
+
+Never commit `.env`. GTM is omitted in `astro dev` so local traffic does not pollute analytics.
+
+## Cloudflare agent setup
+
+Official setup from [developers.cloudflare.com/agent-setup/prompt.md](https://developers.cloudflare.com/agent-setup/prompt.md):
+
+- **Skills:** 13 Cloudflare skills in `~/.cursor/skills/` (wrangler, workers-best-practices, web-perf, etc.)
+- **MCP:** `.cursor/mcp.json` — cloudflare, cloudflare-docs, cloudflare-bindings, cloudflare-builds, cloudflare-observability
+
+Copy `.cursor/mcp.example.json` → `.cursor/mcp.json` and add your Stitch key if needed. **Restart Cursor** after changes. OAuth runs automatically on first Cloudflare MCP use.
 
 ## Stitch MCP
 
