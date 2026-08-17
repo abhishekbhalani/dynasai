@@ -1,5 +1,7 @@
 ---
 import Breadcrumb from './Breadcrumb.astro';
+import Icon from './Icon.astro';
+import { iconForTitle } from '../lib/icon-map';
 import type { MarketingPage as MarketingPageType } from '../content/stitch-pages';
 
 interface Props {
@@ -71,7 +73,9 @@ const { page } = Astro.props;
             <div class="story-grid">
               {section.items.map((item) => (
                 <article class="story-card">
-                  <div class="story-card-visual" aria-hidden="true"><span>◈</span></div>
+                  <div class="story-card-visual" aria-hidden="true">
+                    <Icon name={item.icon ?? iconForTitle(item.title)} size={40} />
+                  </div>
                   <h3>{item.href ? <a href={item.href}>{item.title}</a> : item.title}</h3>
                   <p>{item.body}</p>
                   {item.href && <a class="story-card-link" href={item.href}>Learn more →</a>}
@@ -95,6 +99,9 @@ const { page } = Astro.props;
               {section.items.map((item) => (
                 <li class="capability-card">
                   <span class="capability-num" aria-hidden="true">{item.num}</span>
+                  <span class="capability-icon" aria-hidden="true">
+                    <Icon name={item.icon ?? iconForTitle(item.title)} size={22} />
+                  </span>
                   <h3>{item.title}</h3>
                   <p>{item.body}</p>
                 </li>

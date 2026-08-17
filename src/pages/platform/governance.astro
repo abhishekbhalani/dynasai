@@ -2,10 +2,37 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import MarketingPage from '../../components/MarketingPage.astro';
 import { governancePage } from '../../content/stitch-pages';
+import { site } from '../../config';
 
 const page = governancePage;
+
+const jsonLd = {
+  '@type': 'Service',
+  '@id': `${site.url}/platform/governance#service`,
+  name: 'DynasAI Governance, GDPR & Security',
+  serviceType: 'AI governance, privacy, and security controls',
+  url: `${site.url}/platform/governance`,
+  description: page.description,
+  provider: { '@id': `${site.url}/#org` },
+  areaServed: ['European Union', 'United States'],
+  audience: { '@type': 'BusinessAudience', audienceType: 'Enterprise' },
+  offers: {
+    '@type': 'Offer',
+    url: `${site.url}/contact`,
+    availability: 'https://schema.org/InStock',
+  },
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Governance capabilities',
+    itemListElement: [
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'GDPR and EU AI Act control design' } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Audit trails and human-in-the-loop gates' } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Customer-controlled data residency on AWS, Azure, or GCP' } },
+    ],
+  },
+};
 ---
 
-<BaseLayout title={page.title} description={page.description}>
+<BaseLayout title={page.title} description={page.description} jsonLd={jsonLd}>
   <MarketingPage page={page} />
 </BaseLayout>

@@ -40,7 +40,7 @@ export const platformMegaMenu = {
   columns: [
     {
       label: 'Build',
-      icon: 'B',
+      icon: 'hammer',
       links: [
         { label: 'AI Automation', href: '/features#build' },
         { label: 'AI Agents', href: '/features#build' },
@@ -51,7 +51,7 @@ export const platformMegaMenu = {
     },
     {
       label: 'Connect',
-      icon: 'C',
+      icon: 'plug',
       links: [
         { label: 'Integrations', href: '/docs' },
         { label: 'APIs', href: '/docs/api-overview' },
@@ -62,7 +62,7 @@ export const platformMegaMenu = {
     },
     {
       label: 'Understand',
-      icon: 'U',
+      icon: 'database',
       links: [
         { label: 'Data Processing', href: '/platform/data-processing' },
         { label: 'Knowledge & RAG', href: '/platform/data-processing' },
@@ -73,13 +73,13 @@ export const platformMegaMenu = {
     },
     {
       label: 'Operate',
-      icon: 'O',
+      icon: 'shield',
       links: [
-        { label: 'AI Observability', href: '/features#operate' },
-        { label: 'Evaluation', href: '/features#operate' },
-        { label: 'Monitoring', href: '/features#operate' },
-        { label: 'AI Governance', href: '/features#operate' },
-        { label: 'Security', href: '/features#operate' },
+        { label: 'AI Observability', href: '/platform/governance' },
+        { label: 'Evaluation', href: '/platform/governance' },
+        { label: 'Monitoring', href: '/platform/governance' },
+        { label: 'AI Governance', href: '/platform/governance' },
+        { label: 'GDPR & Security', href: '/platform/governance' },
       ],
     },
   ],
@@ -89,10 +89,10 @@ export const resourcesMegaMenu = {
   title: 'Resources & Insights',
   description: 'Delivery notes, documentation, and tools for builders and operators.',
   links: [
-    { label: 'Dynas Toolkit', href: '/platform/toolkit', description: 'Modular accelerators for agent delivery.' },
-    { label: 'Blog', href: '/blog', description: 'Delivery notes and platform updates.' },
-    { label: 'Documentation', href: '/docs', description: 'Getting started and API overview.' },
-    { label: 'RSS Feed', href: '/rss.xml', description: 'Subscribe to new articles.' },
+    { label: 'Dynas Toolkit', href: '/platform/toolkit', description: 'Modular accelerators for agent delivery.', icon: 'wrench' },
+    { label: 'Blog', href: '/blog', description: 'Delivery notes and platform updates.', icon: 'book' },
+    { label: 'Documentation', href: '/docs', description: 'Getting started and API overview.', icon: 'file-text' },
+    { label: 'RSS Feed', href: '/rss.xml', description: 'Subscribe to new articles.', icon: 'rss' },
   ],
 } as const;
 
@@ -100,9 +100,9 @@ export const companyMegaMenu = {
   title: 'Company',
   description: 'Learn about our team, culture, and how to work with DynasAI.',
   links: [
-    { label: 'About', href: '/about', description: 'Our story, mission, and leadership.' },
-    { label: 'Careers', href: '/careers', description: 'Open roles and culture.' },
-    { label: 'Contact', href: '/contact', description: 'Talk to an AI expert.' },
+    { label: 'About', href: '/about', description: 'Our story, mission, and leadership.', icon: 'users' },
+    { label: 'Careers', href: '/careers', description: 'Open roles and culture.', icon: 'briefcase' },
+    { label: 'Contact', href: '/contact', description: 'Talk to an AI expert.', icon: 'phone' },
   ],
 } as const;
 

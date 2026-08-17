@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import HeroBanner from '../components/HeroBanner.astro';
+import Icon from '../components/Icon.astro';
+import { iconForTitle } from '../lib/icon-map';
 import { site } from '../config';
 import {
   servicePillars,
@@ -17,22 +19,22 @@ const lifecycle = [
   {
     title: 'Discover',
     body: 'Map data sources, cloud options, compliance needs, and high-ROI automation opportunities.',
-    icon: '◎',
+    icon: 'map',
   },
   {
     title: 'Design',
     body: 'Architect agents, data pipelines, and human-in-the-loop controls on your chosen cloud backend.',
-    icon: '◇',
+    icon: 'pencil',
   },
   {
     title: 'Deploy',
     body: 'Ship to AWS, Azure, or GCP with secure integrations, eval gates, and environment-aware rollout.',
-    icon: '↑',
+    icon: 'rocket',
   },
   {
     title: 'Operate',
     body: 'Monitor traces, data quality, and drift — iterate with AgentOps and compliance cadence.',
-    icon: '≋',
+    icon: 'activity',
   },
 ];
 ---
@@ -46,6 +48,9 @@ const lifecycle = [
       <div class="cloud-trust-grid">
         {cloudProviders.map((provider) => (
           <div class="cloud-trust-item">
+            <span class="cloud-trust-icon" aria-hidden="true">
+              <Icon name="cloud" size={22} />
+            </span>
             <strong>{provider.short}</strong>
             <span>{provider.body}</span>
           </div>
@@ -92,7 +97,9 @@ const lifecycle = [
       <div class="feature-grid feature-grid--4">
         {dataProcessing.steps.map((step) => (
           <article class="info-card">
-            <div class="icon-box">{step.title.slice(0, 1)}</div>
+            <div class="icon-box" aria-hidden="true">
+              <Icon name={iconForTitle(step.title)} size={22} />
+            </div>
             <h3>{step.title}</h3>
             <p>{step.body}</p>
           </article>
@@ -112,6 +119,9 @@ const lifecycle = [
       <div class="card-grid">
         {servicePillars.map((pillar) => (
           <article class="card">
+            <div class="icon-box" aria-hidden="true">
+              <Icon name={iconForTitle(pillar.title)} size={22} />
+            </div>
             <h3><a href={pillar.href}>{pillar.title}</a></h3>
             <p class="muted">{pillar.summary}</p>
             <ul class="list-compact">
@@ -134,6 +144,9 @@ const lifecycle = [
       <div class="feature-grid">
         {complianceStandards.items.map((item) => (
           <article class="info-card">
+            <div class="icon-box" aria-hidden="true">
+              <Icon name={iconForTitle(item.title)} size={22} />
+            </div>
             <h3>{item.href ? <a href={item.href}>{item.title}</a> : item.title}</h3>
             <p>{item.body}</p>
           </article>
@@ -153,7 +166,9 @@ const lifecycle = [
       <div class="bento-grid">
         {lifecycle.map((item) => (
           <article class="bento-card">
-            <div class="bento-icon" aria-hidden="true">{item.icon}</div>
+            <div class="bento-icon" aria-hidden="true">
+              <Icon name={item.icon} size={22} />
+            </div>
             <div>
               <h3>{item.title}</h3>
               <p>{item.body}</p>
@@ -179,10 +194,4 @@ const lifecycle = [
           </div>
           <div class="cta-band-actions">
             <a class="btn btn-primary" href="/contact">Talk to an expert</a>
-            <a class="btn btn-secondary" href="/partners">Cloud partners</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-</BaseLayout>
+            <a class="btn btn-s

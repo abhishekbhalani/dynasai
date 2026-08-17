@@ -72,8 +72,8 @@ export const complianceStandards = {
   body:
     'We follow enterprise security practices and regional privacy requirements so customers can deploy with confidence — whether data stays in the EU, US, or a hybrid model.',
   items: [
-    { title: 'GDPR & EU privacy', body: 'Data minimization, purpose limitation, DPA support, and residency options for EU customers.' },
-    { title: 'US enterprise standards', body: 'SOC-aligned controls, encryption in transit/at rest, and access logging.' },
+    { title: 'GDPR & EU privacy', body: 'Data minimization, purpose limitation, DPA support, and residency options for EU customers.', href: '/platform/governance' },
+    { title: 'US enterprise standards', body: 'SOC-aligned controls, encryption in transit/at rest, and access logging.', href: '/platform/governance' },
     { title: 'Customer data control', body: 'Use our managed cloud templates or keep data in your own AWS, Azure, or GCP account.' },
     { title: 'Audit-ready operations', body: 'Trace logs, eval reports, and policy gates for regulated industries.', href: '/platform/governance' },
   ],

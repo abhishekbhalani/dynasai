@@ -1,9 +1,11 @@
 ---
+import Icon from './Icon.astro';
+
 interface Props {
   id: string;
   title: string;
   description: string;
-  links: ReadonlyArray<{ label: string; href: string; description: string }>;
+  links: ReadonlyArray<{ label: string; href: string; description: string; icon?: string }>;
 }
 
 const { id, title, description, links } = Astro.props;
@@ -21,6 +23,11 @@ const { id, title, description, links } = Astro.props;
           links.map((link) => (
             <li>
               <a href={link.href}>
+                {link.icon && (
+                  <span class="mega-link-icon" aria-hidden="true">
+                    <Icon name={link.icon} size={18} />
+                  </span>
+                )}
                 <strong>{link.label}</strong>
                 <span>{link.description}</span>
               </a>

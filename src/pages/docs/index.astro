@@ -2,6 +2,8 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
+import Icon from '../../components/Icon.astro';
+import { iconForTitle } from '../../lib/icon-map';
 
 const docs = (await getCollection('docs')).sort((a, b) => a.data.order - b.data.order);
 const title = 'Platform Infrastructure Overview';
@@ -30,7 +32,9 @@ const layers = [
       <div class="feature-grid feature-grid--4" style="margin-top: 24px;">
         {layers.map(([name, body]) => (
           <article class="info-card">
-            <div class="icon-box">{name.slice(0, 1)}</div>
+            <div class="icon-box" aria-hidden="true">
+              <Icon name={iconForTitle(name)} size={22} />
+            </div>
             <h3>{name}</h3>
             <p>{body}</p>
           </article>

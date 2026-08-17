@@ -2,6 +2,7 @@
 import Logo from './Logo.astro';
 import ThemeToggle from './ThemeToggle.astro';
 import CompactMegaPanel from './CompactMegaPanel.astro';
+import Icon from './Icon.astro';
 import { site, nav, platformMegaMenu, resourcesMegaMenu, companyMegaMenu } from '../config';
 
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
@@ -30,7 +31,7 @@ function isActive(href: string) {
                 aria-current={isActive(item.href) ? 'page' : undefined}
               >
                 {item.label}
-                <span class="nav-chevron" aria-hidden="true">▾</span>
+                <Icon name="chevron-down" size={14} class="nav-chevron" />
               </button>
             </div>
           ) : 'mega' in item && item.mega === 'resources' ? (
@@ -44,7 +45,7 @@ function isActive(href: string) {
                 aria-current={isActive(item.href) ? 'page' : undefined}
               >
                 {item.label}
-                <span class="nav-chevron" aria-hidden="true">▾</span>
+                <Icon name="chevron-down" size={14} class="nav-chevron" />
               </button>
             </div>
           ) : 'mega' in item && item.mega === 'company' ? (
@@ -58,7 +59,7 @@ function isActive(href: string) {
                 aria-current={isActive(item.href) ? 'page' : undefined}
               >
                 {item.label}
-                <span class="nav-chevron" aria-hidden="true">▾</span>
+                <Icon name="chevron-down" size={14} class="nav-chevron" />
               </button>
             </div>
           ) : (
@@ -93,7 +94,9 @@ function isActive(href: string) {
               platformMegaMenu.columns.map((column) => (
                 <div class="mega-menu-col">
                   <h3>
-                    <span class="mega-menu-icon" aria-hidden="true">{column.icon}</span>
+                    <span class="mega-menu-icon" aria-hidden="true">
+                      <Icon name={column.icon} size={14} />
+                    </span>
                     {column.label}
                   </h3>
                   <ul>
@@ -111,7 +114,7 @@ function isActive(href: string) {
         <aside class="mega-menu-featured">
           <h3>{platformMegaMenu.featured.title}</h3>
           <div class="mega-menu-visual" aria-hidden="true">
-            <span class="mega-menu-visual-icon">⬡</span>
+            <Icon name="workflow" size={48} class="mega-menu-visual-icon" />
           </div>
           <p>{platformMegaMenu.featured.description}</p>
           <a class="btn btn-primary btn-block" href={platformMegaMenu.featured.href}>

@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import { iconForTitle } from '../lib/icon-map';
 
 const title = 'Solutions Overview';
 const description =
@@ -28,7 +30,9 @@ const capabilities = [
       <div class="feature-grid" style="margin-top: 24px;">
         {capabilities.map(([title, body]) => (
           <article class="info-card">
-            <div class="icon-box">◆</div>
+            <div class="icon-box" aria-hidden="true">
+              <Icon name={iconForTitle(title)} size={22} />
+            </div>
             <h3>{title}</h3>
             <p>{body}</p>
           </article>
@@ -45,24 +49,24 @@ const capabilities = [
       </div>
       <div class="bento-grid">
         <article class="bento-card" id="build">
-          <div class="bento-icon">B</div>
+          <div class="bento-icon" aria-hidden="true"><Icon name="hammer" size={22} /></div>
           <h3>Build</h3>
           <p>AI automation, agents, workflow orchestration, and the agent builder.</p>
         </article>
         <article class="bento-card" id="connect">
-          <div class="bento-icon">C</div>
+          <div class="bento-icon" aria-hidden="true"><Icon name="plug" size={22} /></div>
           <h3>Connect</h3>
           <p>Integrations, APIs, webhooks, tools, and enterprise apps.</p>
         </article>
         <article class="bento-card" id="understand">
-          <div class="bento-icon">U</div>
+          <div class="bento-icon" aria-hidden="true"><Icon name="database" size={22} /></div>
           <h3><a href="/platform/data-processing">Understand</a></h3>
           <p>Data processing, RAG, document intelligence, enterprise search, and memory.</p>
         </article>
         <article class="bento-card" id="operate">
-          <div class="bento-icon">O</div>
-          <h3>Operate</h3>
-          <p>Observability, evaluation, monitoring, governance, and security.</p>
+          <div class="bento-icon" aria-hidden="true"><Icon name="shield" size={22} /></div>
+          <h3><a href="/platform/governance">Operate</a></h3>
+          <p>Observability, evaluation, GDPR, EU AI Act, and security controls.</p>
         </article>
       </div>
     </div>

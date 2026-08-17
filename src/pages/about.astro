@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import { iconForTitle } from '../lib/icon-map';
 
 const title = 'About Our Company';
 const description =
@@ -51,7 +53,9 @@ const description =
             ['Operate', 'Monitor performance, manage drift, and optimize continuously.'],
           ].map(([name, body]) => (
             <article class="info-card">
-              <div class="icon-box">{name.slice(0, 1)}</div>
+              <div class="icon-box" aria-hidden="true">
+                <Icon name={iconForTitle(name)} size={22} />
+              </div>
               <h3>{name}</h3>
               <p>{body}</p>
             </article>

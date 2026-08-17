@@ -3,8 +3,8 @@
 export type MarketingSection =
   | { type: 'split'; title: string; paragraphs: string[] }
   | { type: 'stats'; title: string; subtitle?: string; items: { value: string; label: string; source?: string }[] }
-  | { type: 'grid'; title: string; subtitle?: string; items: { title: string; body: string; href?: string }[] }
-  | { type: 'numbered'; title: string; subtitle?: string; items: { num: string; title: string; body: string }[] }
+  | { type: 'grid'; title: string; subtitle?: string; items: { title: string; body: string; href?: string; icon?: string }[] }
+  | { type: 'numbered'; title: string; subtitle?: string; items: { num: string; title: string; body: string; icon?: string }[] }
   | { type: 'cta'; title: string; body: string; primary: { label: string; href: string }; secondary?: { label: string; href: string } };
 
 export type MarketingPage = {
@@ -198,31 +198,95 @@ export const partnersPage: MarketingPage = {
 };
 
 export const governancePage: MarketingPage = {
-  title: 'Governance & Security',
-  description: 'Enterprise-grade security, audit trails, and policy controls for AI agent automation.',
+  title: 'Governance, GDPR & Security',
+  description:
+    'Governed AI agents with GDPR, EU AI Act, NIS2, and US privacy controls. Customer data stays on AWS, Azure, or GCP — with audit trails, human oversight, and residency you choose.',
   badge: 'Platform',
-  headline: 'Governance built in,',
-  highlight: 'not bolted on',
-  subhead: 'Role-aware access, eval gates, trace logging, and policy guardrails for regulated teams.',
+  headline: 'One evidence pack for GDPR,',
+  highlight: 'AI Act, and US privacy',
+  subhead:
+    'The AI Act does not replace GDPR. DynasAI is the front layer that logs, redacts, and gates agents so EU and US teams can prove control — while compute and data stay on the cloud you choose.',
+  breadcrumb: [
+    { label: 'Home', href: '/' },
+    { label: 'Platform', href: '/platform/intelligence' },
+    { label: 'Governance', href: '/platform/governance' },
+  ],
   sections: [
     {
-      type: 'grid',
-      title: 'Security & compliance capabilities',
+      type: 'stats',
+      title: 'The 2026 compliance clock',
+      subtitle:
+        'Enterprises now face stacked EU duties plus a US state-privacy patchwork. Buyers want continuous evidence, not a one-time policy PDF.',
       items: [
-        { title: 'Identity & access', body: 'SSO, RBAC, and environment-scoped agent permissions.' },
-        { title: 'Audit trails', body: 'Full trace logs for prompts, tool calls, and human decisions.' },
-        { title: 'Policy guardrails', body: 'Block, redact, or escalate based on content and context rules.' },
-        { title: 'Evaluation gates', body: 'Require eval scores before promotion to production.' },
-        { title: 'Data residency', body: 'Deployment options aligned to your cloud and compliance needs.' },
-        { title: 'Vendor risk', body: 'Documented subprocessors and security review artifacts.' },
+        { value: '2 Aug 2026', label: 'EU AI Act general application and Article 50 transparency duties', source: 'European Commission AI Act timeline' },
+        { value: '72h', label: 'GDPR Article 33 breach notification window when personal data is involved', source: 'GDPR Art. 33' },
+        { value: '24h / 72h', label: 'NIS2 early warning and formal incident reporting for essential entities', source: 'NIS2 incident-reporting duties' },
+        { value: '7%', label: 'maximum AI Act fine of global turnover (or €35M) for prohibited practices', source: 'EU AI Act penalty framework' },
+      ],
+    },
+    {
+      type: 'split',
+      title: 'GDPR still applies. The AI Act adds more.',
+      paragraphs: [
+        'Today: any personal data in training, prompts, retrieval, or monitoring still needs a GDPR legal basis, minimization, purpose limits, and data-subject rights. DPIAs (Art. 35) sit alongside AI Act fundamental-rights assessments where those apply. Article 22 protections against solely automated decisions still require a human path. Transparency duties under AI Act Article 50 — chatbot disclosure, synthetic-content marking — apply from 2 August 2026.',
+        'Next: high-risk obligations (logging, human oversight, data governance, technical documentation) are the operating system for credit, insurance, employment, and essential services. Annex III high-risk duties are widely expected toward December 2027, with product-embedded systems later — but insurance and financial deployers should not pause FRIA and logging work. In the US, CCPA/CPRA plus 20+ state laws, plus SOC 2 Type II as a procurement default, demand encryption, access logs, and proof that customer data is not used to train public models.',
+      ],
+    },
+    {
+      type: 'grid',
+      title: 'Where governance programs fail',
+      subtitle: 'Policy binders and three separate incident templates do not survive a real event. Technical controls have to produce one evidence trail.',
+      items: [
+        { title: 'Three reports, one incident', body: 'GDPR, NIS2, and AI Act Article 73 can all fire on the same agent failure. Separate spreadsheets produce inconsistent facts.' },
+        { title: 'No legal basis for AI data', body: 'The AI Act does not create a GDPR legal basis. Training and monitoring still need Art. 6 — and a record of processing.' },
+        { title: 'Logs that cannot answer SAR', body: 'Subject access, deletion, and CCPA “right to know” fail when prompts, retrieval, and tool calls are not queryable.' },
+        { title: 'Human oversight on paper', body: 'High-risk and Art. 22 workflows need named reviewers with authority — not a checkbox after the agent already acted.' },
+        { title: 'Cloud lock-in vs residency', body: 'EU customers need EU residency options; US customers need SOC-aligned tenants. One vendor region is not a strategy.' },
+        { title: 'Point-in-time audits', body: 'SOC 2 Type II and ongoing GDPR duties expect continuous evidence: policy versions, redactions, and tool-call history.' },
+      ],
+    },
+    {
+      type: 'numbered',
+      title: 'Controls DynasAI runs in the front layer',
+      subtitle: 'You keep data in AWS, Azure, or GCP. We make the agent surface governable: identity, policy, logs, and eval gates.',
+      items: [
+        { num: '01', title: 'Identity & scoped access', body: 'SSO, RBAC/ABAC, and environment-scoped agent permissions so retrieval inherits the user’s rights — not a shared service account.' },
+        { num: '02', title: 'Minimization & redaction', body: 'Block, redact, or escalate PII and sensitive categories before prompts and tool calls leave your tenant.' },
+        { num: '03', title: 'Immutable traces', body: 'Log prompts, retrieved sources, tool calls, policy version, and human overrides. Retention aligned to six-month+ AI Act logging and SOC evidence windows.' },
+        { num: '04', title: 'Human-in-the-loop gates', body: 'Pause for review on automated decisions, conflicts, or policy hits. Named approvers with authority — required for Art. 22 and high-risk oversight.' },
+        { num: '05', title: 'Residency & customer control', body: 'EU or US regions, your VPC, or a managed template. Customer-managed keys where the cloud allows. No forced training on your corpus.' },
+        { num: '06', title: 'One incident evidence pack', body: 'Map the same traces to GDPR 72h, NIS2 24h/72h, and AI Act serious-incident fields so legal, security, and ops tell one story.' },
+      ],
+    },
+    {
+      type: 'grid',
+      title: 'Frameworks we design for',
+      items: [
+        { title: 'GDPR', body: 'Legal basis, DPIA support, minimization, DPA language, SAR/deletion workflows, and EU residency options.', href: '/legal/privacy' },
+        { title: 'EU AI Act', body: 'Art. 50 transparency now; logging, human oversight, and documentation patterns for high-risk and insurance/credit deployers.' },
+        { title: 'NIS2', body: 'Incident records and early-warning evidence when agents sit in essential or important entity supply chains.' },
+        { title: 'US privacy & SOC-aligned', body: 'CCPA/CPRA-style access and deletion, encryption in transit/at rest, access logs, and procurement-ready control descriptions.' },
+        { title: 'NIST AI RMF', body: 'Map Govern, Map, Measure, Manage to eval gates, drift monitors, and policy versions — useful for US buyers and insurers.' },
+        { title: 'Data processing layer', body: 'Quality, lineage, and permission-aware retrieval so governance is not bolted onto a dirty index.', href: '/platform/data-processing' },
+      ],
+    },
+    {
+      type: 'numbered',
+      title: 'Governance readiness sprint',
+      subtitle: 'A focused engagement that leaves you with a control map, evidence pack, and cloud residency plan — not a slide deck.',
+      items: [
+        { num: '01', title: 'System & data inventory', body: 'Classify agents, personal data, high-risk use (credit, insurance, HR), and subprocessors.' },
+        { num: '02', title: 'Gap map', body: 'GDPR legal basis, DPIA/FRIA need, Art. 50 disclosures, logging gaps, and US state-privacy overlap.' },
+        { num: '03', title: 'Control build', body: 'RBAC, redaction, eval gates, human approval paths, and residency on AWS, Azure, or GCP.' },
+        { num: '04', title: 'Evidence pack', body: 'Unified incident template, retention schedule, and security-review artifacts for procurement and DPO review.' },
       ],
     },
     {
       type: 'cta',
-      title: 'Review our security posture',
-      body: 'Request architecture docs or schedule a security review with our team.',
-      primary: { label: 'Contact us', href: '/contact' },
-      secondary: { label: 'Platform overview', href: '/docs' },
+      title: 'Put GDPR and AI Act controls in the product, not the binder',
+      body: 'Request a security review or start a governance sprint. Data stays in your cloud; DynasAI is the governed front layer.',
+      primary: { label: 'Talk to an expert', href: '/contact' },
+      secondary: { label: 'Data processing', href: '/platform/data-processing' },
     },
   ],
 };
