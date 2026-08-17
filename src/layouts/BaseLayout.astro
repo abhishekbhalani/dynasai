@@ -94,55 +94,80 @@ const loadGtm = Boolean(gtmId) && import.meta.env.PROD;
       });
 
       const megaItems = Array.from(document.querySelectorAll('[data-mega-item]'));
+      let megaCloseTimer = 0;
+      const desktop = () => window.matchMedia('(min-width: 861px)').matches;
+
+      function panelForItem(item: Element) {
+        const id = item.getAttribute('data-mega-id');
+        if (id === 'platform') {
+          return document.querySelector(`[data-mega-layer="${id}"]`);
+        }
+        return item.querySelector('[data-mega-panel]');
+      }
+
+      function setMegaOpen(item: Element, open: boolean) {
+        const trigger = item.querySelector('[data-mega-trigger]');
+        const panel = panelForItem(item);
+        item.classList.toggle('is-open', open);
+        trigger?.setAttribute('aria-expanded', String(open));
+        if (open) panel?.removeAttribute('hidden');
+        else panel?.setAttribute('hidden', '');
+      }
 
       function closeMegaMenus(except?: Element | null) {
+        window.clearTimeout(megaCloseTimer);
         megaItems.forEach((item) => {
           if (except && item === except) return;
-          item.classList.remove('is-open');
-          const trigger = item.querySelector('[data-mega-trigger]');
-          const panel = item.querySelector('[data-mega-panel]');
-          trigger?.setAttribute('aria-expanded', 'false');
-          panel?.setAttribute('hidden', '');
+          setMegaOpen(item, false);
+        });
+      }
+
+      function scheduleMegaClose() {
+        window.clearTimeout(megaCloseTimer);
+        megaCloseTimer = window.setTimeout(() => closeMegaMenus(), 140);
+      }
+
+      function cancelMegaClose() {
+        window.clearTimeout(megaCloseTimer);
+      }
+
+      function bindMegaHover(targets: Element[], item: Element) {
+        targets.forEach((target) => {
+          target.addEventListener('mouseenter', () => {
+            if (!desktop()) return;
+            cancelMegaClose();
+            closeMegaMenus(item);
+            setMegaOpen(item, true);
+          });
+          target.addEventListener('mouseleave', () => {
+            if (!desktop()) return;
+            scheduleMegaClose();
+          });
         });
       }
 
       megaItems.forEach((item) => {
         const trigger = item.querySelector('[data-mega-trigger]');
-        const panel = item.querySelector('[data-mega-panel]');
+        const panel = panelForItem(item);
         if (!trigger || !panel) return;
 
         trigger.addEventListener('click', (event) => {
           event.preventDefault();
           const willOpen = !item.classList.contains('is-open');
           closeMegaMenus(willOpen ? item : null);
-          item.classList.toggle('is-open', willOpen);
-          trigger.setAttribute('aria-expanded', String(willOpen));
-          if (willOpen) panel.removeAttribute('hidden');
-          else panel.setAttribute('hidden', '');
+          setMegaOpen(item, willOpen);
         });
 
-        item.addEventListener('mouseenter', () => {
-          if (window.matchMedia('(min-width: 861px)').matches) {
-            closeMegaMenus(item);
-            item.classList.add('is-open');
-            trigger.setAttribute('aria-expanded', 'true');
-            panel.removeAttribute('hidden');
-          }
-        });
-
-        item.addEventListener('mouseleave', () => {
-          if (window.matchMedia('(min-width: 861px)').matches) {
-            item.classList.remove('is-open');
-            trigger.setAttribute('aria-expanded', 'false');
-            panel.setAttribute('hidden', '');
-          }
-        });
+        bindMegaHover(
+          item.getAttribute('data-mega-id') === 'platform' ? [trigger, panel] : [item, panel],
+          item,
+        );
       });
 
       document.addEventListener('click', (event) => {
         const target = event.target;
         if (!(target instanceof Element)) return;
-        if (!target.closest('[data-mega-item]')) closeMegaMenus();
+        if (!target.closest('[data-mega-item]') && !target.closest('[data-mega-layer]')) closeMegaMenus();
       });
 
       document.addEventListener('keydown', (event) => {

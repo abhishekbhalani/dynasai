@@ -19,11 +19,12 @@ function isActive(href: string) {
       {
         nav.map((item) =>
           'mega' in item && item.mega === 'platform' ? (
-            <div class="nav-item nav-item--mega" data-mega-item>
+            <div class="nav-item nav-item--mega nav-item--platform" data-mega-item data-mega-id="platform">
               <button
                 type="button"
                 class="nav-trigger"
                 data-mega-trigger
+                data-mega-target="platform"
                 aria-expanded="false"
                 aria-controls="mega-platform"
                 aria-current={isActive(item.href) ? 'page' : undefined}
@@ -31,46 +32,9 @@ function isActive(href: string) {
                 {item.label}
                 <span class="nav-chevron" aria-hidden="true">▾</span>
               </button>
-              <div class="mega-menu mega-menu--platform" id="mega-platform" data-mega-panel hidden>
-                <div class="mega-menu-inner container">
-                  <div class="mega-menu-grid">
-                    <div class="mega-menu-intro">
-                      <h2>{platformMegaMenu.title}</h2>
-                      <p>{platformMegaMenu.description}</p>
-                    </div>
-                    {
-                      platformMegaMenu.columns.map((column) => (
-                        <div class="mega-menu-col">
-                          <h3>
-                            <span class="mega-menu-icon" aria-hidden="true">{column.icon}</span>
-                            {column.label}
-                          </h3>
-                          <ul>
-                            {column.links.map((link) => (
-                              <li>
-                                <a href={link.href}>{link.label}</a>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      ))
-                    }
-                  </div>
-                  <aside class="mega-menu-featured">
-                    <h3>{platformMegaMenu.featured.title}</h3>
-                    <div class="mega-menu-visual" aria-hidden="true">
-                      <span class="mega-menu-visual-icon">⬡</span>
-                    </div>
-                    <p>{platformMegaMenu.featured.description}</p>
-                    <a class="btn btn-primary btn-block" href={platformMegaMenu.featured.href}>
-                      {platformMegaMenu.featured.cta}
-                    </a>
-                  </aside>
-                </div>
-              </div>
             </div>
           ) : 'mega' in item && item.mega === 'resources' ? (
-            <div class="nav-item nav-item--mega nav-item--compact" data-mega-item>
+            <div class="nav-item nav-item--mega nav-item--compact" data-mega-item data-mega-id="resources">
               <button
                 type="button"
                 class="nav-trigger"
@@ -83,7 +47,7 @@ function isActive(href: string) {
                 <span class="nav-chevron" aria-hidden="true">▾</span>
               </button>
               <div class="mega-menu mega-menu--compact" id="mega-resources" data-mega-panel hidden>
-                <div class="mega-menu-inner container">
+                <div class="mega-menu-inner">
                   <ul class="mega-menu-list">
                     {
                       resourcesMegaMenu.links.map((link) => (
@@ -100,7 +64,7 @@ function isActive(href: string) {
               </div>
             </div>
           ) : 'mega' in item && item.mega === 'company' ? (
-            <div class="nav-item nav-item--mega nav-item--compact" data-mega-item>
+            <div class="nav-item nav-item--mega nav-item--compact" data-mega-item data-mega-id="company">
               <button
                 type="button"
                 class="nav-trigger"
@@ -113,7 +77,7 @@ function isActive(href: string) {
                 <span class="nav-chevron" aria-hidden="true">▾</span>
               </button>
               <div class="mega-menu mega-menu--compact" id="mega-company" data-mega-panel hidden>
-                <div class="mega-menu-inner container">
+                <div class="mega-menu-inner">
                   <ul class="mega-menu-list">
                     {
                       companyMegaMenu.links.map((link) => (
@@ -145,6 +109,48 @@ function isActive(href: string) {
       <button class="menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="primary-nav">
         Menu
       </button>
+    </div>
+  </div>
+
+  <div class="mega-menu-layer" id="mega-platform" data-mega-layer="platform" data-mega-panel hidden>
+    <div class="container mega-menu-layer-inner">
+      <div class="mega-menu-inner mega-menu-inner--platform">
+        <div class="mega-menu-main">
+          <div class="mega-menu-intro">
+            <h2>{platformMegaMenu.title}</h2>
+            <p>{platformMegaMenu.description}</p>
+          </div>
+          <div class="mega-menu-grid">
+            {
+              platformMegaMenu.columns.map((column) => (
+                <div class="mega-menu-col">
+                  <h3>
+                    <span class="mega-menu-icon" aria-hidden="true">{column.icon}</span>
+                    {column.label}
+                  </h3>
+                  <ul>
+                    {column.links.map((link) => (
+                      <li>
+                        <a href={link.href}>{link.label}</a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+        <aside class="mega-menu-featured">
+          <h3>{platformMegaMenu.featured.title}</h3>
+          <div class="mega-menu-visual" aria-hidden="true">
+            <span class="mega-menu-visual-icon">⬡</span>
+          </div>
+          <p>{platformMegaMenu.featured.description}</p>
+          <a class="btn btn-primary btn-block" href={platformMegaMenu.featured.href}>
+            {platformMegaMenu.featured.cta}
+          </a>
+        </aside>
+      </div>
     </div>
   </div>
 </header>
