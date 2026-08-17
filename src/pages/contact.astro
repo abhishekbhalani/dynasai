@@ -1,68 +1,40 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
+import OnboardingForm from '../components/OnboardingForm.astro';
 import { site } from '../config';
 
 const title = 'Contact Sales';
-const description = 'Talk to a DynasAI expert about enterprise agentic automation, platform access, or services.';
+const description =
+  'Tell us the job to automate and where data lives. We recommend a DynasAI service and cloud path — your AWS, Azure, or GCP stays yours.';
 const email = import.meta.env.PUBLIC_CONTACT_EMAIL || site.email;
 ---
 
 <BaseLayout title={title} description={description}>
   <PageHero
     badge="Contact"
-    title="Contact"
-    highlight="Sales"
-    description="Tell us about your automation goals. Our team will recommend platform access, services, or both."
+    title="Start with a"
+    highlight="recommended path"
+    description="Five questions. We suggest a service and whether to stay on AWS, Azure, or GCP. We never ask you to expose your network on this form."
   />
 
   <section class="section">
     <div class="container split-layout">
       <div>
-        <h2>Talk to an AI Expert</h2>
+        <h2>Talk to an AI expert</h2>
         <p class="lede">
-          Whether you need a governed platform, delivery support, or a demo workspace, we respond
-          within one business day.
+          DynasAI is the front layer. Production data and models stay in your cloud with least-privilege access — or a managed pilot if you have no cloud yet.
         </p>
-        <p><a href={`mailto:${email}`}>{email}</a></p>
-
-        <div class="info-card" style="margin-top: 24px;">
-          <h3>Global Offices</h3>
-          <p><strong>San Francisco</strong><br />100 AI Boulevard, Suite 400<br />San Francisco, CA 94105</p>
-          <p><strong>London</strong><br />Level 39, One Canada Square<br />London E14 5AB</p>
-          <p><strong>Singapore</strong><br />Marina Bay Financial Centre, Tower 1<br />Singapore 018981</p>
-        </div>
+        <ul class="list-compact">
+          <li>We recommend the stack; we do not force a hyperscaler.</li>
+          <li>EU / US residency follows the region you approve.</li>
+          <li>Reply within one business day: <a href={`mailto:${email}`}>{email}</a></li>
+        </ul>
+        <p><a href="/platform/governance">How we handle GDPR and customer control →</a></p>
+        <p><a href="/partners">AWS, Azure, and GCP backends →</a></p>
       </div>
 
-      <form class="form panel" method="post" action={`mailto:${email}`} enctype="text/plain">
-        <h3>Request a consultation</h3>
-        <label>
-          Full name
-          <input type="text" name="name" autocomplete="name" required />
-        </label>
-        <label>
-          Work email
-          <input type="email" name="email" autocomplete="email" required />
-        </label>
-        <label>
-          Company
-          <input type="text" name="company" autocomplete="organization" required />
-        </label>
-        <label>
-          I am interested in
-          <select name="interest" required>
-            <option value="platform">Platform demo</option>
-            <option value="services">AI engineering services</option>
-            <option value="both">Platform + services</option>
-            <option value="enterprise">Enterprise rollout</option>
-          </select>
-        </label>
-        <label>
-          How can we help?
-          <textarea name="notes" required></textarea>
-        </label>
-        <button class="btn btn-primary btn-lg" type="submit">Submit request</button>
-      </form>
+      <OnboardingForm />
     </div>
   </section>
 </BaseLayout>

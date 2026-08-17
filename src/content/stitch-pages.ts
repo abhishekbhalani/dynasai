@@ -210,19 +210,19 @@ export const partnersPage: MarketingPage = {
           title: 'Amazon Web Services',
           body: 'Bedrock, S3, Lambda, VPC, KMS, and PrivateLink-style patterns for agents and pipelines in your AWS account.',
           href: '/platform/data-processing',
-          icon: 'cloud',
+          icon: 'aws',
         },
         {
           title: 'Microsoft Azure',
           body: 'Azure OpenAI, Entra ID, Fabric / ADLS, and enterprise app connectors for teams already on Microsoft 365.',
           href: '/platform/governance',
-          icon: 'cloud',
+          icon: 'azure',
         },
         {
           title: 'Google Cloud',
           body: 'Vertex AI, BigQuery, Cloud Storage, and document AI-style processing for analytics-heavy estates.',
           href: '/platform/data-processing',
-          icon: 'cloud',
+          icon: 'gcp',
         },
         {
           title: 'Databricks',

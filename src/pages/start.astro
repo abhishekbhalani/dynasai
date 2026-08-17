@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import OnboardingForm from '../components/OnboardingForm.astro';
+
+const title = 'Start — recommended service and cloud path';
+const description =
+  'Answer five questions. DynasAI recommends a service package and whether to stay on your existing AWS, Azure, or GCP — without a server picker.';
+---
+
+<BaseLayout title={title} description={description}>
+  <PageHero
+    badge="Get started"
+    title="Tell us the job,"
+    highlight="not the server"
+    description="Existing cloud? We stay there. No cloud yet? We recommend a managed template, then move to your account. Production never requires exposing your full infra."
+  />
+
+  <section class="section">
+    <div class="container onboarding-page">
+      <OnboardingForm />
+    </div>
+  </section>
+</BaseLayout>

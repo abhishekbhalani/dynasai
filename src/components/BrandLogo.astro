@@ -1,0 +1,47 @@
+---
+interface Props {
+  name: 'aws' | 'azure' | 'gcp' | 'microsoft';
+  size?: 'sm' | 'lg';
+}
+
+const { name, size = 'lg' } = Astro.props;
+
+const brands: Record<Props['name'], { src: string; darkSrc?: string; alt: string }> = {
+  aws: {
+    src: '/img/brands/aws.svg',
+    darkSrc: '/img/brands/aws-dark.svg',
+    alt: 'Amazon Web Services',
+  },
+  azure: {
+    src: '/img/brands/azure.svg',
+    alt: 'Microsoft Azure',
+  },
+  microsoft: {
+    src: '/img/brands/microsoft.svg',
+    alt: 'Microsoft',
+  },
+  gcp: {
+    src: '/img/brands/gcp.svg',
+    alt: 'Google Cloud',
+  },
+};
+
+const brand = brands[name];
+---
+
+{
+  brand.darkSrc ? (
+    <span class:list={['brand-logo', `brand-logo--${name}`, `brand-logo--${size}`]} role="img" aria-label={brand.alt}>
+      <img class="brand-logo-img brand-logo-img--light" src={brand.src} alt="" width="160" height="96" />
+      <img class="brand-logo-img brand-logo-img--dark" src={brand.darkSrc} alt="" width="160" height="96" />
+    </span>
+  ) : (
+    <img
+      class:list={['brand-logo', 'brand-logo-img', `brand-logo--${name}`, `brand-logo--${size}`]}
+      src={brand.src}
+      alt={brand.alt}
+      width="48"
+      height="48"
+    />
+  )
+}

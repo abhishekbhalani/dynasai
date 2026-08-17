@@ -1,0 +1,144 @@
+---
+import { site } from '../config';
+import { onboardingQuestions } from '../content/onboarding';
+
+const email = import.meta.env.PUBLIC_CONTACT_EMAIL || site.email;
+---
+
+<form class="form panel onboarding-form" id="onboarding-form" data-onboarding data-contact-email={email}>
+  <h3>Start with a plan</h3>
+  <p class="muted onboarding-lead">
+    Five questions. We recommend a service and a cloud path — we do not ask you to pick a server or expose your network.
+  </p>
+
+  <label>
+    Full name
+    <input type="text" name="name" autocomplete="name" required />
+  </label>
+  <label>
+    Work email
+    <input type="email" name="email" autocomplete="email" required />
+  </label>
+  <label>
+    Company
+    <input type="text" name="company" autocomplete="organization" required />
+  </label>
+
+  {
+    onboardingQuestions.map((q) => (
+      <fieldset class="onboarding-fieldset">
+        <legend>{q.label}</legend>
+        <p class="onboarding-hint">{q.hint}</p>
+        <select name={q.id} required data-onboarding-field>
+          <option value="">Select…</option>
+          {q.options.map((opt) => (
+            <option value={opt.value}>{opt.label}</option>
+          ))}
+        </select>
+      </fieldset>
+    ))
+  }
+
+  <label>
+    Anything else we should know?
+    <textarea name="notes" rows="4"></textarea>
+  </label>
+
+  <input type="hidden" name="recommended_service" data-onboarding-service />
+  <input type="hidden" name="recommended_cloud" data-onboarding-cloud />
+  <input type="hidden" name="recommended_summary" data-onboarding-summary />
+
+  <aside class="onboarding-plan" data-onboarding-plan hidden>
+    <p class="label-sm">Recommended path</p>
+    <h4 data-onboarding-plan-service></h4>
+    <p data-onboarding-plan-cloud></p>
+    <p class="muted" data-onboarding-plan-cloud-body></p>
+    <p data-onboarding-plan-engagement></p>
+    <p class="onboarding-plan-note">
+      Production stays in <strong>your</strong> AWS, Azure, or GCP account (or private network). We connect with least privilege — not a copy of your estate.
+    </p>
+  </aside>
+
+  <button class="btn btn-primary btn-lg" type="submit">Send request</button>
+  <p class="muted onboarding-fallback">
+    Or email <a href={`mailto:${email}`}>{email}</a> if the form is blocked.
+  </p>
+</form>
+
+<script>
+  import { recommendPlan } from '../content/onboarding';
+
+  const form = document.querySelector<HTMLFormElement>('[data-onboarding]');
+  const plan = document.querySelector<HTMLElement>('[data-onboarding-plan]');
+  if (!form || !plan) {
+    /* no-op when this island is not on the page */
+  } else {
+    const serviceEl = plan.querySelector('[data-onboarding-plan-service]');
+    const cloudEl = plan.querySelector('[data-onboarding-plan-cloud]');
+    const cloudBodyEl = plan.querySelector('[data-onboarding-plan-cloud-body]');
+    const engagementEl = plan.querySelector('[data-onboarding-plan-engagement]');
+    const serviceInput = form.querySelector<HTMLInputElement>('[data-onboarding-service]');
+    const cloudInput = form.querySelector<HTMLInputElement>('[data-onboarding-cloud]');
+    const summaryInput = form.querySelector<HTMLInputElement>('[data-onboarding-summary]');
+    const contactEmail = form.dataset.contactEmail || '';
+
+    function readAnswers() {
+      const data = new FormData(form!);
+      return {
+        job: String(data.get('job') || ''),
+        industry: String(data.get('industry') || ''),
+        cloud: String(data.get('cloud') || ''),
+        residency: String(data.get('residency') || ''),
+        start: String(data.get('start') || ''),
+      };
+    }
+
+    function updatePlan() {
+      const answers = readAnswers();
+      if (!answers.job || !answers.industry || !answers.cloud || !answers.residency || !answers.start) {
+        plan!.hidden = true;
+        return;
+      }
+      const rec = recommendPlan(answers);
+      plan!.hidden = false;
+      if (serviceEl) {
+        serviceEl.textContent = rec.serviceTitle;
+        const link = rec.serviceHref;
+        serviceEl.replaceChildren();
+        const a = document.createElement('a');
+        a.href = link;
+        a.textContent = rec.serviceTitle;
+        serviceEl.append(a);
+      }
+      if (cloudEl) cloudEl.textContent = rec.cloudTitle;
+      if (cloudBodyEl) cloudBodyEl.textContent = rec.cloudBody;
+      if (engagementEl) engagementEl.textContent = rec.engagement;
+      if (serviceInput) serviceInput.value = rec.serviceTitle;
+      if (cloudInput) cloudInput.value = rec.cloudTitle;
+      if (summaryInput) summaryInput.value = rec.summary;
+    }
+
+    form.addEventListener('change', updatePlan);
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      updatePlan();
+      const data = new FormData(form);
+      const lines = [
+        `Name: ${data.get('name')}`,
+        `Email: ${data.get('email')}`,
+        `Company: ${data.get('company')}`,
+        `Job: ${data.get('job')}`,
+        `Industry: ${data.get('industry')}`,
+        `Existing cloud: ${data.get('cloud')}`,
+        `Residency: ${data.get('residency')}`,
+        `Start: ${data.get('start')}`,
+        `Recommended service: ${data.get('recommended_service')}`,
+        `Recommended cloud path: ${data.get('recommended_cloud')}`,
+        `Notes: ${data.get('notes') || '(none)'}`,
+      ];
+      const href = `mailto:${contactEmail}?subject=${encodeURIComponent('DynasAI plan request')}&body=${encodeURIComponent(lines.join('\n'))}`;
+      window.location.href = href;
+    });
+  }
+</script>

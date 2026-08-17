@@ -32,9 +32,9 @@ export const servicePillars = [
 ] as const;
 
 export const cloudProviders = [
-  { name: 'Amazon Web Services', short: 'AWS', body: 'Bedrock, S3, Lambda, and VPC-native deployments.' },
-  { name: 'Microsoft Azure', short: 'Azure', body: 'OpenAI, Entra ID, Fabric, and enterprise app integrations.' },
-  { name: 'Google Cloud', short: 'GCP', body: 'Vertex AI, BigQuery, and secure data processing pipelines.' },
+  { name: 'Amazon Web Services', short: 'AWS', logo: 'aws', body: 'Bedrock, S3, Lambda, and VPC-native deployments.' },
+  { name: 'Microsoft Azure', short: 'Azure', logo: 'azure', body: 'OpenAI, Entra ID, Fabric, and enterprise app integrations.' },
+  { name: 'Google Cloud', short: 'GCP', logo: 'gcp', body: 'Vertex AI, BigQuery, and secure data processing pipelines.' },
 ] as const;
 
 export const platformModel = {

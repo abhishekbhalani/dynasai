@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import HeroBanner from '../components/HeroBanner.astro';
+import BrandLogo from '../components/BrandLogo.astro';
 import Icon from '../components/Icon.astro';
 import { iconForTitle } from '../lib/icon-map';
 import { site } from '../config';
@@ -49,7 +50,7 @@ const lifecycle = [
         {cloudProviders.map((provider) => (
           <div class="cloud-trust-item">
             <span class="cloud-trust-icon" aria-hidden="true">
-              <Icon name="cloud" size={22} />
+              <BrandLogo name={provider.logo} size="sm" />
             </span>
             <strong>{provider.short}</strong>
             <span>{provider.body}</span>
@@ -193,7 +194,7 @@ const lifecycle = [
             </p>
           </div>
           <div class="cta-band-actions">
-            <a class="btn btn-primary" href="/contact">Talk to an expert</a>
+            <a class="btn btn-primary" href="/start">Get a recommended path</a>
             <a class="btn btn-secondary" href="/partners">Cloud partners</a>
           </div>
         </div>

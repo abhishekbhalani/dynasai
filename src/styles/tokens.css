@@ -12,6 +12,11 @@
   --accent-on: #ffffff;
   --header-bg: rgba(255, 255, 255, 0.96);
   --shadow: 0 1px 2px rgba(15, 23, 42, 0.05), 0 8px 24px rgba(15, 23, 42, 0.06);
+  --card-hover-y: -4px;
+  --card-hover-duration: 180ms;
+  --card-hover-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --card-hover-border: color-mix(in srgb, var(--accent) 45%, var(--border));
+  --card-hover-shadow: 0 10px 20px rgba(15, 23, 42, 0.06), 0 18px 40px color-mix(in srgb, var(--accent) 16%, transparent);
   --focus: #2563eb;
   --danger: #dc2626;
   --ok: #2563eb;
@@ -49,6 +54,8 @@
   --accent-on: #0a1422;
   --header-bg: rgba(10, 20, 34, 0.92);
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.45), 0 14px 36px rgba(0, 0, 0, 0.35);
+  --card-hover-border: color-mix(in srgb, var(--accent) 50%, var(--border));
+  --card-hover-shadow: 0 12px 28px rgba(0, 0, 0, 0.4), 0 0 0 1px color-mix(in srgb, var(--accent) 28%, transparent);
   --focus: #4cd7f6;
   --gradient-text: linear-gradient(to right, #4cd7f6, #c0c1ff);
 }

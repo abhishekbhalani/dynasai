@@ -1,0 +1,17 @@
+---
+description: Keep marketing sections aligned to the same container and rhythm. Dark navy backgrounds belong on the footer in dark mode only.
+globs: src/pages/**/*.astro,src/components/**/*.astro,src/styles/**/*.css
+alwaysApply: false
+---
+
+# Section layout
+
+- Wrap page sections in `<section class="section">` + inner `<div class="container">`.
+- Do not nest a second `.container` inside a component that already assumes one.
+- CTA blocks: `.container > .cta-band > .cta-band-inner` with `.cta-band-copy` + `.cta-band-actions`.
+- CTA inner layout is CSS grid (`1fr / auto`), not a full-bleed footer band.
+- Vertical rhythm: `--space-8` section padding, `--space-4` gaps. Avoid `section--compact` with `padding-top: 0` for closing CTAs.
+- Page sections and CTA cards use `var(--surface)` / `var(--bg)`. Do not paint them with footer navy or accent fills.
+- Footer dark background (`var(--bg)` navy) applies only via `[data-theme="dark"] .site-footer`. Light mode footer uses `var(--surface)`.
+- Invert the logo in the footer only in dark mode (`[data-theme="dark"] .brand--footer`).
+- Card hover is shared. Change lift/shadow/border only in `src/styles/tokens.css` (`--card-hover-y`, `--card-hover-duration`, `--card-hover-border`, `--card-hover-shadow`). Do not add per-card `:hover` unless the card sits on a photo (hero services).
