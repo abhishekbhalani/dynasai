@@ -6,4 +6,4 @@
 - 2026-08-17: GTM in production only; GA4 loaded via GTM.
 - 2026-08-17: app.dynasai.ai is a later, separate project — not a route on this site.
 - 2026-08-17: Dynas Toolkit page at `/platform/toolkit` — public counterpart to TigerML (docs + workspace now; npm SDK planned).
-- 2026-08-17: Insurance playbook is OTP-gated (work email + 6-digit code). Verified contacts are stored in KV as leads and emailed to hello@dynasai.ai. PDF is served only after session cookie.
+- 2026-08-17: Insurance playbook OTP/leads are designed (KV + email). Do not enable Email Sending or treat KV as a live lead facility until the playbook UI is finalized. Ask the user on chat resume.
