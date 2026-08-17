@@ -23,7 +23,7 @@ export const site = {
 export const nav = [
   { href: '/features', label: 'Platform', mega: 'platform' },
   { href: '/pricing', label: 'Services' },
-  { href: '/features', label: 'Solutions' },
+  { href: '/solutions/insurance', label: 'Solutions' },
   { href: '/blog', label: 'Resources', mega: 'resources' },
   { href: '/about', label: 'Company', mega: 'company' },
 ] as const;

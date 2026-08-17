@@ -108,3 +108,109 @@ export const differentiators = [
     body: 'Move from pilot to production with evals, monitoring, and iteration — not slide-deck handoffs.',
   },
 ] as const;
+
+export const insuranceIndustry = {
+  slug: 'insurance',
+  title: 'Insurance',
+  meta: {
+    title: 'Insurance — AI Agents for Underwriting, Claims & Risk',
+    description:
+      'Transform insurance decision-making with governed AI agents across underwriting, claims, telematics, and customer operations.',
+  },
+  breadcrumb: [
+    { label: 'Home', href: '/' },
+    { label: 'Solutions', href: '/features' },
+    { label: 'Industries', href: '/features' },
+    { label: 'Insurance', href: '/solutions/insurance' },
+  ],
+  hero: {
+    headline: 'Transform decision-making in insurance with',
+    highlight: 'AI agents and analytics',
+    subhead:
+      'See how DynasAI helps insurers drive operational excellence across the value chain with governed agent workflows.',
+  },
+  promo: {
+    title: 'Bridge the AI gap in 3 steps',
+    body: 'Proven agent automation patterns from production insurance deployments.',
+    cta: 'Get the playbook',
+    href: '/contact',
+  },
+  intro: {
+    title: 'AI for enhanced effectiveness across the insurance value chain',
+    body:
+      'In a competitive insurance landscape with rising customer expectations, AI-powered agents are becoming essential to maintain a leading edge. From risk assessment and accelerated underwriting to claims management and customer service, a governed, data-driven approach helps uncover hidden insights, identify new opportunities, and deliver measurable value.',
+    body2:
+      'DynasAI combines deep expertise in agent orchestration, generative AI, enterprise integrations, and insurance domain patterns — so you can make informed decisions, optimize processes, and unlock growth while reducing cost and manual effort.',
+  },
+  capabilities: [
+    {
+      num: '01',
+      title: 'Underwriting data prefill',
+      body: 'Reimagine small-business underwriting with AI agents that enrich applications, validate sources, and deliver high fill rates with human review gates.',
+    },
+    {
+      num: '02',
+      title: 'Accelerated underwriting',
+      body: 'Reduce evidence requests and manual effort in life and specialty lines. Improve quote-to-bind ratios with governed automation and clear escalation paths.',
+    },
+    {
+      num: '03',
+      title: 'Telematics & risk signals',
+      body: 'Integrate TSP data, build feature stores, and orchestrate ML use cases for pricing, risk assessment, and claims — with end-to-end data governance.',
+    },
+    {
+      num: '04',
+      title: 'Computer vision for claims',
+      body: 'Automate damage assessment workflows, shorten cycle times, and make risk evaluation more objective with vision agents and audit trails.',
+    },
+    {
+      num: '05',
+      title: 'Customer interaction analytics',
+      body: 'Analyze call, chat, and email interactions to find coverage gaps, compliance issues, and coaching opportunities for representatives.',
+    },
+    {
+      num: '06',
+      title: 'Agent & model operations',
+      body: 'Monitor production agents and models with drift alerts, eval suites, and automated retraining triggers — built for regulated environments.',
+    },
+  ],
+  stories: [
+    {
+      title: 'Workers comp underwriting transformed for US SME',
+      body: 'DynasAI agents achieved 85%+ data prefill with 90% accuracy, optimizing underwriting throughput for a regional carrier.',
+      href: '/contact',
+    },
+    {
+      title: '36 claims use cases for a US P&C insurer',
+      body: 'Computer-vision agents accelerated auto damage estimation and reduced manual intervention across the claims lifecycle.',
+      href: '/contact',
+    },
+    {
+      title: '39% savings with governed AI/ML underwriting',
+      body: 'Document intelligence and automated risk assessment improved accuracy while cutting manual extraction effort.',
+      href: '/contact',
+    },
+  ],
+  cta: {
+    title: 'Revamp insurance operations with governed agents',
+    body: 'Talk to our team about underwriting, claims, or full-stack agent delivery on the DynasAI platform.',
+    primary: { label: 'Let\'s connect', href: '/contact' },
+    secondary: { label: 'Explore platform', href: '/features' },
+  },
+} as const;
+
+export const homeHero = {
+  badge: 'AI Delivery Studio + Developer Platform',
+  headline: 'Turn enterprise complexity into',
+  highlight: 'intelligent action',
+  lede:
+    'DynasAI orchestrates AI agents, enterprise data, and human intelligence into one governed execution layer — build yourself, implement with our studio, or run both in parallel.',
+  stats: [
+    { value: '4×', label: 'Faster agent delivery' },
+    { value: '85%+', label: 'Prefill accuracy' },
+    { value: '36+', label: 'Production use cases' },
+  ],
+  primaryCta: { label: 'Start Building', href: 'https://app.dynasai.ai' },
+  secondaryCta: { label: 'Insurance solutions', href: '/solutions/insurance' },
+  tertiaryCta: { label: 'Explore Toolkit', href: '/platform/toolkit' },
+} as const;

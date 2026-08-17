@@ -1,0 +1,103 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { insuranceIndustry } from '../../content/site-content';
+
+const { meta, breadcrumb, hero, promo, intro, capabilities, stories, cta } = insuranceIndustry;
+---
+
+<BaseLayout title={meta.title} description={meta.description}>
+  <section class="industry-hero bg-grid-pattern">
+    <div class="container">
+      <Breadcrumb items={breadcrumb} />
+      <div class="industry-hero-copy">
+        <h1>
+          {hero.headline} <span class="gradient-text">{hero.highlight}</span>
+        </h1>
+        <p class="lede">{hero.subhead}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="promo-band" aria-labelledby="promo-heading">
+    <div class="container promo-band-inner">
+      <div>
+        <h2 id="promo-heading">{promo.title}</h2>
+        <p>{promo.body}</p>
+      </div>
+      <a class="btn btn-primary" href={promo.href}>{promo.cta}</a>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="intro-heading">
+    <div class="container split-layout">
+      <div>
+        <h2 id="intro-heading">{intro.title}</h2>
+      </div>
+      <div class="prose-block">
+        <p>{intro.body}</p>
+        <p>{intro.body2}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--muted" aria-labelledby="capabilities-heading">
+    <div class="container">
+      <div class="section-header">
+        <h2 id="capabilities-heading">What we do</h2>
+        <p class="section-copy">Agent-native capabilities across the insurance value chain.</p>
+      </div>
+      <ol class="capability-grid">
+        {
+          capabilities.map((item) => (
+            <li class="capability-card">
+              <span class="capability-num" aria-hidden="true">{item.num}</span>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="stories-heading">
+    <div class="container">
+      <div class="section-header">
+        <h2 id="stories-heading">Customer stories</h2>
+        <p class="section-copy">Production outcomes from insurance agent deployments.</p>
+      </div>
+      <div class="story-grid">
+        {
+          stories.map((story) => (
+            <article class="story-card">
+              <div class="story-card-visual" aria-hidden="true">
+                <span>◈</span>
+              </div>
+              <h3>{story.title}</h3>
+              <p>{story.body}</p>
+              <a class="story-card-link" href={story.href}>Read more →</a>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--compact">
+    <div class="container">
+      <div class="cta-band cta-band--industry">
+        <div class="cta-band-inner">
+          <div class="cta-band-copy">
+            <h2>{cta.title}</h2>
+            <p class="muted">{cta.body}</p>
+          </div>
+          <div class="cta-band-actions">
+            <a class="btn btn-primary" href={cta.primary.href}>{cta.primary.label}</a>
+            <a class="btn btn-secondary" href={cta.secondary.href}>{cta.secondary.label}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

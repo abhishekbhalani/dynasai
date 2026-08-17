@@ -1,7 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import HomeHero from '../components/HomeHero.astro';
 import { site } from '../config';
-import { servicePillars, differentiators } from '../content/site-content';
+import { servicePillars } from '../content/site-content';
 
 const title = 'Turn Enterprise Complexity Into Intelligent Action';
 const description = site.description;
@@ -33,54 +34,7 @@ const trustItems = ['Cloud platforms', 'Data warehouses', 'Enterprise identity',
 ---
 
 <BaseLayout title={title} description={description}>
-  <section class="hero-enterprise bg-grid-pattern">
-    <div class="container">
-      <p class="hero-badge">AI Delivery Studio + Developer Platform</p>
-      <h1>
-        Turn Enterprise Complexity Into <span class="gradient-text">Intelligent Action</span>
-      </h1>
-      <p class="lede">
-        DynasAI combines a governed agent platform with delivery expertise — so you can build yourself,
-        implement with our team, or run both in parallel on the same stack.
-      </p>
-      <div class="hero-actions hero-actions--center">
-        <a class="btn btn-primary btn-lg" href={site.appUrl}>Start Building</a>
-        <a class="btn btn-secondary btn-lg" href="/platform/toolkit">Explore Toolkit</a>
-      </div>
-
-      <div class="orchestration bg-grid-pattern" aria-label="Orchestration visualization">
-        <div class="orchestration-lines" aria-hidden="true">
-          <span></span><span></span><span></span>
-        </div>
-        <div class="orchestration-inner">
-          <div class="orchestration-col">
-            <div class="orchestration-node">
-              <span aria-hidden="true">▣</span>
-              <strong>Enterprise Data</strong>
-            </div>
-            <div class="orchestration-node">
-              <span aria-hidden="true">◉</span>
-              <strong>AI Agents</strong>
-            </div>
-            <div class="orchestration-node">
-              <span aria-hidden="true">◍</span>
-              <strong>People</strong>
-            </div>
-          </div>
-          <div class="orchestration-hub" aria-hidden="true">
-            <span>◎</span>
-            <span>Intelligence Layer</span>
-          </div>
-          <div class="orchestration-col orchestration-col--center">
-            <div class="orchestration-node orchestration-node--large">
-              <span aria-hidden="true">↗</span>
-              <strong>Business Outcomes</strong>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+  <HomeHero />
 
   <section class="trust-bar" aria-label="Trusted ecosystem">
     <div class="container">

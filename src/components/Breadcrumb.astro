@@ -1,0 +1,29 @@
+---
+interface Crumb {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  items: ReadonlyArray<Crumb>;
+}
+
+const { items } = Astro.props;
+const last = items.length - 1;
+---
+
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <ol>
+    {
+      items.map((item, index) => (
+        <li>
+          {index === last ? (
+            <span aria-current="page">{item.label}</span>
+          ) : (
+            <a href={item.href}>{item.label}</a>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</nav>
