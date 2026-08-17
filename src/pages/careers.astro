@@ -1,57 +1,71 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
 
-const title = 'Careers';
-const description = 'Open roles at DynasAI. We hire people who can ship AI systems and developer platforms.';
+const title = 'Careers & Culture';
+const description = 'Build the future of agentic AI at DynasAI. Explore open roles in research, architecture, and design.';
+
+const values = [
+  ['Ownership Mindset', 'We ship outcomes, not slide decks.'],
+  ['Future-Focused', 'We design for where enterprise AI is going, not where it was.'],
+  ['Experimental Excellence', 'We iterate fast with rigor, evals, and governance.'],
+];
+
+const roles = [
+  ['AI Research Engineer', 'Platform · Remote', '/contact'],
+  ['Senior Workflow Architect', 'Services · Remote / Hybrid', '/contact'],
+  ['Product Designer (AI Platforms)', 'Product · Remote', '/contact'],
+];
 ---
 
 <BaseLayout title={title} description={description}>
-  <section class="hero">
+  <PageHero
+    badge="Careers"
+    title="Build the Future of"
+    highlight="Agentic AI"
+    description="Join a team designing, shipping, and operating enterprise automation systems."
+  />
+
+  <section class="section">
     <div class="container">
-      <p class="kicker">Careers</p>
-      <h1>Build the studio and the platform</h1>
-      <p class="lede">
-        We are a small team covering delivery, product, and developer experience. Roles below are
-        placeholders until hiring opens.
-      </p>
+      <h2>Our Tribe Values</h2>
+      <div class="feature-grid feature-grid--3" style="margin-top: 24px;">
+        {values.map(([title, body]) => (
+          <article class="info-card">
+            <h3>{title}</h3>
+            <p>{body}</p>
+          </article>
+        ))}
+      </div>
     </div>
   </section>
 
   <section class="section">
     <div class="container">
-      <div class="data-table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th scope="col">Role</th>
-              <th scope="col">Team</th>
-              <th scope="col">Location</th>
-              <th scope="col">Type</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th scope="row">Founding engineer</th>
-              <td>Platform</td>
-              <td>Remote</td>
-              <td>Full-time</td>
-            </tr>
-            <tr>
-              <th scope="row">AI delivery lead</th>
-              <td>Studio</td>
-              <td>Remote / hybrid</td>
-              <td>Full-time</td>
-            </tr>
-            <tr>
-              <th scope="row">Developer experience</th>
-              <td>Docs &amp; SDKs</td>
-              <td>Remote</td>
-              <td>Contract or full-time</td>
-            </tr>
-          </tbody>
-        </table>
+      <h2>What We Offer</h2>
+      <div class="feature-grid" style="margin-top: 24px;">
+        <article class="info-card"><h3>Remote-first</h3><p>Work where you do your best work.</p></article>
+        <article class="info-card"><h3>Learning budget</h3><p>Conferences, courses, and research time.</p></article>
+        <article class="info-card"><h3>Real problems</h3><p>Production systems, not perpetual pilots.</p></article>
+        <article class="info-card"><h3>Equity</h3><p>Share in what we build together.</p></article>
       </div>
-      <p class="muted">Apply via <a href="/contact">contact</a> with the role in the subject.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2>Open Roles</h2>
+      <div class="role-list" style="margin-top: 24px;">
+        {roles.map(([name, meta, href]) => (
+          <article class="role-item">
+            <div>
+              <h3>{name}</h3>
+              <p>{meta}</p>
+            </div>
+            <a class="btn btn-secondary" href={href}>Apply</a>
+          </article>
+        ))}
+      </div>
     </div>
   </section>
 </BaseLayout>

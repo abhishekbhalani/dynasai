@@ -1,35 +1,59 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
 
 const docs = (await getCollection('docs')).sort((a, b) => a.data.order - b.data.order);
-const title = 'Documentation';
-const description = 'DynasAI developer docs: getting started, API overview, and how the app subdomain will work.';
+const title = 'Platform Infrastructure Overview';
+const description =
+  'DynasAI developer docs: getting started, API overview, and how the app subdomain will work.';
+
+const layers = [
+  ['Build', 'Agents, workflows, and the agent builder.'],
+  ['Connect', 'APIs, webhooks, integrations, and tools.'],
+  ['Understand', 'Knowledge, RAG, search, and document intelligence.'],
+  ['Operate', 'Observability, evals, governance, and security.'],
+];
 ---
 
 <BaseLayout title={title} description={description}>
-  <section class="hero">
+  <PageHero
+    badge="Docs"
+    title="Platform"
+    highlight="Infrastructure"
+    description="Build against a stable contract. These pages are static MDX; the live workspace ships on app.dynasai.ai."
+  />
+
+  <section class="section">
     <div class="container">
-      <p class="kicker">Docs</p>
-      <h1>Build against a stable contract</h1>
-      <p class="lede">
-        These pages are static MDX. The live workspace will be served from app.dynasai.ai when the
-        product app ships.
-      </p>
+      <h2>Platform Layers</h2>
+      <div class="feature-grid feature-grid--4" style="margin-top: 24px;">
+        {layers.map(([name, body]) => (
+          <article class="info-card">
+            <div class="icon-box">{name.slice(0, 1)}</div>
+            <h3>{name}</h3>
+            <p>{body}</p>
+          </article>
+        ))}
+      </div>
     </div>
   </section>
+
   <section class="section">
-    <div class="container card-grid">
-      {
-        docs.map((doc) => (
-          <article class="card">
-            <h2>
-              <a href={`/docs/${doc.id}`}>{doc.data.title}</a>
-            </h2>
-            <p class="muted">{doc.data.description}</p>
-          </article>
-        ))
-      }
+    <div class="container">
+      <h2>Documentation</h2>
+      <div class="card-grid" style="margin-top: 24px;">
+        {
+          docs.map((doc) => (
+            <article class="card">
+              <h3>
+                <a href={`/docs/${doc.id}`}>{doc.data.title}</a>
+              </h3>
+              <p class="muted">{doc.data.description}</p>
+            </article>
+          ))
+        }
+      </div>
     </div>
   </section>
 </BaseLayout>

@@ -5,8 +5,8 @@ export const site = {
   appUrl: 'https://app.dynasai.ai',
   locale: 'en_US',
   description:
-    'DynasAI designs, ships, and operates AI systems for businesses — and gives developers APIs, SDKs, and a workspace to build on.',
-  tagline: 'AI systems for operators. APIs for builders.',
+    'DynasAI orchestrates AI agents, enterprise data, and human intelligence into a unified execution layer. Automate sophisticated workflows with precision and control.',
+  tagline: 'Turn enterprise complexity into intelligent action.',
   email: 'hello@dynasai.ai',
   gtmId: 'GTM-KDPPRVV2',
   twitter: '@dynasai',
@@ -18,10 +18,11 @@ export const site = {
 } as const;
 
 export const nav = [
-  { href: '/features', label: 'Product' },
-  { href: '/pricing', label: 'Pricing' },
-  { href: '/docs', label: 'Docs' },
-  { href: '/blog', label: 'Blog' },
+  { href: '/features', label: 'Platform' },
+  { href: '/pricing', label: 'Services' },
+  { href: '/features', label: 'Solutions' },
+  { href: '/blog', label: 'Resources' },
+  { href: '/about', label: 'Company' },
 ] as const;
 
 export const companyNav = [
@@ -29,3 +30,5 @@ export const companyNav = [
   { href: '/careers', label: 'Careers' },
   { href: '/contact', label: 'Contact' },
 ] as const;
+
+export { stitchScreens as stitch } from './stitch-screens';

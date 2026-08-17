@@ -1,27 +1,43 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
 import { site } from '../config';
 
-const title = 'Contact';
-const description = 'Book a DynasAI demo or start a delivery conversation. We reply to studio and API enquiries.';
+const title = 'Contact Sales';
+const description = 'Talk to a DynasAI expert about enterprise agentic automation, platform access, or services.';
 const email = import.meta.env.PUBLIC_CONTACT_EMAIL || site.email;
 ---
 
 <BaseLayout title={title} description={description}>
-  <section class="hero">
-    <div class="container split">
+  <PageHero
+    badge="Contact"
+    title="Contact"
+    highlight="Sales"
+    description="Tell us about your automation goals. Our team will recommend platform access, services, or both."
+  />
+
+  <section class="section">
+    <div class="container split-layout">
       <div>
-        <p class="kicker">Contact</p>
-        <h1>Tell us what you want to ship</h1>
+        <h2>Talk to an AI Expert</h2>
         <p class="lede">
-          Studio work, API access, or a demo workspace. Email
-          <a href={`mailto:${email}`}>{email}</a>
-          or send the form. Submissions currently open mail until the app subdomain handles leads.
+          Whether you need a governed platform, delivery support, or a demo workspace, we respond
+          within one business day.
         </p>
+        <p><a href={`mailto:${email}`}>{email}</a></p>
+
+        <div class="info-card" style="margin-top: 24px;">
+          <h3>Global Offices</h3>
+          <p><strong>San Francisco</strong><br />100 AI Boulevard, Suite 400<br />San Francisco, CA 94105</p>
+          <p><strong>London</strong><br />Level 39, One Canada Square<br />London E14 5AB</p>
+          <p><strong>Singapore</strong><br />Marina Bay Financial Centre, Tower 1<br />Singapore 018981</p>
+        </div>
       </div>
+
       <form class="form panel" method="post" action={`mailto:${email}`} enctype="text/plain">
+        <h3>Request a consultation</h3>
         <label>
-          Name
+          Full name
           <input type="text" name="name" autocomplete="name" required />
         </label>
         <label>
@@ -29,19 +45,23 @@ const email = import.meta.env.PUBLIC_CONTACT_EMAIL || site.email;
           <input type="email" name="email" autocomplete="email" required />
         </label>
         <label>
+          Company
+          <input type="text" name="company" autocomplete="organization" required />
+        </label>
+        <label>
           I am interested in
           <select name="interest" required>
-            <option value="studio">AI delivery studio</option>
-            <option value="api">Developer APIs</option>
-            <option value="both">Both</option>
-            <option value="demo">Product demo</option>
+            <option value="platform">Platform demo</option>
+            <option value="services">AI engineering services</option>
+            <option value="both">Platform + services</option>
+            <option value="enterprise">Enterprise rollout</option>
           </select>
         </label>
         <label>
-          Project notes
+          How can we help?
           <textarea name="notes" required></textarea>
         </label>
-        <button class="btn btn-primary" type="submit">Send</button>
+        <button class="btn btn-primary btn-lg" type="submit">Submit request</button>
       </form>
     </div>
   </section>

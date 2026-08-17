@@ -1,115 +1,124 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import CtaBand from '../components/CtaBand.astro';
 import { site } from '../config';
 
-const title = 'AI systems for operators. APIs for builders.';
+const title = 'Turn Enterprise Complexity Into Intelligent Action';
 const description = site.description;
+
+const lifecycle = [
+  {
+    title: 'Discover',
+    body: 'Identify automation bottlenecks across your enterprise architecture. Our analysis engines map complex operational inefficiencies and pinpoint high-ROI agentic opportunities.',
+    icon: '◎',
+  },
+  {
+    title: 'Design',
+    body: 'Architect intelligent workflows on our visual canvas. Connect data sources, assign AI agent capabilities, and define complex logic gates without extensive code.',
+    icon: '◇',
+  },
+  {
+    title: 'Deploy',
+    body: 'Push workflows to production instantly. DynasAI handles infrastructure scaling, version control, and secure environment management for agentic solutions.',
+    icon: '↑',
+  },
+  {
+    title: 'Optimize',
+    body: 'Monitor performance in real-time. Gain actionable insights into agent decisions, token usage, and execution speed to refine your intelligence layer.',
+    icon: '≋',
+  },
+];
+
+const trustItems = [
+  'Cloud Infrastructure',
+  'Data Warehouses',
+  'API Gateways',
+  'Enterprise Security',
+];
 ---
 
 <BaseLayout title={title} description={description}>
-  <section class="hero">
-    <div class="container hero-grid">
-      <div>
-        <p class="eyebrow">Agency delivery · Developer platform</p>
-        <h1>{site.tagline}</h1>
-        <p class="lede">
-          DynasAI helps companies design, ship, and run production AI — then gives your team a
-          workspace and APIs to keep building. Marketing lives here. Product lives on
-          <a href={site.appUrl}>app.dynasai.ai</a>.
-        </p>
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="/contact">Start a project</a>
-          <a class="btn btn-secondary" href="/docs">Explore the API</a>
-        </div>
-        <div class="stat-row">
-          <div class="stat">
-            <b>2 tracks</b>
-            <span class="muted">Services + platform</span>
-          </div>
-          <div class="stat">
-            <b>Static-first</b>
-            <span class="muted">Cloudflare Workers</span>
-          </div>
-          <div class="stat">
-            <b>SEO-ready</b>
-            <span class="muted">Sitemap, schema, GTM</span>
-          </div>
-        </div>
-      </div>
-      <aside class="hero-panel" aria-label="What we ship">
-        <p class="kicker">What you get</p>
-        <h2>From brief to production workspace</h2>
-        <ul class="list">
-          <li>AI strategy, agents, and integration for operators</li>
-          <li>APIs, SDKs, and docs for engineering teams</li>
-          <li>A customer workspace on the app subdomain</li>
-          <li>Analytics and search foundations from day one</li>
-        </ul>
-      </aside>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="tracks-heading">
+  <section class="hero-enterprise bg-grid-pattern">
     <div class="container">
-      <div class="section-header">
-        <p class="kicker">Two ways to work with us</p>
-        <h2 id="tracks-heading">Studio for delivery. Platform for builders.</h2>
+      <p class="hero-badge">Enterprise-Ready Agentic Automation</p>
+      <h1>
+        Turn Enterprise Complexity Into <span class="gradient-text">Intelligent Action</span>
+      </h1>
+      <p class="lede">{description}</p>
+      <div class="hero-actions hero-actions--center">
+        <a class="btn btn-primary btn-lg" href="/contact">Start Building</a>
+        <a class="btn btn-secondary btn-lg" href="/features">View Platform</a>
       </div>
-      <div class="split">
-        <article class="card">
-          <p class="kicker">Services</p>
-          <h3>AI delivery studio</h3>
-          <p class="muted">
-            Discovery, custom agents, data integration, and operated systems for teams that need
-            outcomes — not another prototype.
-          </p>
-          <p><a href="/features">See services</a></p>
-        </article>
-        <article class="card">
-          <p class="kicker">Platform</p>
-          <h3>Developer tools &amp; API</h3>
-          <p class="muted">
-            Typed APIs, evals, and a workspace at app.dynasai.ai so your product team can ship
-            against a stable contract.
-          </p>
-          <p><a href="/docs">Read docs</a></p>
-        </article>
+
+      <div class="orchestration bg-grid-pattern" aria-label="Orchestration visualization">
+        <div class="orchestration-lines" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="orchestration-inner">
+          <div class="orchestration-col">
+            <div class="orchestration-node">
+              <span aria-hidden="true">▣</span>
+              <strong>Enterprise Data</strong>
+            </div>
+            <div class="orchestration-node">
+              <span aria-hidden="true">◉</span>
+              <strong>AI Agents</strong>
+            </div>
+            <div class="orchestration-node">
+              <span aria-hidden="true">◍</span>
+              <strong>People</strong>
+            </div>
+          </div>
+          <div class="orchestration-hub" aria-hidden="true">
+            <span>◎</span>
+            <span>Intelligence Layer</span>
+          </div>
+          <div class="orchestration-col orchestration-col--center">
+            <div class="orchestration-node orchestration-node--large">
+              <span aria-hidden="true">↗</span>
+              <strong>Business Outcomes</strong>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="section" aria-labelledby="features-heading">
+  <section class="trust-bar" aria-label="Trusted ecosystem">
     <div class="container">
-      <div class="section-header">
-        <p class="kicker">Product</p>
-        <h2 id="features-heading">Built for search, speed, and a later app split</h2>
-        <p class="section-copy">
-          This site is a static Astro build on Cloudflare Workers. The demo and customer app will
-          live on a separate Workers project bound to the app subdomain.
+      <p class="label-sm muted">Trusted Ecosystem</p>
+      <div class="trust-items">
+        {trustItems.map((item) => (
+          <div class="trust-item">
+            <span aria-hidden="true">●</span>
+            <span>{item}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="lifecycle-heading">
+    <div class="container">
+      <div class="section-header section-header--center">
+        <h2 id="lifecycle-heading">The Automation Lifecycle</h2>
+        <p class="section-copy section-copy--center">
+          A comprehensive toolkit to transform manual processes into sophisticated, agentic workflows.
         </p>
       </div>
-      <div class="card-grid">
-        <article class="card">
-          <h3>Search-first pages</h3>
-          <p class="muted">Canonical URLs, Open Graph, JSON-LD, sitemap, robots, and RSS.</p>
-        </article>
-        <article class="card">
-          <h3>Tag management</h3>
-          <p class="muted">Google Tag Manager is wired for production. GA4 can load from GTM.</p>
-        </article>
-        <article class="card">
-          <h3>Light and dark</h3>
-          <p class="muted">Theme tokens in CSS variables, WCAG AA contrast, system-aware default.</p>
-        </article>
+      <div class="bento-grid">
+        {lifecycle.map((item) => (
+          <article class="bento-card">
+            <div class="bento-icon" aria-hidden="true">{item.icon}</div>
+            <div>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </div>
+            <div class="bento-visual" aria-hidden="true">
+              <div class="bento-visual-bar"></div>
+            </div>
+          </article>
+        ))}
       </div>
     </div>
   </section>
-
-  <div class="container">
-    <CtaBand
-      title="Tell us what you want to ship"
-      body="A delivery engagement, an API workspace, or both. We’ll map the shortest path."
-    />
-  </div>
 </BaseLayout>

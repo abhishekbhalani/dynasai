@@ -1,40 +1,68 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
 
 const title = 'Privacy Policy';
 const description = 'How DynasAI collects, uses, and protects personal data on dynasai.ai and related services.';
 const updated = '17 August 2026';
+
+const sections = [
+  { id: 'who', label: 'Who we are' },
+  { id: 'collect', label: 'What we collect' },
+  { id: 'use', label: 'How we use data' },
+  { id: 'cookies', label: 'Cookies' },
+  { id: 'rights', label: 'Retention and rights' },
+];
 ---
 
 <BaseLayout title={title} description={description}>
-  <article class="hero">
-    <div class="container prose">
-      <p class="kicker">Legal · Updated {updated}</p>
-      <h1>Privacy Policy</h1>
-      <p class="lede">This is an operational draft for launch. Have counsel review before you process customer data at scale.</p>
-      <h2>Who we are</h2>
-      <p>
-        DynasAI operates the website at dynasai.ai. The product workspace will be served from
-        app.dynasai.ai. Contact: hello@dynasai.ai.
-      </p>
-      <h2>What we collect</h2>
-      <p>
-        If you contact us, we receive the details you send (name, email, message). Production
-        analytics are loaded through Google Tag Manager. Tags configured in GTM — including Google
-        Analytics 4 if you enable them — may set cookies or collect usage data.
-      </p>
-      <h2>How we use data</h2>
-      <p>We use enquiry data to respond to you. We use analytics to understand site performance and content.</p>
-      <h2>Cookies</h2>
-      <p>
-        See the <a href="/legal/cookies">Cookie Policy</a>. You can control non-essential tags in
-        Google Tag Manager / Consent Mode once consent is configured.
-      </p>
-      <h2>Retention and rights</h2>
-      <p>
-        We keep enquiry mail as long as needed to handle the request. Depending on your location you
-        may have rights to access, correct, or delete personal data. Email hello@dynasai.ai.
-      </p>
+  <PageHero
+    badge={`Legal · Updated ${updated}`}
+    title="Privacy"
+    highlight="Policy"
+    description="This is an operational draft for launch. Have counsel review before you process customer data at scale."
+  />
+
+  <section class="section">
+    <div class="container legal-layout">
+      <nav class="legal-nav" aria-label="Privacy policy sections">
+        <h2>On this page</h2>
+        <ul>
+          {sections.map(({ id, label }) => (
+            <li><a href={`#${id}`}>{label}</a></li>
+          ))}
+        </ul>
+      </nav>
+
+      <article class="legal-content prose">
+        <h2 id="who">Who we are</h2>
+        <p>
+          DynasAI operates the website at dynasai.ai. The product workspace will be served from
+          app.dynasai.ai. Contact: hello@dynasai.ai.
+        </p>
+
+        <h2 id="collect">What we collect</h2>
+        <p>
+          If you contact us, we receive the details you send (name, email, message). Production
+          analytics are loaded through Google Tag Manager. Tags configured in GTM — including Google
+          Analytics 4 if you enable them — may set cookies or collect usage data.
+        </p>
+
+        <h2 id="use">How we use data</h2>
+        <p>We use enquiry data to respond to you. We use analytics to understand site performance and content.</p>
+
+        <h2 id="cookies">Cookies</h2>
+        <p>
+          See the <a href="/legal/cookies">Cookie Policy</a>. You can control non-essential tags in
+          Google Tag Manager / Consent Mode once consent is configured.
+        </p>
+
+        <h2 id="rights">Retention and rights</h2>
+        <p>
+          We keep enquiry mail as long as needed to handle the request. Depending on your location you
+          may have rights to access, correct, or delete personal data. Email hello@dynasai.ai.
+        </p>
+      </article>
     </div>
-  </article>
+  </section>
 </BaseLayout>

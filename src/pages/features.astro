@@ -1,54 +1,85 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import CtaBand from '../components/CtaBand.astro';
+import PageHero from '../components/PageHero.astro';
 
-const title = 'Product';
+const title = 'Solutions Overview';
 const description =
-  'DynasAI services for AI delivery and a developer platform with APIs, SDKs, and a customer workspace.';
+  'Transform operations with intelligent automation. Function-specific capabilities for customer ops, finance, HR, and supply chain.';
+
+const capabilities = [
+  ['Customer Operations', 'Resolve tickets, route requests, and automate service workflows with governed agents.'],
+  ['Finance & Accounting', 'Accelerate reconciliation, reporting, and controls with document intelligence.'],
+  ['Human Resources', 'Streamline onboarding, policy answers, and workforce operations.'],
+  ['Supply Chain', 'Coordinate vendors, inventory signals, and exception handling at scale.'],
+];
 ---
 
 <BaseLayout title={title} description={description}>
-  <section class="hero">
+  <PageHero
+    badge="Platform"
+    title="Transform Operations with"
+    highlight="Intelligent Automation"
+    description={description}
+  />
+
+  <section class="section">
     <div class="container">
-      <p class="kicker">Product</p>
-      <h1>Services that ship. APIs that stay.</h1>
-      <p class="lede">
-        Use DynasAI as a delivery studio, a developer platform, or both. The marketing site stays
-        fast and indexable; the product UI will run on app.dynasai.ai.
-      </p>
+      <h2>Function-Specific Capabilities</h2>
+      <div class="feature-grid" style="margin-top: 24px;">
+        {capabilities.map(([title, body]) => (
+          <article class="info-card">
+            <div class="icon-box">◆</div>
+            <h3>{title}</h3>
+            <p>{body}</p>
+          </article>
+        ))}
+      </div>
     </div>
   </section>
 
   <section class="section">
-    <div class="container card-grid">
-      <article class="card">
-        <h2>AI delivery</h2>
-        <p class="muted">Strategy, architecture, custom agents, and integration into your stack.</p>
-      </article>
-      <article class="card">
-        <h2>Operated systems</h2>
-        <p class="muted">Monitoring, evals, and iteration after go-live — not a one-off demo.</p>
-      </article>
-      <article class="card">
-        <h2>Developer APIs</h2>
-        <p class="muted">Stable contracts, auth, and SDKs so engineering can build without waiting.</p>
-      </article>
-      <article class="card">
-        <h2>Workspace</h2>
-        <p class="muted">Customer login, projects, keys, and usage on the app subdomain.</p>
-      </article>
-      <article class="card">
-        <h2>Docs &amp; blog</h2>
-        <p class="muted">MDX content collections for technical SEO and a living knowledge base.</p>
-      </article>
-      <article class="card">
-        <h2>Analytics ready</h2>
-        <p class="muted">GTM in production. Add GA4, ads, and conversion tags without a rebuild.</p>
-      </article>
+    <div class="container">
+      <div class="section-header section-header--center">
+        <h2>Platform Layers</h2>
+        <p class="section-copy section-copy--center">Build, connect, understand, and operate from one system.</p>
+      </div>
+      <div class="bento-grid">
+        <article class="bento-card">
+          <div class="bento-icon">B</div>
+          <h3>Build</h3>
+          <p>AI automation, agents, workflow orchestration, and the agent builder.</p>
+        </article>
+        <article class="bento-card">
+          <div class="bento-icon">C</div>
+          <h3>Connect</h3>
+          <p>Integrations, APIs, webhooks, tools, and enterprise apps.</p>
+        </article>
+        <article class="bento-card">
+          <div class="bento-icon">U</div>
+          <h3>Understand</h3>
+          <p>Knowledge, RAG, document intelligence, enterprise search, and memory.</p>
+        </article>
+        <article class="bento-card">
+          <div class="bento-icon">O</div>
+          <h3>Operate</h3>
+          <p>Observability, evaluation, monitoring, governance, and security.</p>
+        </article>
+      </div>
     </div>
   </section>
 
-  <div class="container">
-    <CtaBand title="See if this fits your stack" body="Share the problem. We’ll recommend studio, platform, or a sequence of both." />
-  </div>
+  <section class="section">
+    <div class="container cta-band">
+      <div class="cta-band-inner">
+        <div>
+          <h2>See DynasAI in action</h2>
+          <p class="muted">Explore platform infrastructure, docs, and a live demo workspace.</p>
+        </div>
+        <div class="inline-actions">
+          <a class="btn btn-primary" href="/docs">Platform overview</a>
+          <a class="btn btn-secondary" href="/contact">Book a demo</a>
+        </div>
+      </div>
+    </div>
+  </section>
 </BaseLayout>

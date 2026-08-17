@@ -1,44 +1,38 @@
 ---
 import Logo from './Logo.astro';
-import { site, nav, companyNav } from '../config';
+import { site } from '../config';
 ---
 
-<footer class="site-footer">
-  <div class="container">
-    <div class="footer-top">
-      <div>
-        <Logo variant="footer" />
-        <p class="muted">{site.tagline}</p>
-      </div>
-      <div class="footer-col">
-        <h2>Product</h2>
-        <ul>
-          {nav.map((item) => (
-            <li><a href={item.href}>{item.label}</a></li>
-          ))}
-          <li><a href={site.appUrl}>Workspace</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h2>Company</h2>
-        <ul>
-          {companyNav.map((item) => (
-            <li><a href={item.href}>{item.label}</a></li>
-          ))}
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h2>Legal</h2>
-        <ul>
-          <li><a href="/legal/privacy">Privacy</a></li>
-          <li><a href="/legal/terms">Terms</a></li>
-          <li><a href="/legal/cookies">Cookies</a></li>
-        </ul>
-      </div>
+<footer class="site-footer site-footer--enterprise-dark">
+  <div class="container footer-dark-grid">
+    <div class="footer-brand-block">
+      <Logo variant="footer" />
+      <p class="footer-tagline">Intelligent systems for the modern enterprise.</p>
+      <p class="footer-copy">© {new Date().getFullYear()} {site.legalName}. All rights reserved.</p>
     </div>
-    <div class="footer-bottom">
-      <p>© {new Date().getFullYear()} {site.legalName}. All rights reserved.</p>
-      <p><a href={`mailto:${site.email}`}>{site.email}</a></p>
+    <div class="footer-col">
+      <h2>Legal</h2>
+      <ul>
+        <li><a href="/legal/privacy">Privacy Policy</a></li>
+        <li><a href="/legal/terms">Terms of Service</a></li>
+        <li><a href="/features">Security</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h2>Site</h2>
+      <ul>
+        <li><a href="/legal/cookies">Cookie Settings</a></li>
+        <li><a href="/sitemap-index.xml">Sitemap</a></li>
+        <li><a href="/contact">Accessibility</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h2>Product</h2>
+      <ul>
+        <li><a href="/features">Platform</a></li>
+        <li><a href="/docs">Docs</a></li>
+        <li><a href={site.appUrl}>Workspace</a></li>
+      </ul>
     </div>
   </div>
 </footer>

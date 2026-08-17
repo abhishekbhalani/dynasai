@@ -1,34 +1,60 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
 
 const title = 'Terms of Service';
 const description = 'Terms that govern use of the DynasAI website, docs, and upcoming app.dynasai.ai workspace.';
 const updated = '17 August 2026';
+
+const sections = [
+  { id: 'site', label: 'The site' },
+  { id: 'app', label: 'The app' },
+  { id: 'use', label: 'Acceptable use' },
+  { id: 'disclaimer', label: 'Disclaimer' },
+];
 ---
 
 <BaseLayout title={title} description={description}>
-  <article class="hero">
-    <div class="container prose">
-      <p class="kicker">Legal · Updated {updated}</p>
-      <h1>Terms of Service</h1>
-      <p class="lede">Draft terms for the public site and future workspace. Replace with counsel-approved terms before taking paid customers.</p>
-      <h2>The site</h2>
-      <p>
-        dynasai.ai is a public marketing and documentation site. It does not grant a license to any
-        product except as stated in the docs.
-      </p>
-      <h2>The app</h2>
-      <p>
-        app.dynasai.ai will host demos and customer workspaces. Separate product terms will apply
-        when accounts are issued.
-      </p>
-      <h2>Acceptable use</h2>
-      <p>Do not misuse the site, attempt unauthorized access, or use content in a way that violates law.</p>
-      <h2>Disclaimer</h2>
-      <p>
-        The site is provided as-is. Delivery engagements and API access are governed by a statement
-        of work or platform agreement.
-      </p>
+  <PageHero
+    badge={`Legal · Updated ${updated}`}
+    title="Terms of"
+    highlight="Service"
+    description="Draft terms for the public site and future workspace. Replace with counsel-approved terms before taking paid customers."
+  />
+
+  <section class="section">
+    <div class="container legal-layout">
+      <nav class="legal-nav" aria-label="Terms sections">
+        <h2>On this page</h2>
+        <ul>
+          {sections.map(({ id, label }) => (
+            <li><a href={`#${id}`}>{label}</a></li>
+          ))}
+        </ul>
+      </nav>
+
+      <article class="legal-content prose">
+        <h2 id="site">The site</h2>
+        <p>
+          dynasai.ai is a public marketing and documentation site. It does not grant a license to any
+          product except as stated in the docs.
+        </p>
+
+        <h2 id="app">The app</h2>
+        <p>
+          app.dynasai.ai will host demos and customer workspaces. Separate product terms will apply
+          when accounts are issued.
+        </p>
+
+        <h2 id="use">Acceptable use</h2>
+        <p>Do not misuse the site, attempt unauthorized access, or use content in a way that violates law.</p>
+
+        <h2 id="disclaimer">Disclaimer</h2>
+        <p>
+          The site is provided as-is. Delivery engagements and API access are governed by a statement
+          of work or platform agreement.
+        </p>
+      </article>
     </div>
-  </article>
+  </section>
 </BaseLayout>

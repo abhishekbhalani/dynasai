@@ -1,29 +1,86 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
 
-const title = 'About';
+const title = 'About Our Company';
 const description =
-  'DynasAI is an AI delivery studio and developer platform. We help operators ship systems and give builders APIs to extend them.';
+  'DynasAI applies intelligence with precision — from discovery through operated production systems for the modern enterprise.';
 ---
 
 <BaseLayout title={title} description={description}>
-  <section class="hero">
-    <div class="container prose">
-      <p class="kicker">About</p>
-      <h1>A studio that also ships a platform</h1>
-      <p class="lede">
-        DynasAI exists for two audiences that usually get split across vendors: operators who need
-        AI in production, and developers who need a durable API and workspace.
-      </p>
-      <p>
-        The public site is built as a static, search-first surface on Cloudflare Workers. Customer
-        product experiences — demos, login, billing, keys — will live on
-        <a href="https://app.dynasai.ai">app.dynasai.ai</a> as a separate app.
-      </p>
-      <p>
-        We keep that split on purpose: marketing pages stay cacheable and indexable; the app can
-        iterate without dragging SEO with it.
-      </p>
+  <PageHero
+    badge="About"
+    title="Intelligence, applied with"
+    highlight="precision."
+    description="We help enterprises move from AI experimentation to governed, operated automation at scale."
+  />
+
+  <section class="section">
+    <div class="container split-layout">
+      <article class="info-card">
+        <h2>Our Story</h2>
+        <p>
+          DynasAI was founded by operators who spent years deploying AI inside regulated, complex
+          organizations. We built the platform we wished existed: one that connects agents, data,
+          and people without sacrificing governance.
+        </p>
+      </article>
+      <article class="info-card">
+        <h2>Mission</h2>
+        <p>
+          Turn enterprise complexity into intelligent action — with systems teams can trust, audit,
+          and extend through APIs and a customer workspace.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2>The Deployment Methodology</h2>
+        <p class="section-copy">Five stages from discovery to continuous operation.</p>
+      </div>
+      <div class="feature-grid feature-grid--5">
+        {
+          [
+            ['Discover', 'Analyze architectures and identify high-value bottlenecks.'],
+            ['Prioritize', 'Rank opportunities by ROI, feasibility, and strategic alignment.'],
+            ['Architect', 'Design secure pipelines integrated with enterprise identity.'],
+            ['Build', 'Deploy models and orchestrate agentic workflows with CI/CD.'],
+            ['Operate', 'Monitor performance, manage drift, and optimize continuously.'],
+          ].map(([name, body]) => (
+            <article class="info-card">
+              <div class="icon-box">{name.slice(0, 1)}</div>
+              <h3>{name}</h3>
+              <p>{body}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2>Leadership</h2>
+      <div class="feature-grid feature-grid--3" style="margin-top: 24px;">
+        <article class="info-card">
+          <h3>Dr. Elena Rostova</h3>
+          <p class="label-sm muted">Chief Executive Officer</p>
+          <p>Former Head of AI Infrastructure at a Fortune 50 bank. Leads strategic vision and enterprise governance.</p>
+        </article>
+        <article class="info-card">
+          <h3>Marcus Chen</h3>
+          <p class="label-sm muted">Chief Technology Officer</p>
+          <p>Architect of large-scale agent platforms and model operations for global enterprises.</p>
+        </article>
+        <article class="info-card">
+          <h3>Sarah Jenkins</h3>
+          <p class="label-sm muted">Chief Operating Officer</p>
+          <p>Runs delivery, client success, and the operating cadence behind production AI systems.</p>
+        </article>
+      </div>
     </div>
   </section>
 </BaseLayout>

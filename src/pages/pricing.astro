@@ -1,89 +1,94 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import CtaBand from '../components/CtaBand.astro';
+import PageHero from '../components/PageHero.astro';
 
-const title = 'Pricing';
+const title = 'AI Engineering Services';
 const description =
-  'DynasAI pricing for delivery retainers and developer platform plans. Start with a scoped engagement or an API workspace.';
+  'Strategy, agent engineering, generative AI applications, and automation engineering — from advisory to production.';
+
+const capabilities = [
+  ['AI Strategy & Advisory', 'Roadmaps, operating models, and portfolio prioritization for enterprise AI.'],
+  ['AI Agent Engineering', 'Custom agents, tool use, evals, and integration into your stack.'],
+  ['Generative AI Apps', 'Production applications with governance, UX, and observability built in.'],
+  ['Automation Engineering', 'Workflow automation, orchestration, and operated systems after go-live.'],
+];
+
+const methodology = [
+  ['Assess', 'Current state, constraints, and highest-value automation bets.'],
+  ['Design', 'Architecture, security model, and delivery plan.'],
+  ['Build', 'Agents, integrations, and platform configuration.'],
+  ['Operate', 'Monitoring, iteration, and continuous improvement.'],
+];
 ---
 
 <BaseLayout title={title} description={description}>
-  <section class="hero">
+  <PageHero
+    badge="Services"
+    title="AI Engineering"
+    highlight="Services"
+    description="Engagements that complement the DynasAI platform — or stand alone while you evaluate."
+  />
+
+  <section class="section">
     <div class="container">
-      <p class="kicker">Pricing</p>
-      <h1>Clear tracks. Scoped to the work.</h1>
-      <p class="lede">
-        Delivery is quoted from the problem. Platform plans unlock the workspace and APIs. Final
-        numbers are confirmed after a short discovery call.
-      </p>
+      <h2>Engineering Capabilities</h2>
+      <div class="feature-grid" style="margin-top: 24px;">
+        {capabilities.map(([title, body]) => (
+          <article class="info-card">
+            <h3>{title}</h3>
+            <p>{body}</p>
+          </article>
+        ))}
+      </div>
     </div>
   </section>
 
   <section class="section">
     <div class="container">
-      <h2>Delivery studio</h2>
+      <h2>Our Methodology: Strategy to Production</h2>
+      <div class="feature-grid feature-grid--4" style="margin-top: 24px;">
+        {methodology.map(([title, body]) => (
+          <article class="info-card">
+            <div class="icon-box">{title.slice(0, 1)}</div>
+            <h3>{title}</h3>
+            <p>{body}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
       <div class="data-table-wrap">
         <table>
           <thead>
             <tr>
-              <th scope="col">Track</th>
+              <th scope="col">Engagement</th>
               <th scope="col">Best for</th>
-              <th scope="col">Includes</th>
-              <th scope="col">Starting at</th>
+              <th scope="col">Outcome</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <th scope="row">Discovery</th>
-              <td>Teams validating an AI bet</td>
-              <td>Workshops, architecture, delivery plan</td>
-              <td>Project quote</td>
+              <td>Teams validating AI strategy</td>
+              <td>Prioritized roadmap and architecture</td>
             </tr>
             <tr>
               <th scope="row">Build</th>
-              <td>Shipping a production system</td>
-              <td>Agents, integrations, evals, launch</td>
-              <td>Project quote</td>
+              <td>Shipping production automation</td>
+              <td>Agents, workflows, and integrations live</td>
             </tr>
             <tr>
               <th scope="row">Operate</th>
               <td>Running after go-live</td>
-              <td>Monitoring, iteration, on-call cadence</td>
-              <td>Monthly retainer</td>
+              <td>Monitoring, evals, and iteration retainer</td>
             </tr>
           </tbody>
         </table>
       </div>
+      <p class="muted" style="margin-top: 16px;">Pricing is scoped per engagement. <a href="/contact">Contact sales</a> for a quote.</p>
     </div>
   </section>
-
-  <section class="section">
-    <div class="container">
-      <h2>Developer platform</h2>
-      <div class="card-grid">
-        <article class="card">
-          <p class="badge">Soon</p>
-          <h3>Starter</h3>
-          <p class="price">Free</p>
-          <p class="muted">Sandbox keys, docs, and limited API calls for evaluation.</p>
-        </article>
-        <article class="card">
-          <p class="badge">Soon</p>
-          <h3>Growth</h3>
-          <p class="price">Usage</p>
-          <p class="muted">Production workspace, team seats, and standard rate limits.</p>
-        </article>
-        <article class="card">
-          <p class="badge">Soon</p>
-          <h3>Scale</h3>
-          <p class="price">Custom</p>
-          <p class="muted">SSO, higher limits, dedicated support, and contract terms.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <div class="container">
-    <CtaBand title="Get a scoped quote" body="Tell us whether you need delivery, API access, or both. We’ll reply with a recommended track." />
-  </div>
 </BaseLayout>

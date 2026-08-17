@@ -1,7 +1,7 @@
 # Todos
 
 - [x] Astro static marketing site
-- [x] All v1 pages (home, product, pricing, blog, docs, about, contact, careers, legal)
+- [x] All v1 pages restyled from Stitch (about, contact, careers, features, pricing, docs, blog, legal)
 - [x] SEO: sitemap, robots, RSS, JSON-LD, canonicals
 - [x] GTM-KDPPRVV2 (production builds)
 - [x] Cloudflare Workers wrangler.jsonc
@@ -14,6 +14,6 @@
 - [ ] Attach dynasai.ai / www in Cloudflare
 - [ ] GTM: GA4 tag + Consent Mode
 - [ ] Google Search Console property for dynasai.ai
-- [ ] OG image 1200×630 (using logo PNG for now)
+- [x] Homepage restyled from Stitch "DynasAI - Enterprise Homepage"
 - [ ] Contact form Worker (replace mailto)
 - [ ] Separate Worker for app.dynasai.ai

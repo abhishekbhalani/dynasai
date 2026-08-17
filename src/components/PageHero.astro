@@ -1,0 +1,23 @@
+---
+interface Props {
+  badge?: string;
+  title: string;
+  highlight?: string;
+  description?: string;
+  centered?: boolean;
+}
+
+const { badge, title, highlight, description, centered = true } = Astro.props;
+---
+
+<section class={`page-hero bg-grid-pattern ${centered ? 'page-hero--center' : ''}`}>
+  <div class="container">
+    {badge && <p class="hero-badge">{badge}</p>}
+    <h1>
+      {title}
+      {highlight && <> <span class="gradient-text">{highlight}</span></>}
+    </h1>
+    {description && <p class="lede">{description}</p>}
+    <slot />
+  </div>
+</section>
