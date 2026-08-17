@@ -5,7 +5,7 @@ export const site = {
   appUrl: 'https://app.dynasai.ai',
   locale: 'en_US',
   description:
-    'DynasAI orchestrates AI agents, enterprise data, and human intelligence into a unified execution layer. Automate sophisticated workflows with precision and control.',
+    'DynasAI is the easy front layer for enterprise AI — governed agents, data processing, and automation on AWS, Azure, or GCP. You keep data control; we handle orchestration, evaluation, and compliance.',
   tagline: 'Turn enterprise complexity into intelligent action.',
   email: 'hello@dynasai.ai',
   gtmId: 'GTM-KDPPRVV2',
@@ -23,7 +23,7 @@ export const site = {
 export const nav = [
   { href: '/features', label: 'Platform', mega: 'platform' },
   { href: '/pricing', label: 'Services' },
-  { href: '/solutions/insurance', label: 'Solutions' },
+  { href: '/solutions', label: 'Solutions' },
   { href: '/blog', label: 'Resources', mega: 'resources' },
   { href: '/about', label: 'Company', mega: 'company' },
 ] as const;

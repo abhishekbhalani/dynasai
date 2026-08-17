@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import MarketingPage from '../../components/MarketingPage.astro';
+import { impactPage } from '../../content/stitch-pages';
+
+const page = impactPage;
+---
+
+<BaseLayout title={page.title} description={page.description}>
+  <MarketingPage page={page} />
+</BaseLayout>

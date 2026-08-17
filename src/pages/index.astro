@@ -1,8 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import HomeHero from '../components/HomeHero.astro';
+import HeroBanner from '../components/HeroBanner.astro';
 import { site } from '../config';
-import { servicePillars } from '../content/site-content';
+import {
+  servicePillars,
+  cloudProviders,
+  platformModel,
+  dataProcessing,
+  complianceStandards,
+} from '../content/site-content';
 
 const title = 'Turn Enterprise Complexity Into Intelligent Action';
 const description = site.description;
@@ -10,41 +16,86 @@ const description = site.description;
 const lifecycle = [
   {
     title: 'Discover',
-    body: 'Map operational bottlenecks, data constraints, and high-ROI automation opportunities across your enterprise.',
+    body: 'Map data sources, cloud options, compliance needs, and high-ROI automation opportunities.',
     icon: '◎',
   },
   {
     title: 'Design',
-    body: 'Architect agent workflows, tool access, and human-in-the-loop controls on a governed visual canvas.',
+    body: 'Architect agents, data pipelines, and human-in-the-loop controls on your chosen cloud backend.',
     icon: '◇',
   },
   {
     title: 'Deploy',
-    body: 'Ship to production with versioned agents, secure integrations, and environment-aware rollout.',
+    body: 'Ship to AWS, Azure, or GCP with secure integrations, eval gates, and environment-aware rollout.',
     icon: '↑',
   },
   {
     title: 'Operate',
-    body: 'Monitor traces, eval scores, and drift — iterate continuously with AgentOps, not one-off pilots.',
+    body: 'Monitor traces, data quality, and drift — iterate with AgentOps and compliance cadence.',
     icon: '≋',
   },
 ];
-
-const trustItems = ['Cloud platforms', 'Data warehouses', 'Enterprise identity', 'API ecosystems'];
 ---
 
 <BaseLayout title={title} description={description}>
-  <HomeHero />
+  <HeroBanner />
 
-  <section class="trust-bar" aria-label="Trusted ecosystem">
+  <section class="trust-bar" aria-label="Supported cloud platforms">
     <div class="container">
-      <p class="label-sm muted">Built for the modern enterprise stack</p>
-      <div class="trust-items">
-        {trustItems.map((item) => (
-          <div class="trust-item">
-            <span aria-hidden="true">●</span>
-            <span>{item}</span>
+      <p class="label-sm muted">Backend services on the clouds you already use</p>
+      <div class="cloud-trust-grid">
+        {cloudProviders.map((provider) => (
+          <div class="cloud-trust-item">
+            <strong>{provider.short}</strong>
+            <span>{provider.body}</span>
           </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="platform-model-heading">
+    <div class="container split-layout">
+      <div>
+        <h2 id="platform-model-heading">{platformModel.title}</h2>
+        <p class="section-copy">{platformModel.subtitle}</p>
+      </div>
+      <div class="platform-model-grid">
+        <article class="info-card">
+          <h3>DynasAI front layer</h3>
+          <p class="muted">What your teams interact with every day.</p>
+          <ul class="list-compact">
+            {platformModel.frontLayer.map((item) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+        </article>
+        <article class="info-card">
+          <h3>Your cloud backend</h3>
+          <p class="muted">Where compute, storage, and models run — your choice.</p>
+          <ul class="list-compact">
+            {platformModel.backendLayer.map((item) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--muted" aria-labelledby="data-processing-heading">
+    <div class="container">
+      <div class="section-header section-header--center">
+        <h2 id="data-processing-heading">{dataProcessing.title}</h2>
+        <p class="section-copy section-copy--center">{dataProcessing.body}</p>
+      </div>
+      <div class="feature-grid feature-grid--4">
+        {dataProcessing.steps.map((step) => (
+          <article class="info-card">
+            <div class="icon-box">{step.title.slice(0, 1)}</div>
+            <h3>{step.title}</h3>
+            <p>{step.body}</p>
+          </article>
         ))}
       </div>
     </div>
@@ -53,9 +104,9 @@ const trustItems = ['Cloud platforms', 'Data warehouses', 'Enterprise identity',
   <section class="section" aria-labelledby="services-heading">
     <div class="container">
       <div class="section-header section-header--center">
-        <h2 id="services-heading">Transform data into intelligent action</h2>
+        <h2 id="services-heading">Enterprise AI services for the modern era</h2>
         <p class="section-copy section-copy--center">
-          Four delivery pillars — from strategy through operated production — on one platform.
+          Strategy, data processing, automation, and compliance — delivered on AWS, Azure, or GCP.
         </p>
       </div>
       <div class="card-grid">
@@ -74,12 +125,29 @@ const trustItems = ['Cloud platforms', 'Data warehouses', 'Enterprise identity',
     </div>
   </section>
 
+  <section class="section" aria-labelledby="compliance-heading">
+    <div class="container">
+      <div class="section-header">
+        <h2 id="compliance-heading">{complianceStandards.title}</h2>
+        <p class="section-copy">{complianceStandards.body}</p>
+      </div>
+      <div class="feature-grid">
+        {complianceStandards.items.map((item) => (
+          <article class="info-card">
+            <h3>{item.href ? <a href={item.href}>{item.title}</a> : item.title}</h3>
+            <p>{item.body}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
   <section class="section" aria-labelledby="lifecycle-heading">
     <div class="container">
       <div class="section-header section-header--center">
         <h2 id="lifecycle-heading">The agent automation lifecycle</h2>
         <p class="section-copy section-copy--center">
-          A repeatable path from discovery to continuous operation — supported by the Dynas Toolkit and workspace.
+          From discovery to operated production — on your cloud, with our front layer and toolkit.
         </p>
       </div>
       <div class="bento-grid">
@@ -104,14 +172,14 @@ const trustItems = ['Cloud platforms', 'Data warehouses', 'Enterprise identity',
       <div class="cta-band">
         <div class="cta-band-inner">
           <div class="cta-band-copy">
-            <h2>Own your AI journey with modular accelerators</h2>
+            <h2>Start with the right cloud and data model</h2>
             <p class="muted">
-              Dynas Toolkit modules — templates, evals, deployment pipelines — speed delivery whether you self-serve or work with our studio.
+              We recommend cost-effective AWS, Azure, or GCP architectures — then deliver automation on the DynasAI front layer with full data control.
             </p>
           </div>
           <div class="cta-band-actions">
-            <a class="btn btn-primary" href="/platform/toolkit">View toolkit</a>
-            <a class="btn btn-secondary" href="/contact">Talk to an expert</a>
+            <a class="btn btn-primary" href="/contact">Talk to an expert</a>
+            <a class="btn btn-secondary" href="/partners">Cloud partners</a>
           </div>
         </div>
       </div>

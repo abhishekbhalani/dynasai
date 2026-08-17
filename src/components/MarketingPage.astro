@@ -1,0 +1,107 @@
+---
+import Breadcrumb from './Breadcrumb.astro';
+import type { MarketingPage as MarketingPageType } from '../content/stitch-pages';
+
+interface Props {
+  page: MarketingPageType;
+}
+
+const { page } = Astro.props;
+---
+
+<section class="industry-hero bg-grid-pattern">
+  <div class="container">
+    {page.breadcrumb && <Breadcrumb items={page.breadcrumb} />}
+    {page.badge && <p class="hero-badge">{page.badge}</p>}
+    <div class="industry-hero-copy">
+      <h1>
+        {page.headline}
+        {page.highlight && <> <span class="gradient-text">{page.highlight}</span></>}
+      </h1>
+      <p class="lede">{page.subhead}</p>
+    </div>
+  </div>
+</section>
+
+{
+  page.sections.map((section) => {
+    if (section.type === 'split') {
+      return (
+        <section class="section">
+          <div class="container split-layout">
+            <div><h2>{section.title}</h2></div>
+            <div class="prose-block">
+              {section.paragraphs.map((p) => <p>{p}</p>)}
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    if (section.type === 'grid') {
+      return (
+        <section class="section section--muted">
+          <div class="container">
+            <div class="section-header">
+              <h2>{section.title}</h2>
+              {section.subtitle && <p class="section-copy">{section.subtitle}</p>}
+            </div>
+            <div class="story-grid">
+              {section.items.map((item) => (
+                <article class="story-card">
+                  <div class="story-card-visual" aria-hidden="true"><span>◈</span></div>
+                  <h3>{item.href ? <a href={item.href}>{item.title}</a> : item.title}</h3>
+                  <p>{item.body}</p>
+                  {item.href && <a class="story-card-link" href={item.href}>Learn more →</a>}
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    if (section.type === 'numbered') {
+      return (
+        <section class="section">
+          <div class="container">
+            <div class="section-header">
+              <h2>{section.title}</h2>
+              {section.subtitle && <p class="section-copy">{section.subtitle}</p>}
+            </div>
+            <ol class="capability-grid">
+              {section.items.map((item) => (
+                <li class="capability-card">
+                  <span class="capability-num" aria-hidden="true">{item.num}</span>
+                  <h3>{item.title}</h3>
+                  <p>{item.body}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+      );
+    }
+
+    return (
+      <section class="section section--compact">
+        <div class="container">
+          <div class="cta-band cta-band--industry">
+            <div class="cta-band-inner">
+              <div class="cta-band-copy">
+                <h2>{section.title}</h2>
+                <p class="muted">{section.body}</p>
+              </div>
+              <div class="cta-band-actions">
+                <a class="btn btn-primary" href={section.primary.href}>{section.primary.label}</a>
+                {section.secondary && (
+                  <a class="btn btn-secondary" href={section.secondary.href}>{section.secondary.label}</a>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  })
+}

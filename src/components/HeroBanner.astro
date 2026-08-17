@@ -1,0 +1,52 @@
+---
+import { site } from '../config';
+import { seoServices } from '../content/stitch-pages';
+
+const headline = 'Turn enterprise complexity into';
+const highlight = 'intelligent action';
+const lede =
+  'One easy front layer for enterprise AI — connect raw data from any source, evaluate and process it safely, and automate with governed agents on AWS, Azure, or GCP. You keep data control; we simplify the experience.';
+---
+
+<section class="hero-banner" aria-labelledby="hero-heading">
+  <div class="hero-banner-media">
+    <img
+      src="/img/hero-banner.png"
+      alt=""
+      width="1920"
+      height="1080"
+      loading="eager"
+      fetchpriority="high"
+      decoding="async"
+    />
+  </div>
+  <div class="hero-banner-overlay">
+    <div class="container hero-banner-content">
+      <p class="hero-badge hero-badge--on-dark">AI Delivery Studio + Developer Platform</p>
+      <h1 id="hero-heading">
+        {headline} <span class="gradient-text gradient-text--on-dark">{highlight}</span>
+      </h1>
+      <p class="hero-banner-lede">{lede}</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-lg" href={site.appUrl}>Start Building</a>
+        <a class="btn btn-secondary btn-lg btn-secondary--on-dark" href="/pricing">Our Services</a>
+      </div>
+
+      <div class="hero-services" aria-labelledby="hero-services-heading">
+        <h2 id="hero-services-heading" class="hero-services-title">Enterprise AI services we provide</h2>
+        <ul class="hero-services-grid">
+          {
+            seoServices.map((service) => (
+              <li>
+                <a class="hero-service-card" href={service.href}>
+                  <strong>{service.label}</strong>
+                  <span>{service.description}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

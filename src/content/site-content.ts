@@ -3,33 +3,81 @@
 export const servicePillars = [
   {
     id: 'strategy',
-    title: 'Strategy & Advisory',
-    summary: 'Turn AI ambition into a prioritized roadmap with clear ROI, governance, and platform choices.',
+    title: 'Strategy & Cloud Advisory',
+    summary: 'Choose the right cloud mix (AWS, Azure, GCP), data residency model, and AI roadmap with clear ROI.',
     href: '/pricing#strategy',
-    items: ['AI & automation roadmap', 'Platform and vendor strategy', 'Operating model design'],
+    items: ['Multi-cloud & cost optimization', 'Data residency planning', 'AI automation roadmap'],
   },
   {
     id: 'engineering',
-    title: 'Agent & Application Engineering',
-    summary: 'Design, build, and integrate governed agents, workflows, and GenAI applications on your stack.',
+    title: 'Agent & Automation Engineering',
+    summary: 'Build governed agents and workflows on the DynasAI front layer — connected to your chosen cloud backend.',
     href: '/pricing#engineering',
-    items: ['Custom AI agents', 'Workflow orchestration', 'GenAI product builds'],
+    items: ['Custom AI agents', 'Workflow orchestration', 'Human-in-the-loop automation'],
   },
   {
     id: 'data',
-    title: 'Data & Integration Foundation',
-    summary: 'Connect enterprise systems, knowledge bases, and APIs so agents act on trusted, fresh context.',
+    title: 'Data Ingestion & Processing',
+    summary: 'Collect raw data from any source, normalize it, evaluate quality, and prepare it for AI — without losing control.',
     href: '/pricing#data',
-    items: ['Enterprise integrations', 'Knowledge & RAG pipelines', 'Identity-aware tool access'],
+    items: ['Multi-source data pipelines', 'Raw-to-ready processing', 'Evaluation & lineage'],
   },
   {
     id: 'operate',
-    title: 'Operate & Scale',
-    summary: 'Run production automation with observability, evals, drift monitoring, and continuous improvement.',
+    title: 'Secure Operate & Compliance',
+    summary: 'Run production automation with GDPR, US privacy standards, audit trails, and continuous AgentOps.',
     href: '/pricing#operate',
-    items: ['AgentOps & monitoring', 'Evaluation frameworks', 'Managed iteration retainers'],
+    items: ['GDPR & US data controls', 'AgentOps & monitoring', 'Security review artifacts'],
   },
 ] as const;
+
+export const cloudProviders = [
+  { name: 'Amazon Web Services', short: 'AWS', body: 'Bedrock, S3, Lambda, and VPC-native deployments.' },
+  { name: 'Microsoft Azure', short: 'Azure', body: 'OpenAI, Entra ID, Fabric, and enterprise app integrations.' },
+  { name: 'Google Cloud', short: 'GCP', body: 'Vertex AI, BigQuery, and secure data processing pipelines.' },
+] as const;
+
+export const platformModel = {
+  title: 'Simple front layer. Your cloud. Your data.',
+  subtitle:
+    'DynasAI sits between your teams and the hyperscalers — one workspace to build, evaluate, and automate while backend services run where you choose.',
+  frontLayer: [
+    'Visual agent & workflow builder',
+    'Unified data evaluation workbench',
+    'Pre-built industry templates',
+    'One login for business and engineering users',
+  ],
+  backendLayer: [
+    'Customer-selected AWS, Azure, or GCP services',
+    'Bring your own VPC, tenant, or data lake',
+    'Cost-optimized architecture recommendations',
+    'No forced cloud lock-in',
+  ],
+} as const;
+
+export const dataProcessing = {
+  title: 'From raw sources to trusted automation',
+  body:
+    'Enterprises sit on fragmented data — APIs, files, warehouses, SaaS exports, and streaming feeds. DynasAI ingests from multiple sources, profiles and evaluates quality, applies processing rules, and exposes clean context to agents and analysts.',
+  steps: [
+    { title: 'Collect', body: 'Connect databases, APIs, documents, webhooks, and batch files from any source.' },
+    { title: 'Evaluate', body: 'Score completeness, freshness, bias risk, and retrieval quality before use.' },
+    { title: 'Process', body: 'Normalize, enrich, chunk, and govern pipelines with versioned transforms.' },
+    { title: 'Automate', body: 'Feed governed agents and workflows with audit-ready context and approvals.' },
+  ],
+} as const;
+
+export const complianceStandards = {
+  title: 'Security and privacy by design',
+  body:
+    'We follow enterprise security practices and regional privacy requirements so customers can deploy with confidence — whether data stays in the EU, US, or a hybrid model.',
+  items: [
+    { title: 'GDPR & EU privacy', body: 'Data minimization, purpose limitation, DPA support, and residency options for EU customers.' },
+    { title: 'US enterprise standards', body: 'SOC-aligned controls, encryption in transit/at rest, and access logging.' },
+    { title: 'Customer data control', body: 'Use our managed cloud templates or keep data in your own AWS, Azure, or GCP account.' },
+    { title: 'Audit-ready operations', body: 'Trace logs, eval reports, and policy gates for regulated industries.', href: '/platform/governance' },
+  ],
+} as const;
 
 export const toolkitModules = [
   {
@@ -119,8 +167,7 @@ export const insuranceIndustry = {
   },
   breadcrumb: [
     { label: 'Home', href: '/' },
-    { label: 'Solutions', href: '/features' },
-    { label: 'Industries', href: '/features' },
+    { label: 'Solutions', href: '/solutions' },
     { label: 'Insurance', href: '/solutions/insurance' },
   ],
   hero: {
