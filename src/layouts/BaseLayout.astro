@@ -99,10 +99,7 @@ const loadGtm = Boolean(gtmId) && import.meta.env.PROD;
 
       function panelForItem(item: Element) {
         const id = item.getAttribute('data-mega-id');
-        if (id === 'platform') {
-          return document.querySelector(`[data-mega-layer="${id}"]`);
-        }
-        return item.querySelector('[data-mega-panel]');
+        return document.querySelector(`[data-mega-layer="${id}"]`);
       }
 
       function setMegaOpen(item: Element, open: boolean) {
@@ -158,10 +155,7 @@ const loadGtm = Boolean(gtmId) && import.meta.env.PROD;
           setMegaOpen(item, willOpen);
         });
 
-        bindMegaHover(
-          item.getAttribute('data-mega-id') === 'platform' ? [trigger, panel] : [item, panel],
-          item,
-        );
+        bindMegaHover([trigger, panel], item);
       });
 
       document.addEventListener('click', (event) => {

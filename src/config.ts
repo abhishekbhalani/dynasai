@@ -85,6 +85,8 @@ export const platformMegaMenu = {
 } as const;
 
 export const resourcesMegaMenu = {
+  title: 'Resources & Insights',
+  description: 'Delivery notes, documentation, and tools for builders and operators.',
   links: [
     { label: 'Dynas Toolkit', href: '/platform/toolkit', description: 'Modular accelerators for agent delivery.' },
     { label: 'Blog', href: '/blog', description: 'Delivery notes and platform updates.' },
@@ -94,17 +96,13 @@ export const resourcesMegaMenu = {
 } as const;
 
 export const companyMegaMenu = {
+  title: 'Company',
+  description: 'Learn about our team, culture, and how to work with DynasAI.',
   links: [
     { label: 'About', href: '/about', description: 'Our story, mission, and leadership.' },
     { label: 'Careers', href: '/careers', description: 'Open roles and culture.' },
     { label: 'Contact', href: '/contact', description: 'Talk to an AI expert.' },
   ],
 } as const;
-
-export const companyNav = [
-  { href: '/about', label: 'About' },
-  { href: '/careers', label: 'Careers' },
-  { href: '/contact', label: 'Contact' },
-] as const;
 
 export { stitchScreens as stitch } from './stitch-screens';

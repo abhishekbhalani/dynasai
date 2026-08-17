@@ -203,10 +203,12 @@ a:hover {
   transition: transform 0.2s ease;
 }
 
-.nav-item.is-open .nav-chevron {
+.nav-item.is-open .nav-chevron,
+.nav-item--mega.is-open .nav-chevron {
   transform: rotate(180deg);
 }
 
+.nav-item--mega.is-open > .nav-trigger,
 .nav-item--platform.is-open > .nav-trigger {
   color: var(--accent);
   background: transparent;
@@ -320,6 +322,18 @@ a:hover {
   border-radius: 0;
   box-shadow: none;
   background: transparent;
+}
+
+.mega-menu-inner--compact {
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: start;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  padding: 0;
 }
 
 .mega-menu-main {
@@ -464,6 +478,28 @@ a:hover {
   font-size: 13px;
   color: var(--text-muted);
   font-weight: 400;
+}
+
+.mega-menu-list--grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-2);
+}
+
+.mega-menu-list--grid a {
+  height: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg);
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+
+.mega-menu-list--grid a:hover,
+.mega-menu-list--grid a:focus-visible {
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+  background: var(--bg-elevated);
 }
 
 .header-cta-secondary {
@@ -1487,7 +1523,8 @@ tbody tr:active {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .mega-menu-inner--platform {
+  .mega-menu-inner--platform,
+  .mega-menu-inner--compact {
     grid-template-columns: 1fr;
   }
 
@@ -1613,8 +1650,13 @@ tbody tr:active {
     padding-block: var(--space-2);
   }
 
-  .mega-menu-inner--platform {
+  .mega-menu-inner--platform,
+  .mega-menu-inner--compact {
     padding: 0;
+  }
+
+  .mega-menu-list--grid {
+    grid-template-columns: 1fr;
   }
 
   .mega-menu-featured {

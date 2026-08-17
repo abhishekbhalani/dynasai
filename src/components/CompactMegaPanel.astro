@@ -1,0 +1,33 @@
+---
+interface Props {
+  id: string;
+  title: string;
+  description: string;
+  links: ReadonlyArray<{ label: string; href: string; description: string }>;
+}
+
+const { id, title, description, links } = Astro.props;
+---
+
+<div class="mega-menu-layer mega-menu-layer--compact" id={`mega-${id}`} data-mega-layer={id} data-mega-panel hidden>
+  <div class="container mega-menu-layer-inner">
+    <div class="mega-menu-inner mega-menu-inner--compact">
+      <div class="mega-menu-intro">
+        <h2>{title}</h2>
+        <p>{description}</p>
+      </div>
+      <ul class="mega-menu-list mega-menu-list--grid">
+        {
+          links.map((link) => (
+            <li>
+              <a href={link.href}>
+                <strong>{link.label}</strong>
+                <span>{link.description}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</div>

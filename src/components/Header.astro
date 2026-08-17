@@ -1,6 +1,7 @@
 ---
 import Logo from './Logo.astro';
 import ThemeToggle from './ThemeToggle.astro';
+import CompactMegaPanel from './CompactMegaPanel.astro';
 import { site, nav, platformMegaMenu, resourcesMegaMenu, companyMegaMenu } from '../config';
 
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
@@ -24,7 +25,6 @@ function isActive(href: string) {
                 type="button"
                 class="nav-trigger"
                 data-mega-trigger
-                data-mega-target="platform"
                 aria-expanded="false"
                 aria-controls="mega-platform"
                 aria-current={isActive(item.href) ? 'page' : undefined}
@@ -34,7 +34,7 @@ function isActive(href: string) {
               </button>
             </div>
           ) : 'mega' in item && item.mega === 'resources' ? (
-            <div class="nav-item nav-item--mega nav-item--compact" data-mega-item data-mega-id="resources">
+            <div class="nav-item nav-item--mega" data-mega-item data-mega-id="resources">
               <button
                 type="button"
                 class="nav-trigger"
@@ -46,25 +46,9 @@ function isActive(href: string) {
                 {item.label}
                 <span class="nav-chevron" aria-hidden="true">▾</span>
               </button>
-              <div class="mega-menu mega-menu--compact" id="mega-resources" data-mega-panel hidden>
-                <div class="mega-menu-inner">
-                  <ul class="mega-menu-list">
-                    {
-                      resourcesMegaMenu.links.map((link) => (
-                        <li>
-                          <a href={link.href}>
-                            <strong>{link.label}</strong>
-                            <span>{link.description}</span>
-                          </a>
-                        </li>
-                      ))
-                    }
-                  </ul>
-                </div>
-              </div>
             </div>
           ) : 'mega' in item && item.mega === 'company' ? (
-            <div class="nav-item nav-item--mega nav-item--compact" data-mega-item data-mega-id="company">
+            <div class="nav-item nav-item--mega" data-mega-item data-mega-id="company">
               <button
                 type="button"
                 class="nav-trigger"
@@ -76,22 +60,6 @@ function isActive(href: string) {
                 {item.label}
                 <span class="nav-chevron" aria-hidden="true">▾</span>
               </button>
-              <div class="mega-menu mega-menu--compact" id="mega-company" data-mega-panel hidden>
-                <div class="mega-menu-inner">
-                  <ul class="mega-menu-list">
-                    {
-                      companyMegaMenu.links.map((link) => (
-                        <li>
-                          <a href={link.href}>
-                            <strong>{link.label}</strong>
-                            <span>{link.description}</span>
-                          </a>
-                        </li>
-                      ))
-                    }
-                  </ul>
-                </div>
-              </div>
             </div>
           ) : (
             <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>
@@ -153,4 +121,7 @@ function isActive(href: string) {
       </div>
     </div>
   </div>
+
+  <CompactMegaPanel id="resources" {...resourcesMegaMenu} />
+  <CompactMegaPanel id="company" {...companyMegaMenu} />
 </header>
