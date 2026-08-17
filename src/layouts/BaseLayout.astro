@@ -31,12 +31,21 @@ const loadGtm = Boolean(gtmId) && import.meta.env.PROD;
     <meta name="generator" content={Astro.generator} />
     <script is:inline>
       (function () {
+        var root = document.documentElement;
         try {
           var stored = localStorage.getItem('theme');
-          var theme = stored || 'light';
-          document.documentElement.setAttribute('data-theme', theme);
+          root.setAttribute('data-theme', stored || 'light');
         } catch (e) {
-          document.documentElement.setAttribute('data-theme', 'light');
+          root.setAttribute('data-theme', 'light');
+        }
+        try {
+          if (localStorage.getItem('dynasai_cookie_consent')) {
+            root.setAttribute('data-cookie-ok', '1');
+          } else {
+            root.setAttribute('data-cookie-needed', '1');
+          }
+        } catch (e) {
+          root.setAttribute('data-cookie-needed', '1');
         }
       })();
     </script>

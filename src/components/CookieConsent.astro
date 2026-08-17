@@ -2,22 +2,12 @@
 import { site } from '../config';
 ---
 
-<script is:inline>
-  (function () {
-    try {
-      if (localStorage.getItem('dynasai_cookie_consent')) {
-        document.documentElement.setAttribute('data-cookie-ok', '1');
-      }
-    } catch (e) {}
-  })();
-</script>
-
 <div class="cookie-root" data-cookie-root>
   <div class="cookie-banner" role="region" aria-label="Cookie notice" data-cookie-banner>
     <p class="cookie-banner-copy">
-      This website uses cookies to enhance your digital experience. For additional details please visit
+      This website uses cookies to enhance your digital experience. For additional details please visit{' '}
       <a href="/legal/privacy">Privacy Policy</a>
-      and
+      {' '}and{' '}
       <a href="/legal/cookies">Cookie Policy</a>.
     </p>
     <div class="cookie-banner-actions">
@@ -49,9 +39,9 @@ import { site } from '../config';
         <h2 id="cookie-dialog-title">Privacy Preference Center</h2>
         <p>
           We use cookies to run dynasai.ai, measure performance, and — only if you allow — support marketing tags in Google Tag Manager.
-          See the
+          See the{' '}
           <a href="/legal/privacy">Privacy Policy</a>
-          and
+          {' '}and{' '}
           <a href="/legal/cookies">Cookie Policy</a>.
         </p>
 
@@ -74,7 +64,7 @@ import { site } from '../config';
           <div class="cookie-cat-row">
             <h4 id="cookie-perf-label">Performance cookies</h4>
             <label class="cookie-switch">
-              <input type="checkbox" role="switch" data-cookie-performance aria-labelledby="cookie-perf-label" />
+              <input type="checkbox" role="switch" data-cookie-performance aria-labelledby="cookie-perf-label" checked />
               <span class="cookie-switch-ui" aria-hidden="true"></span>
             </label>
           </div>
@@ -89,11 +79,11 @@ import { site } from '../config';
           <div class="cookie-cat-row">
             <h4 id="cookie-mkt-label">Marketing / Targeting Cookies</h4>
             <label class="cookie-switch">
-              <input type="checkbox" role="switch" data-cookie-marketing aria-labelledby="cookie-mkt-label" />
+              <input type="checkbox" role="switch" data-cookie-marketing aria-labelledby="cookie-mkt-label" checked />
               <span class="cookie-switch-ui" aria-hidden="true"></span>
             </label>
           </div>
-          <p>Used for advertising measurement and personalization if you enable those tags in GTM. Off by default until you confirm.</p>
+          <p>Used for advertising measurement and personalization if those tags are enabled in GTM. On by default; turn off if you do not want marketing cookies.</p>
           <details>
             <summary>Cookies Details</summary>
             <p>Advertising / conversion cookies from GTM tags, only when marketing consent is granted.</p>
@@ -147,23 +137,19 @@ import { site } from '../config';
   function save(prefs: Prefs) {
     localStorage.setItem(KEY, JSON.stringify({ ...prefs, savedAt: new Date().toISOString() }));
     document.documentElement.setAttribute('data-cookie-ok', '1');
+    document.documentElement.removeAttribute('data-cookie-needed');
     applyGtm(prefs);
   }
 
   function hideBanner() {
+    document.documentElement.setAttribute('data-cookie-ok', '1');
+    document.documentElement.removeAttribute('data-cookie-needed');
     if (banner) banner.hidden = true;
-    if (root && overlay?.hidden) root.hidden = true;
-  }
-
-  function showBanner() {
-    if (!root || !banner) return;
-    root.hidden = false;
-    banner.hidden = false;
   }
 
   function openSettings() {
     if (!root || !overlay || !dialog || !perf || !mkt) return;
-    const prefs = readPrefs() || { necessary: true as const, performance: false, marketing: false };
+    const prefs = readPrefs() || { necessary: true as const, performance: true, marketing: true };
     perf.checked = prefs.performance;
     mkt.checked = prefs.marketing;
     root.hidden = false;
@@ -177,10 +163,6 @@ import { site } from '../config';
     if (!overlay) return;
     overlay.hidden = true;
     document.body.style.overflow = '';
-    if (readPrefs() && banner) {
-      banner.hidden = true;
-      if (root) root.hidden = true;
-    }
   }
 
   function acceptAll() {
@@ -196,29 +178,33 @@ import { site } from '../config';
   }
 
   function confirmChoices() {
-    save({
-      necessary: true,
-      performance: Boolean(perf?.checked),
-      marketing: Boolean(mkt?.checked),
-    });
+    try {
+      save({
+        necessary: true,
+        performance: Boolean(perf?.checked),
+        marketing: Boolean(mkt?.checked),
+      });
+    } catch {
+      document.documentElement.setAttribute('data-cookie-ok', '1');
+      document.documentElement.removeAttribute('data-cookie-needed');
+    }
     closeSettings();
     hideBanner();
   }
 
   if (root && banner && overlay) {
     const existing = readPrefs();
-    if (existing) {
-      applyGtm(existing);
-      root.hidden = true;
-    } else {
-      showBanner();
-    }
+    if (existing) applyGtm(existing);
 
-    document.querySelector('[data-cookie-accept]')?.addEventListener('click', acceptAll);
-    document.querySelector('[data-cookie-open]')?.addEventListener('click', openSettings);
-    document.querySelector('[data-cookie-close]')?.addEventListener('click', closeSettings);
-    document.querySelector('[data-cookie-reject]')?.addEventListener('click', rejectAll);
-    document.querySelector('[data-cookie-confirm]')?.addEventListener('click', confirmChoices);
+    root.addEventListener('click', (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      if (target.closest('[data-cookie-accept]')) acceptAll();
+      else if (target.closest('[data-cookie-open]')) openSettings();
+      else if (target.closest('[data-cookie-close]')) closeSettings();
+      else if (target.closest('[data-cookie-reject]')) rejectAll();
+      else if (target.closest('[data-cookie-confirm]')) confirmChoices();
+    });
 
     overlay.addEventListener('click', (event) => {
       if (event.target === overlay) closeSettings();

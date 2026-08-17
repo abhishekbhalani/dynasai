@@ -2728,6 +2728,7 @@ tbody tr:active {
 }
 
 .cookie-banner {
+  display: none;
   position: fixed;
   inset: auto 0 0;
   z-index: 80;
@@ -2755,6 +2756,7 @@ tbody tr:active {
   font-weight: 650;
   text-decoration: underline;
   text-underline-offset: 3px;
+  margin-inline: 0.2em;
 }
 
 .cookie-banner-copy a:hover,
@@ -2823,6 +2825,10 @@ tbody tr:active {
   background: rgba(0, 0, 0, 0.62);
 }
 
+.cookie-overlay[hidden] {
+  display: none !important;
+}
+
 .cookie-dialog {
   display: flex;
   flex-direction: column;
@@ -2869,6 +2875,8 @@ tbody tr:active {
 }
 
 .cookie-dialog-body {
+  flex: 1 1 auto;
+  min-height: 0;
   overflow: auto;
   padding: 16px 24px 24px;
 }
@@ -2892,9 +2900,17 @@ tbody tr:active {
   line-height: 1.6;
 }
 
+.cookie-dialog-body p {
+  margin: 0 0 16px;
+}
+
 .cookie-cat {
-  padding: 16px 0;
+  padding: 20px 0;
   border-top: 1px solid #334155;
+}
+
+.cookie-cat + .cookie-cat {
+  margin-top: 8px;
 }
 
 .cookie-cat-row {
@@ -2928,8 +2944,12 @@ tbody tr:active {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
   padding: 16px 24px 24px;
   border-top: 1px solid #334155;
+  background: #0a0a0a;
 }
 
 .cookie-dialog-foot .cookie-btn {
@@ -2984,6 +3004,10 @@ tbody tr:active {
 .cookie-switch input:focus-visible + .cookie-switch-ui {
   outline: 2px solid #7dd3fc;
   outline-offset: 3px;
+}
+
+html[data-cookie-needed] .cookie-banner {
+  display: flex;
 }
 
 html[data-cookie-ok] .cookie-banner {
