@@ -19,7 +19,7 @@ export const servicePillars = [
     id: 'data',
     title: 'Data Ingestion & Processing',
     summary: 'Collect raw data from any source, normalize it, evaluate quality, and prepare it for AI — without losing control.',
-    href: '/pricing#data',
+    href: '/platform/data-processing',
     items: ['Multi-source data pipelines', 'Raw-to-ready processing', 'Evaluation & lineage'],
   },
   {

@@ -503,24 +503,44 @@ a:hover {
   white-space: nowrap;
 }
 
-.menu-toggle {
-  display: none;
+.menu-toggle,
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 40px;
   height: 40px;
+  padding: 0;
+  margin: 0;
   border: 1px solid var(--border);
   background: var(--surface);
   color: var(--text);
   border-radius: 10px;
+  line-height: 0;
+  flex-shrink: 0;
+  cursor: pointer;
 }
 
-.theme-toggle {
-  width: 40px;
-  height: 40px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--text);
-  border-radius: 10px;
-  cursor: pointer;
+.menu-toggle {
+  display: none;
+}
+
+.theme-toggle svg,
+.menu-toggle svg {
+  display: block;
+  flex-shrink: 0;
+}
+
+.theme-toggle .icon-moon {
+  display: none;
+}
+
+[data-theme="dark"] .theme-toggle .icon-sun {
+  display: none;
+}
+
+[data-theme="dark"] .theme-toggle .icon-moon {
+  display: block;
 }
 
 .theme-toggle:hover,
@@ -2149,6 +2169,45 @@ tbody tr:active {
   background: linear-gradient(135deg, var(--accent-soft), var(--surface));
 }
 
+.market-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.market-stat {
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.market-stat dt {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+.market-stat dd {
+  margin: 12px 0 0;
+  color: var(--text);
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.market-stat-source {
+  margin: 12px 0 0;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
 .bento-visual-bar {
   height: 8px;
   border-radius: 999px;
@@ -2170,6 +2229,10 @@ tbody tr:active {
 
   .capability-grid,
   .story-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .market-stat-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -2220,7 +2283,8 @@ tbody tr:active {
   .hero-services-grid,
   .cloud-trust-grid,
   .platform-model-grid,
-  .feature-grid--4 {
+  .feature-grid--4,
+  .market-stat-grid {
     grid-template-columns: 1fr;
   }
 

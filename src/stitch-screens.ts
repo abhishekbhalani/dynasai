@@ -20,6 +20,7 @@ export const stitchScreens = {
   workflowBuilder: '41c25176cae843e9bdad156441955470',
   integrations: 'fa739eadc4a3433f9cb91eb6c9dd7a97',
   impact: 'c206f7a76c7c48d689701e00e8b532b8',
+  dataProcessing: 'platform-data-processing',
 } as const;
 
 export const stitchRoutes = {
@@ -42,4 +43,5 @@ export const stitchRoutes = {
   workflowBuilder: '/platform/workflow-builder',
   integrations: '/platform/integrations',
   impact: '/impact',
+  dataProcessing: '/platform/data-processing',
 } as const;

@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import MarketingPage from '../../components/MarketingPage.astro';
+import { dataProcessingPage } from '../../content/stitch-pages';
+import { site } from '../../config';
+
+const page = dataProcessingPage;
+
+const jsonLd = {
+  '@type': 'Service',
+  '@id': `${site.url}/platform/data-processing#service`,
+  name: 'DynasAI Data Processing & Context Layer',
+  serviceType: 'Enterprise data ingestion, evaluation, and AI context processing',
+  url: `${site.url}/platform/data-processing`,
+  description: page.description,
+  provider: { '@id': `${site.url}/#org` },
+  areaServed: ['United States', 'European Union'],
+  audience: { '@type': 'BusinessAudience', audienceType: 'Enterprise' },
+  offers: {
+    '@type': 'Offer',
+    url: `${site.url}/contact`,
+    availability: 'https://schema.org/InStock',
+  },
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Data processing capabilities',
+    itemListElement: [
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Multi-source data ingestion' } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Data quality and RAG evaluation' } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Governed context pipelines on AWS, Azure, or GCP' } },
+    ],
+  },
+};
+---
+
+<BaseLayout title={page.title} description={page.description} jsonLd={jsonLd}>
+  <MarketingPage page={page} />
+</BaseLayout>

@@ -64,8 +64,9 @@ export const platformMegaMenu = {
       label: 'Understand',
       icon: 'U',
       links: [
-        { label: 'Knowledge & RAG', href: '/features#understand' },
-        { label: 'Document Intelligence', href: '/features#understand' },
+        { label: 'Data Processing', href: '/platform/data-processing' },
+        { label: 'Knowledge & RAG', href: '/platform/data-processing' },
+        { label: 'Document Intelligence', href: '/platform/data-processing' },
         { label: 'Enterprise Search', href: '/features#understand' },
         { label: 'Memory', href: '/features#understand' },
       ],

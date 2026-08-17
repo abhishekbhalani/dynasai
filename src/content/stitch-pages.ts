@@ -2,6 +2,7 @@
 
 export type MarketingSection =
   | { type: 'split'; title: string; paragraphs: string[] }
+  | { type: 'stats'; title: string; subtitle?: string; items: { value: string; label: string; source?: string }[] }
   | { type: 'grid'; title: string; subtitle?: string; items: { title: string; body: string; href?: string }[] }
   | { type: 'numbered'; title: string; subtitle?: string; items: { num: string; title: string; body: string }[] }
   | { type: 'cta'; title: string; body: string; primary: { label: string; href: string }; secondary?: { label: string; href: string } };
@@ -26,7 +27,7 @@ export const seoServices = [
   {
     label: 'Data Ingestion & Processing',
     description: 'Collect raw data from any source, evaluate quality, and prepare for AI.',
-    href: '/pricing#data',
+    href: '/platform/data-processing',
   },
   {
     label: 'Agent & Workflow Automation',
@@ -278,7 +279,7 @@ export const intelligencePage: MarketingPage = {
       items: [
         { title: 'Build', body: 'Agent builder, workflow studio, and template library.', href: '/platform/workflow-builder' },
         { title: 'Connect', body: 'Integrations marketplace and secure tool access.', href: '/platform/integrations' },
-        { title: 'Understand', body: 'RAG, document intelligence, and enterprise search.' },
+        { title: 'Understand', body: 'Data processing, RAG, document intelligence, and enterprise search.', href: '/platform/data-processing' },
         { title: 'Operate', body: 'Observability, evals, and governance controls.', href: '/platform/governance' },
       ],
     },
@@ -318,6 +319,98 @@ export const integrationsPage: MarketingPage = {
       body: 'Our engineering team builds secure integrations as part of delivery programs.',
       primary: { label: 'Request integration', href: '/contact' },
       secondary: { label: 'API overview', href: '/docs/api-overview' },
+    },
+  ],
+};
+
+export const dataProcessingPage: MarketingPage = {
+  title: 'Data Processing & Context Layer',
+  description:
+    'Collect raw data from any source, evaluate quality, and process it into governed context for AI agents — on AWS, Azure, or GCP with customer data control, GDPR, and US privacy standards.',
+  badge: 'Platform',
+  headline: 'Turn raw, fragmented data into',
+  highlight: 'trusted AI context',
+  subhead:
+    'The 2026 bottleneck is not the model. It is data readiness. DynasAI is the front layer that collects, evaluates, and processes multi-source data — then feeds governed agents while compute stays on the cloud you choose.',
+  breadcrumb: [
+    { label: 'Home', href: '/' },
+    { label: 'Platform', href: '/platform/intelligence' },
+    { label: 'Data processing', href: '/platform/data-processing' },
+  ],
+  sections: [
+    {
+      type: 'stats',
+      title: 'The market gap in 2026',
+      subtitle:
+        'Enterprises are funding agents faster than they are preparing the data those agents need. Independent 2026 research points to the same hole: plumbing, context, and governance — not GPUs.',
+      items: [
+        { value: '85%', label: 'of enterprises lack a data foundation to run agentic AI securely at scale', source: 'Fivetran / Redpoint 2026 Agentic AI Readiness Index' },
+        { value: '15%', label: 'have the data foundation required for production agents', source: 'Fivetran / Redpoint 2026' },
+        { value: '95%', label: 'of architects delayed or cancelled AI projects over data, governance, or compliance', source: 'Cloudera enterprise survey, via CIO' },
+        { value: '≤20%', label: 'of enterprise data is sufficiently described and contextualized for agents', source: 'Teradata 2026 Agentic AI report' },
+      ],
+    },
+    {
+      type: 'split',
+      title: 'Why pilots stall — and what comes next',
+      paragraphs: [
+        'Today: 60% of enterprises invest millions in agentic AI while 41% still run agents on unreliable, poorly governed data. Silent failures look correct until stale, siloed, or mis-permissioned context compounds. RAG demos hide this — production corpora, ambiguous queries, and retrieval noise drop decision-ready accuracy sharply. Only about 12% of enterprises have centralized control over the agents they already run.',
+        'Through 2026–2027: EU AI Act enforcement, GDPR incident reporting, and NIS2 raise the bar for lineage, access control, and audit evidence. Hybrid and private deployments are rising as teams reclaim sovereignty — 66% moved AI workloads back from public cloud in the last year. Buyers now rank permissions and ingestion equally, and they refuse to lock the context layer to a single model vendor. The winning stack is a governed context layer on the customer’s AWS, Azure, or GCP — not another demo chatbot.',
+      ],
+    },
+    {
+      type: 'grid',
+      title: 'Where the market is underserved',
+      subtitle: 'Vendors sell pipelines, lakes, or models. Few own the front layer that makes multi-source data easy to evaluate, process, and automate — with the customer still in control.',
+      items: [
+        { title: 'Data not ready for agents', body: 'Pipelines exist for analytics, not for real-time agent context, freshness SLAs, or permission-aware retrieval.' },
+        { title: 'Context fragmentation', body: 'Silos across SaaS, warehouses, files, and streams. Agents cannot reason across functions without unified lineage and meaning.' },
+        { title: 'Evaluation after the fact', body: 'Teams ship RAG without retrieval quality, faithfulness, or conflict-handling checks — then discover silent failure in production.' },
+        { title: 'Cloud lock-in vs sovereignty', body: 'Provider-native retrieval is convenient, but most enterprises will not consolidate context onto one vendor. They need BYO cloud and residency.' },
+        { title: 'Compliance as paperwork', body: 'GDPR, US privacy, and the EU AI Act need technical controls — DPIA evidence, audit logs, and data minimization — not slide decks.' },
+        { title: 'Cost without architecture', body: 'Hyperscaler spend grows while data quality stays unmeasured. Teams need cost-aware processing on the cloud they already pay for.' },
+      ],
+    },
+    {
+      type: 'numbered',
+      title: 'How DynasAI processes data',
+      subtitle: 'One front layer. Your backend. Collect from anywhere, evaluate before use, process with versioned transforms, automate with audit trails.',
+      items: [
+        { num: '01', title: 'Collect from any source', body: 'APIs, warehouses, SaaS exports, documents, webhooks, and batch files — unified ingestion without moving ownership off your cloud.' },
+        { num: '02', title: 'Evaluate before agents touch it', body: 'Score completeness, freshness, PII risk, retrieval recall, and groundedness. Gate indexes the way CI gates code.' },
+        { num: '03', title: 'Process and contextualize', body: 'Normalize, enrich, chunk, and attach lineage so agents receive meaning — not raw dumps. Hybrid retrieval and reranking ready for production RAG.' },
+        { num: '04', title: 'Govern access at retrieval time', body: 'RBAC/ABAC follows the data. Agents inherit permissions; queries, sources, and decisions are logged for EU and US audits.' },
+        { num: '05', title: 'Run on the cloud you choose', body: 'AWS, Azure, or GCP — managed templates or your VPC. We recommend the cost-effective mix; you keep data control and residency.' },
+        { num: '06', title: 'Automate with human gates', body: 'Feed governed workflows. Pause for review on conflicts, knowledge gaps, or policy hits — then promote with eval evidence.' },
+      ],
+    },
+    {
+      type: 'grid',
+      title: 'Built for today’s rules and tomorrow’s scale',
+      items: [
+        { title: 'GDPR & EU AI Act', body: 'Minimization, purpose limits, residency options, and evidence packs that support incident reporting — not separate binders per framework.', href: '/platform/governance' },
+        { title: 'US enterprise standards', body: 'Encryption, access logs, SOC-aligned controls, and customer-owned tenants for regulated US workloads.' },
+        { title: 'Multi-cloud backends', body: 'Bedrock, Vertex AI, Azure OpenAI, BigQuery, S3, Fabric — DynasAI orchestrates; your hyperscaler runs the work.', href: '/partners' },
+        { title: 'Future-ready context layer', body: 'Independent of any single model provider. Hybrid retrieval, eval suites, and incremental re-index as agents become multi-step operators.' },
+      ],
+    },
+    {
+      type: 'numbered',
+      title: 'Data-readiness sprint',
+      subtitle: 'A 2–4 week engagement that maps sources, scores quality, picks AWS / Azure / GCP, and leaves a governed pipeline — before you scale agents.',
+      items: [
+        { num: '01', title: 'Source inventory', body: 'Catalog warehouses, APIs, SaaS, files, and streams. Mark ownership, residency, and PII.' },
+        { num: '02', title: 'Quality & retrieval eval', body: 'Freshness, completeness, permission gaps, recall@k, and groundedness on a golden question set.' },
+        { num: '03', title: 'Cloud & cost recommendation', body: 'Stay in your VPC or use a managed template. Right-size Bedrock, Vertex, or Azure OpenAI.' },
+        { num: '04', title: 'Governed pipeline', body: 'Versioned transforms, lineage, access at retrieval time, and an eval gate before production indexes.' },
+      ],
+    },
+    {
+      type: 'cta',
+      title: 'Close the 85/15 data gap before you scale agents',
+      body: 'Start with a data-readiness sprint: source map, quality eval, cloud recommendation, and a governed pipeline on AWS, Azure, or GCP.',
+      primary: { label: 'Talk to an expert', href: '/contact' },
+      secondary: { label: 'View services', href: '/pricing#data' },
     },
   ],
 };

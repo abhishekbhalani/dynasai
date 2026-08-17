@@ -38,6 +38,28 @@ const { page } = Astro.props;
       );
     }
 
+    if (section.type === 'stats') {
+      return (
+        <section class="section">
+          <div class="container">
+            <div class="section-header">
+              <h2>{section.title}</h2>
+              {section.subtitle && <p class="section-copy">{section.subtitle}</p>}
+            </div>
+            <dl class="market-stat-grid">
+              {section.items.map((item) => (
+                <div class="market-stat">
+                  <dt>{item.label}</dt>
+                  <dd>{item.value}</dd>
+                  {item.source && <p class="market-stat-source">{item.source}</p>}
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
+      );
+    }
+
     if (section.type === 'grid') {
       return (
         <section class="section section--muted">
