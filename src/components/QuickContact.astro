@@ -1,0 +1,117 @@
+---
+import { site } from '../config';
+---
+
+<div class="qc-root" data-qc-root hidden>
+  <div class="qc-panel" role="dialog" aria-labelledby="qc-title" data-qc-panel>
+    <button class="qc-close" type="button" data-qc-close aria-label="Close quick contact">×</button>
+    <h2 id="qc-title">Need a quick answer?</h2>
+    <p>You stayed on this for a moment. Send a short note and we will reply at {site.email}.</p>
+    <form data-qc-form>
+      <label>
+        Name
+        <input name="name" type="text" required minlength="2" maxlength="80" autocomplete="name" />
+      </label>
+      <label>
+        Email
+        <input name="email" type="email" required maxlength="120" autocomplete="email" />
+      </label>
+      <label>
+        Message
+        <textarea name="message" required minlength="8" maxlength="500" rows="3"></textarea>
+      </label>
+      <p class="qc-status" data-qc-status hidden></p>
+      <button class="cookie-btn cookie-btn-primary" type="submit">Send</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  const HOLD_MS = 2000;
+  const SESSION = 'dynasai_qc_shown';
+  const root = document.querySelector<HTMLElement>('[data-qc-root]');
+  const form = document.querySelector<HTMLFormElement>('[data-qc-form]');
+  const status = document.querySelector<HTMLElement>('[data-qc-status]');
+  let timer = 0;
+  let holding = false;
+
+  function open() {
+    if (!root || sessionStorage.getItem(SESSION)) return;
+    sessionStorage.setItem(SESSION, '1');
+    root.hidden = false;
+    const first = root.querySelector<HTMLInputElement>('input');
+    first?.focus();
+  }
+
+  function close() {
+    if (root) root.hidden = true;
+  }
+
+  function startHold() {
+    if (holding) return;
+    holding = true;
+    timer = window.setTimeout(() => {
+      holding = false;
+      open();
+      void fetch('/api/track', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          consent: (() => {
+            try {
+              return JSON.parse(localStorage.getItem('dynasai_cookie_consent') || '').performance === true;
+            } catch {
+              return false;
+            }
+          })(),
+          type: 'hold',
+          holdMs: HOLD_MS,
+          path: location.pathname,
+          sessionId: localStorage.getItem('dynasai_sid') || '',
+        }),
+      });
+    }, HOLD_MS);
+  }
+
+  function cancelHold() {
+    holding = false;
+    window.clearTimeout(timer);
+  }
+
+  document.addEventListener('pointerdown', (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    if (target.closest('a, button, input, textarea, select, [data-qc-root], .cookie-root')) return;
+    startHold();
+  });
+  document.addEventListener('pointerup', cancelHold);
+  document.addEventListener('pointercancel', cancelHold);
+  document.addEventListener('pointerleave', cancelHold);
+
+  root?.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    if (target.closest('[data-qc-close]')) close();
+  });
+
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!form || !status) return;
+    const data = new FormData(form);
+    status.hidden = false;
+    status.textContent = 'Sending…';
+    const res = await fetch('/api/contact-quick', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        name: data.get('name'),
+        email: data.get('email'),
+        message: data.get('message'),
+        path: location.pathname,
+      }),
+    });
+    const json = (await res.json()) as { ok?: boolean; error?: string; message?: string };
+    status.textContent = json.ok ? json.message || 'Sent.' : json.error || 'Could not send.';
+    if (json.ok) form.reset();
+  });
+</script>

@@ -1,0 +1,88 @@
+---
+import { site } from '../config';
+const maxChars = 400;
+---
+
+<div class="vc-root" data-vc-root>
+  <button class="vc-toggle" type="button" data-vc-toggle aria-expanded="false" aria-controls="vc-panel">
+    Ask DynasAI
+  </button>
+  <section class="vc-panel" id="vc-panel" hidden data-vc-panel>
+    <header class="vc-head">
+      <h2>Visitor assistant</h2>
+      <p>Public questions only. {maxChars} character max. No private or security details.</p>
+      <button class="qc-close" type="button" data-vc-close aria-label="Close chat">×</button>
+    </header>
+    <div class="vc-log" data-vc-log aria-live="polite"></div>
+    <form class="vc-form" data-vc-form>
+      <label class="vc-field">
+        <span class="visually-hidden">Your question</span>
+        <textarea name="message" maxlength={maxChars} required rows="3" placeholder="Ask about DynasAI…" data-vc-input></textarea>
+      </label>
+      <div class="vc-meta">
+        <span data-vc-count>0 / {maxChars}</span>
+        <button class="cookie-btn cookie-btn-primary" type="submit">Send</button>
+      </div>
+    </form>
+  </section>
+</div>
+
+<script define:vars={{ email: site.email, maxChars }}>
+  const root = document.querySelector('[data-vc-root]');
+  const panel = document.querySelector<HTMLElement>('[data-vc-panel]');
+  const toggle = document.querySelector<HTMLButtonElement>('[data-vc-toggle]');
+  const log = document.querySelector('[data-vc-log]');
+  const form = document.querySelector<HTMLFormElement>('[data-vc-form]');
+  const input = document.querySelector<HTMLTextAreaElement>('[data-vc-input]');
+  const count = document.querySelector('[data-vc-count]');
+
+  function add(role: string, text: string) {
+    if (!log) return;
+    const p = document.createElement('p');
+    p.className = `vc-msg vc-msg-${role}`;
+    p.textContent = text;
+    log.appendChild(p);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function setOpen(open: boolean) {
+    if (!panel || !toggle) return;
+    panel.hidden = !open;
+    toggle.setAttribute('aria-expanded', String(open));
+  }
+
+  input?.addEventListener('input', () => {
+    if (count && input) count.textContent = `${input.value.length} / ${maxChars}`;
+  });
+
+  toggle?.addEventListener('click', () => setOpen(Boolean(panel?.hidden)));
+  root?.querySelector('[data-vc-close]')?.addEventListener('click', () => setOpen(false));
+
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const message = input?.value.trim() || '';
+    if (!message) return;
+    if (message.length > maxChars) {
+      add('bot', `Please keep questions under ${maxChars} characters.`);
+      return;
+    }
+    add('user', message);
+    if (input) input.value = '';
+    if (count) count.textContent = `0 / ${maxChars}`;
+    add('bot', 'Thinking…');
+    const pending = log?.lastElementChild;
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ message }),
+      });
+      const json = (await res.json()) as { ok?: boolean; reply?: string; error?: string; limit?: boolean };
+      const text = json.ok ? json.reply || '' : json.error || `Email ${email}`;
+      if (pending) pending.textContent = text;
+      if (json.limit && pending) pending.textContent = json.error || `Live chat is at capacity. Email ${email}`;
+    } catch {
+      if (pending) pending.textContent = `Could not reach the assistant. Email ${email}`;
+    }
+  });
+</script>

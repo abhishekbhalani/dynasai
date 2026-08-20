@@ -1,0 +1,104 @@
+import { cookieValue, json, originOk, sha256, timingSafeEqual } from './http';
+import { listRecent } from './track';
+
+const COOKIE = 'dynasai_admin';
+const SESSION_TTL = 12 * 60 * 60;
+
+function sessionCookie(token: string, secure: boolean) {
+  const parts = [
+    `${COOKIE}=${encodeURIComponent(token)}`,
+    'Path=/',
+    'HttpOnly',
+    'SameSite=Lax',
+    `Max-Age=${SESSION_TTL}`,
+  ];
+  if (secure) parts.push('Secure');
+  return parts.join('; ');
+}
+
+async function requireAdmin(request: Request, env: Env) {
+  const token = cookieValue(request, COOKIE);
+  if (!token) return null;
+  const raw = await env.LEADS.get(`admin:sess:${token}`);
+  return raw ? token : null;
+}
+
+export async function handleAdmin(request: Request, env: Env) {
+  if (!originOk(request)) return json({ ok: false, error: 'Forbidden' }, 403);
+  if (request.method === 'OPTIONS') return new Response(null, { status: 204 });
+
+  const url = new URL(request.url);
+  const path = url.pathname.replace(/\/$/, '') || '/';
+
+  if (request.method === 'POST' && path === '/api/admin/login') {
+    const body = (await request.json()) as { password?: string };
+    const expected = env.ADMIN_PASSWORD || '';
+    if (!expected || !timingSafeEqual(String(body.password || ''), expected)) {
+      return json({ ok: false, error: 'Wrong password.' }, 401);
+    }
+    const token = await sha256(`${crypto.randomUUID()}:${Date.now()}`);
+    await env.LEADS.put(`admin:sess:${token}`, JSON.stringify({ at: Date.now() }), {
+      expirationTtl: SESSION_TTL,
+    });
+    const secure = url.protocol === 'https:';
+    return json({ ok: true }, 200, { 'set-cookie': sessionCookie(token, secure) });
+  }
+
+  if (request.method === 'POST' && path === '/api/admin/logout') {
+    const token = cookieValue(request, COOKIE);
+    if (token) await env.LEADS.delete(`admin:sess:${token}`);
+    return json({ ok: true }, 200, {
+      'set-cookie': `${COOKIE}=; Path=/; Max-Age=0; SameSite=Lax`,
+    });
+  }
+
+  const session = await requireAdmin(request, env);
+  if (!session) return json({ ok: false, error: 'Sign in required.' }, 401);
+
+  if (request.method === 'GET' && path === '/api/admin/session') {
+    return json({ ok: true });
+  }
+
+  if (request.method === 'GET' && path === '/api/admin/activity') {
+    const events = await listRecent(env, 120);
+    const countries: Record<string, number> = {};
+    const pages: Record<string, number> = {};
+    for (const event of events) {
+      const country = String(event.country || '??');
+      const pathName = String(event.path || '/');
+      countries[country] = (countries[country] || 0) + 1;
+      if (event.type === 'page_view' || event.type === 'page_timing') {
+        pages[pathName] = (pages[pathName] || 0) + 1;
+      }
+    }
+    return json({ ok: true, count: events.length, countries, pages, events });
+  }
+
+  return json({ ok: false, error: 'Not found' }, 404);
+}
+
+export async function handleQuickContact(request: Request, env: Env) {
+  if (!originOk(request)) return json({ ok: false, error: 'Forbidden' }, 403);
+  if (request.method === 'OPTIONS') return new Response(null, { status: 204 });
+  if (request.method !== 'POST') return json({ ok: false, error: 'Method not allowed' }, 405);
+
+  const body = (await request.json()) as { name?: string; email?: string; message?: string; path?: string };
+  const name = String(body.name || '').trim();
+  const email = String(body.email || '').trim().toLowerCase();
+  const message = String(body.message || '').trim();
+  if (name.length < 2 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || message.length < 8) {
+    return json({ ok: false, error: 'Enter your name, email, and a short message.' }, 400);
+  }
+  if (message.length > 500) return json({ ok: false, error: 'Message is too long (500 character max).' }, 400);
+
+  const lead = {
+    name,
+    email,
+    message,
+    path: String(body.path || ''),
+    source: 'quick-contact',
+    at: new Date().toISOString(),
+  };
+  await env.LEADS.put(`quick:${email}:${Date.now()}`, JSON.stringify(lead), { expirationTtl: 30 * 24 * 60 * 60 });
+  return json({ ok: true, message: 'Thanks. We will reply from hello@dynasai.ai.' });
+}

@@ -18,10 +18,14 @@
   "observability": {
     "enabled": true
   },
+  "ai": {
+    "binding": "AI"
+  },
   "vars": {
     "ENVIRONMENT": "production",
     "PLAYBOOK_FROM": "hello@dynasai.ai",
-    "LEAD_NOTIFY": "hello@dynasai.ai"
+    "LEAD_NOTIFY": "hello@dynasai.ai",
+    "CHAT_MODEL": "@cf/meta/llama-3.2-3b-instruct"
   },
   "send_email": [
     { "name": "EMAIL" }

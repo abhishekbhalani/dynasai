@@ -13,7 +13,9 @@
 - [ ] wrangler login + first deploy (user will run login)
 - [x] Attach dynasai.ai / www in wrangler.jsonc (applied on deploy)
 - [ ] GTM: advertising tags only after Consent Mode (already in site)
-- [ ] Paste GA4 measurement ID into `.env` as `PUBLIC_GA_MEASUREMENT_ID` and GitHub variable
+- [ ] Create a GA4 property and paste G-XXXXXXXX (not GTM) into PUBLIC_GA_MEASUREMENT_ID
+- [ ] Set production secret: wrangler secret put ADMIN_PASSWORD
+- [ ] First production release (tracking, /admin, chat)
 - [ ] Reload Cursor MCP: `dynasai-google-tags` (sign in to Google)
 - [ ] Google Search Console property for dynasai.ai
 - [ ] Contact form Worker (replace mailto)

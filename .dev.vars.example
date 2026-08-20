@@ -1,1 +1,2 @@
 ENVIRONMENT=development
+ADMIN_PASSWORD=change-me-local

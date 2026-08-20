@@ -1,21 +1,14 @@
 import { playbookMeta, playbookPages } from '../src/content/playbook-pages';
 import { buildPlaybookPdf } from './pdf';
+import { json } from './http';
+import { handleTrack } from './track';
+import { handleChat } from './chat';
+import { handleAdmin, handleQuickContact } from './admin';
 
 const OTP_TTL_SEC = 10 * 60;
 const SESSION_TTL_SEC = 12 * 60 * 60;
 const COOKIE = 'dynasai_playbook';
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-function json(data: unknown, status = 200, extra?: HeadersInit) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: {
-      'content-type': 'application/json; charset=utf-8',
-      'cache-control': 'no-store',
-      ...extra,
-    },
-  });
-}
 
 function clientIp(request: Request) {
   return request.headers.get('CF-Connecting-IP') || request.headers.get('x-forwarded-for') || 'unknown';
@@ -234,15 +227,22 @@ export default {
       url.hostname = 'dynasai.ai';
       return Response.redirect(url.toString(), 301);
     }
-    if (url.pathname.startsWith('/api/playbook')) {
-      if (request.method === 'OPTIONS') return new Response(null, { status: 204 });
-      try {
+
+    const path = url.pathname;
+    try {
+      if (path.startsWith('/api/track')) return await handleTrack(request, env);
+      if (path.startsWith('/api/chat')) return await handleChat(request, env);
+      if (path.startsWith('/api/contact-quick')) return await handleQuickContact(request, env);
+      if (path.startsWith('/api/admin')) return await handleAdmin(request, env);
+      if (path.startsWith('/api/playbook')) {
+        if (request.method === 'OPTIONS') return new Response(null, { status: 204 });
         return await handlePlaybook(request, env);
-      } catch (error) {
-        console.error('playbook_api_error', { error: String(error) });
-        return json({ ok: false, error: 'Something went wrong.' }, 500);
       }
+    } catch (error) {
+      console.error('api_error', { path, error: String(error) });
+      return json({ ok: false, error: 'Something went wrong.' }, 500);
     }
+
     return env.ASSETS.fetch(request);
   },
 };

@@ -47,11 +47,16 @@ const sections = [
           before enabling advertising tags.
         </p>
 
-        <h2 id="ga">Google Analytics</h2>
+        <h2 id="ga">Google Analytics and first-party activity</h2>
         <p>
-          In production we also load Google Analytics 4 when <code>PUBLIC_GA_MEASUREMENT_ID</code> is set.
-          Hits are held until you grant performance cookies (Consent Mode: <code>analytics_storage</code>).
-          Do not add a second GA4 Configuration tag in GTM for the same measurement ID, or traffic will double-count.
+          Google Analytics 4 loads in production only when a <code>G-</code> measurement ID is set.
+          Hits wait for performance-cookie consent. Do not paste a GTM ID into that field.
+        </p>
+        <p>
+          With the same consent we also store first-party activity on Cloudflare (page, section, clicks,
+          time on page, approximate location/ISP from Cloudflare, hashed IP). This powers the internal
+          admin activity view. We cannot see Wi‑Fi SSIDs, exact GPS, or personal identity unless you
+          type it into a form.
         </p>
 
         <h2 id="control">Control</h2>

@@ -1,0 +1,155 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Activity admin"
+  description="Internal activity dashboard for dynasai.ai."
+  noindex
+>
+  <section class="section admin-wrap" data-admin>
+    <div class="container">
+      <h1>Site activity</h1>
+      <p class="lede">First-party events from consented visits. IP is hashed. Sign in with the Worker admin password.</p>
+
+      <form class="admin-login" data-admin-login>
+        <label>
+          Admin password
+          <input name="password" type="password" required autocomplete="current-password" />
+        </label>
+        <button class="cookie-btn cookie-btn-primary" type="submit">Sign in</button>
+        <p class="admin-status" data-admin-login-status hidden></p>
+      </form>
+
+      <div class="admin-board" data-admin-board hidden>
+        <div class="admin-toolbar">
+          <p data-admin-summary>Loading…</p>
+          <button class="cookie-btn" type="button" data-admin-refresh>Refresh</button>
+          <button class="cookie-btn" type="button" data-admin-logout>Sign out</button>
+        </div>
+        <div class="admin-kpis" data-admin-kpis></div>
+        <div class="table-wrap">
+          <table>
+            <caption class="visually-hidden">Recent visitor events</caption>
+            <thead>
+              <tr>
+                <th scope="col">Time</th>
+                <th scope="col">Type</th>
+                <th scope="col">Page / section</th>
+                <th scope="col">Dwell</th>
+                <th scope="col">Location</th>
+                <th scope="col">Network / ISP</th>
+              </tr>
+            </thead>
+            <tbody data-admin-rows></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const loginForm = document.querySelector<HTMLFormElement>('[data-admin-login]');
+  const loginStatus = document.querySelector('[data-admin-login-status]');
+  const board = document.querySelector<HTMLElement>('[data-admin-board]');
+  const summary = document.querySelector('[data-admin-summary]');
+  const kpis = document.querySelector('[data-admin-kpis]');
+  const rows = document.querySelector('[data-admin-rows]');
+
+  function showBoard(on: boolean) {
+    if (loginForm) loginForm.hidden = on;
+    if (board) board.hidden = !on;
+  }
+
+  function esc(value: unknown) {
+    return String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function fmtMs(value: unknown) {
+    const n = Number(value) || 0;
+    if (n < 1000) return `${n} ms`;
+    return `${(n / 1000).toFixed(1)} s`;
+  }
+
+  async function load() {
+    const res = await fetch('/api/admin/activity');
+    if (res.status === 401) {
+      showBoard(false);
+      return;
+    }
+    const data = (await res.json()) as {
+      ok?: boolean;
+      count?: number;
+      countries?: Record<string, number>;
+      pages?: Record<string, number>;
+      events?: Array<Record<string, unknown>>;
+    };
+    if (!data.ok) {
+      showBoard(false);
+      return;
+    }
+    showBoard(true);
+    if (summary) summary.textContent = `${data.count || 0} recent events (7-day window)`;
+    if (kpis) {
+      const topCountry = Object.entries(data.countries || {}).sort((a, b) => b[1] - a[1])[0];
+      const topPage = Object.entries(data.pages || {}).sort((a, b) => b[1] - a[1])[0];
+      kpis.innerHTML = `
+        <article><h2>Events</h2><p>${esc(data.count || 0)}</p></article>
+        <article><h2>Top country</h2><p>${esc(topCountry ? `${topCountry[0]} (${topCountry[1]})` : '—')}</p></article>
+        <article><h2>Top page</h2><p>${esc(topPage ? `${topPage[0]} (${topPage[1]})` : '—')}</p></article>
+      `;
+    }
+    if (rows) {
+      rows.innerHTML = (data.events || [])
+        .map((event) => {
+          const when = String(event.ts || '').replace('T', ' ').slice(0, 19);
+            const loc = [event.city, event.region, event.country].filter(Boolean).join(', ');
+          const net = [event.network, event.isp].filter(Boolean).join(' · ');
+          return `<tr>
+            <td>${esc(when)}</td>
+            <td>${esc(event.type)}</td>
+            <td>${esc(event.path)}${event.section ? ` · ${esc(event.section)}` : ''}</td>
+            <td>${esc(fmtMs(event.dwellMs || event.visibleMs || event.holdMs))}</td>
+            <td>${esc(loc || '—')}</td>
+            <td>${esc(net || '—')}</td>
+          </tr>`;
+        })
+        .join('');
+    }
+  }
+
+  loginForm?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const password = new FormData(loginForm).get('password');
+    if (loginStatus) {
+      loginStatus.hidden = false;
+      loginStatus.textContent = 'Signing in…';
+    }
+    const res = await fetch('/api/admin/login', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ password }),
+    });
+    const json = (await res.json()) as { ok?: boolean; error?: string };
+    if (!json.ok) {
+      if (loginStatus) loginStatus.textContent = json.error || 'Could not sign in.';
+      return;
+    }
+    await load();
+  });
+
+  document.querySelector('[data-admin-refresh]')?.addEventListener('click', () => void load());
+  document.querySelector('[data-admin-logout]')?.addEventListener('click', async () => {
+    await fetch('/api/admin/logout', { method: 'POST' });
+    showBoard(false);
+  });
+
+  void fetch('/api/admin/session').then((res) => {
+    if (res.ok) void load();
+  });
+</script>
