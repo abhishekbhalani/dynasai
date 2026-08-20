@@ -100,3 +100,67 @@ export async function listRecent(env: Env, limit = 80) {
     return [];
   }
 }
+
+function countMap(events: TrackEvent[], keyFn: (event: TrackEvent) => string) {
+  const map: Record<string, number> = {};
+  for (const event of events) {
+    const key = keyFn(event) || 'Unknown';
+    map[key] = (map[key] || 0) + 1;
+  }
+  return Object.entries(map)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 12)
+    .map(([name, count]) => ({ name, count }));
+}
+
+function deviceFromViewport(viewport: unknown) {
+  const width = Number(String(viewport || '').split('x')[0]) || 0;
+  if (width && width < 768) return 'Mobile';
+  if (width && width < 1100) return 'Tablet';
+  return 'Desktop';
+}
+
+function referrerHost(referrer: unknown) {
+  const raw = String(referrer || '').trim();
+  if (!raw) return 'Direct';
+  try {
+    const host = new URL(raw).hostname.replace(/^www\./, '');
+    if (host === 'dynasai.ai') return 'Internal';
+    return host || 'Direct';
+  } catch {
+    return 'Direct';
+  }
+}
+
+function hourKey(ts: string) {
+  return ts.slice(0, 13) + ':00';
+}
+
+export function summarizeActivity(events: TrackEvent[]) {
+  const pageViews = events.filter((event) => event.type === 'page_view' || event.type === 'page_timing');
+  const visitors = new Set(events.map((event) => String(event.sessionId || event.ipHash || event.id))).size;
+  const hours = new Map<string, { visitors: Set<string>; pageViews: number }>();
+  for (const event of events) {
+    const key = hourKey(String(event.ts || ''));
+    if (!key.startsWith('20')) continue;
+    const row = hours.get(key) || { visitors: new Set<string>(), pageViews: 0 };
+    row.visitors.add(String(event.sessionId || event.ipHash || event.id));
+    if (event.type === 'page_view' || event.type === 'page_timing') row.pageViews += 1;
+    hours.set(key, row);
+  }
+  const series = [...hours.entries()]
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .slice(-48)
+    .map(([t, row]) => ({ t, visitors: row.visitors.size, pageViews: row.pageViews }));
+
+  return {
+    visitors,
+    pageViews: pageViews.length,
+    events: events.length,
+    series,
+    countries: countMap(events, (event) => String(event.country || '')),
+    pages: countMap(pageViews, (event) => String(event.path || '/')),
+    referrers: countMap(events, (event) => referrerHost(event.referrer)),
+    devices: countMap(events, (event) => deviceFromViewport(event.viewport)),
+  };
+}

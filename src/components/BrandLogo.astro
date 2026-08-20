@@ -32,8 +32,8 @@ const brand = brands[name];
 {
   brand.darkSrc ? (
     <span class:list={['brand-logo', `brand-logo--${name}`, `brand-logo--${size}`]} role="img" aria-label={brand.alt}>
-      <img class="brand-logo-img brand-logo-img--light" src={brand.src} alt="" width="160" height="96" />
-      <img class="brand-logo-img brand-logo-img--dark" src={brand.darkSrc} alt="" width="160" height="96" />
+      <img class="brand-logo-img brand-logo-img--light" src={brand.src} alt="" width="160" height="96" loading="lazy" decoding="async" />
+      <img class="brand-logo-img brand-logo-img--dark" src={brand.darkSrc} alt="" width="160" height="96" loading="lazy" decoding="async" />
     </span>
   ) : (
     <img
@@ -42,6 +42,8 @@ const brand = brands[name];
       alt={brand.alt}
       width="48"
       height="48"
+      loading="lazy"
+      decoding="async"
     />
   )
 }

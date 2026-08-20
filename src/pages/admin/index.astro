@@ -3,57 +3,85 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 ---
 
 <AdminLayout
-  title="Activity admin"
-  description="Internal activity dashboard for dynasai.ai."
+  title="Analytics"
+  description="Internal visitor analytics for dynasai.ai."
 >
-  <section class="section admin-wrap" data-admin>
-    <div class="container">
-      <h1>Site activity</h1>
-      <p class="lede">First-party events from consented public visits. This host is not measured. Sign in with the Worker admin password.</p>
+  <section class="admin-shell" data-admin>
+    <h1>Analytics</h1>
+    <p class="admin-lede">
+      Consented first-party visits on dynasai.ai. Same shape as Cloudflare Analytics: visitors, page views,
+      countries, and top paths. This admin host is not measured.
+    </p>
 
-      <form class="admin-login" data-admin-login>
-        <label>
-          Admin password
-          <input name="password" type="password" required autocomplete="current-password" />
-        </label>
-        <button class="cookie-btn cookie-btn-primary" type="submit">Sign in</button>
-        <p class="admin-status" data-admin-login-status hidden></p>
-      </form>
+    <form class="admin-login" data-admin-login>
+      <label>
+        Admin password
+        <input name="password" type="password" required autocomplete="current-password" />
+      </label>
+      <button class="admin-btn admin-btn-primary" type="submit">Sign in</button>
+      <p class="admin-status" data-admin-login-status hidden></p>
+    </form>
 
-      <div class="admin-board" data-admin-board hidden>
-        <div class="admin-toolbar">
-          <p data-admin-summary>Loading…</p>
-          <button class="cookie-btn" type="button" data-admin-refresh>Refresh</button>
-          <button class="cookie-btn" type="button" data-admin-logout>Sign out</button>
-        </div>
-        <div class="admin-kpis" data-admin-kpis></div>
-        <div class="table-wrap">
-          <table>
-            <caption class="visually-hidden">Recent visitor events</caption>
-            <thead>
-              <tr>
-                <th scope="col">Time</th>
-                <th scope="col">Type</th>
-                <th scope="col">Page / section</th>
-                <th scope="col">Dwell</th>
-                <th scope="col">Location</th>
-                <th scope="col">Network / ISP</th>
-              </tr>
-            </thead>
-            <tbody data-admin-rows></tbody>
-          </table>
-        </div>
+    <div class="admin-board" data-admin-board hidden>
+      <div class="admin-toolbar">
+        <p data-admin-summary>Loading…</p>
+        <button class="admin-btn" type="button" data-admin-refresh>Refresh</button>
+        <button class="admin-btn" type="button" data-admin-logout>Sign out</button>
+      </div>
+      <div class="admin-kpis" data-admin-kpis></div>
+      <div class="admin-grid">
+        <section class="admin-panel">
+          <h2>Visitors over time</h2>
+          <div class="admin-chart" data-admin-chart role="img" aria-label="Visitors by hour"></div>
+        </section>
+        <section class="admin-panel">
+          <h2>Top countries</h2>
+          <ol class="admin-rank" data-admin-countries></ol>
+        </section>
+      </div>
+      <div class="admin-split">
+        <section class="admin-panel">
+          <h2>Top pages</h2>
+          <ol class="admin-rank" data-admin-pages></ol>
+        </section>
+        <section class="admin-panel">
+          <h2>Referrers</h2>
+          <ol class="admin-rank" data-admin-referrers></ol>
+        </section>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <caption class="visually-hidden">Recent visitor events</caption>
+          <thead>
+            <tr>
+              <th scope="col">Time</th>
+              <th scope="col">Type</th>
+              <th scope="col">Page / section</th>
+              <th scope="col">Dwell</th>
+              <th scope="col">Location</th>
+              <th scope="col">Network / ISP</th>
+            </tr>
+          </thead>
+          <tbody data-admin-rows></tbody>
+        </table>
       </div>
     </div>
   </section>
 </AdminLayout>
 
 <script>
+  type Rank = { name: string; count: number };
+  type Series = { t: string; visitors: number; pageViews: number };
+
   const loginForm = document.querySelector<HTMLFormElement>('[data-admin-login]');
   const loginStatus = document.querySelector('[data-admin-login-status]');
   const board = document.querySelector<HTMLElement>('[data-admin-board]');
   const summary = document.querySelector('[data-admin-summary]');
   const kpis = document.querySelector('[data-admin-kpis]');
+  const chart = document.querySelector('[data-admin-chart]');
+  const countries = document.querySelector('[data-admin-countries]');
+  const pages = document.querySelector('[data-admin-pages]');
+  const referrers = document.querySelector('[data-admin-referrers]');
   const rows = document.querySelector('[data-admin-rows]');
 
   function showBoard(on: boolean) {
@@ -75,6 +103,19 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     return `${(n / 1000).toFixed(1)} s`;
   }
 
+  function rankList(list: Rank[]) {
+    const max = Math.max(...list.map((item) => item.count), 1);
+    if (!list.length) return '<p class="admin-empty">No data yet.</p>';
+    return list
+      .map(
+        (item) => `<li>
+          <div class="admin-rank-meta"><span>${esc(item.name)}</span><span>${esc(item.count)}</span></div>
+          <div class="admin-rank-track"><div class="admin-rank-fill" style="--w:${Math.round((item.count / max) * 100)}%"></div></div>
+        </li>`,
+      )
+      .join('');
+  }
+
   async function load() {
     const res = await fetch('/api/admin/activity');
     if (res.status === 401) {
@@ -83,31 +124,47 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     }
     const data = (await res.json()) as {
       ok?: boolean;
-      count?: number;
-      countries?: Record<string, number>;
-      pages?: Record<string, number>;
-      events?: Array<Record<string, unknown>>;
+      visitors?: number;
+      pageViews?: number;
+      events?: number;
+      series?: Series[];
+      countries?: Rank[];
+      pages?: Rank[];
+      referrers?: Rank[];
+      recent?: Array<Record<string, unknown>>;
     };
     if (!data.ok) {
       showBoard(false);
       return;
     }
     showBoard(true);
-    if (summary) summary.textContent = `${data.count || 0} recent events (7-day window)`;
+    if (summary) summary.textContent = 'Last 7 days · consented visits';
     if (kpis) {
-      const topCountry = Object.entries(data.countries || {}).sort((a, b) => b[1] - a[1])[0];
-      const topPage = Object.entries(data.pages || {}).sort((a, b) => b[1] - a[1])[0];
       kpis.innerHTML = `
-        <article><h2>Events</h2><p>${esc(data.count || 0)}</p></article>
-        <article><h2>Top country</h2><p>${esc(topCountry ? `${topCountry[0]} (${topCountry[1]})` : '—')}</p></article>
-        <article><h2>Top page</h2><p>${esc(topPage ? `${topPage[0]} (${topPage[1]})` : '—')}</p></article>
+        <article><h2>Unique visitors</h2><p>${esc(data.visitors || 0)}</p></article>
+        <article><h2>Page views</h2><p>${esc(data.pageViews || 0)}</p></article>
+        <article><h2>Events</h2><p>${esc(data.events || 0)}</p></article>
+        <article><h2>Countries</h2><p>${esc((data.countries || []).length)}</p></article>
       `;
     }
+    const maxVisitors = Math.max(...(data.series || []).map((item) => item.visitors), 1);
+    if (chart) {
+      chart.innerHTML = (data.series || [])
+        .map((item) => {
+          const pct = Math.max(6, Math.round((item.visitors / maxVisitors) * 100));
+          return `<button type="button" title="${esc(item.t)} · ${esc(item.visitors)} visitors" style="--h:${pct}%" aria-label="${esc(item.t)} ${esc(item.visitors)} visitors"></button>`;
+        })
+        .join('');
+      if (!data.series?.length) chart.innerHTML = '<p class="admin-empty">No traffic in the current window.</p>';
+    }
+    if (countries) countries.innerHTML = rankList(data.countries || []);
+    if (pages) pages.innerHTML = rankList(data.pages || []);
+    if (referrers) referrers.innerHTML = rankList(data.referrers || []);
     if (rows) {
-      rows.innerHTML = (data.events || [])
+      rows.innerHTML = (data.recent || [])
         .map((event) => {
           const when = String(event.ts || '').replace('T', ' ').slice(0, 19);
-            const loc = [event.city, event.region, event.country].filter(Boolean).join(', ');
+          const loc = [event.city, event.region, event.country].filter(Boolean).join(', ');
           const net = [event.network, event.isp].filter(Boolean).join(' · ');
           return `<tr>
             <td>${esc(when)}</td>
@@ -152,4 +209,3 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     if (res.ok) void load();
   });
 </script>
-</AdminLayout>

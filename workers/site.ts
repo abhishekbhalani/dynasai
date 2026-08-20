@@ -235,10 +235,13 @@ async function servePublicNotFound(request: Request, env: Env) {
 }
 
 async function serveAdminPage(request: Request, env: Env) {
-  const url = new URL(request.url);
-  url.pathname = '/admin';
-  const res = await env.ASSETS.fetch(new Request(url.toString(), request));
-  return withRobots(res, 'noindex, nofollow');
+  for (const pathname of ['/admin/', '/admin', '/admin/index.html']) {
+    const url = new URL(request.url);
+    url.pathname = pathname;
+    const res = await env.ASSETS.fetch(new Request(url.toString(), request));
+    if (res.ok) return withRobots(res, 'noindex, nofollow');
+  }
+  return servePublicNotFound(request, env);
 }
 
 async function handleAdminHost(request: Request, env: Env) {

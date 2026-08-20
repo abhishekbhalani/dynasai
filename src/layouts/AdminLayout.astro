@@ -1,8 +1,6 @@
 ---
-import '../styles/global.css';
-import '../styles/visitor.css';
+import '../styles/admin.css';
 import ThemeToggle from '../components/ThemeToggle.astro';
-import Seo from '../components/Seo.astro';
 import { site } from '../config';
 
 interface Props {
@@ -11,6 +9,7 @@ interface Props {
 }
 
 const { title, description } = Astro.props;
+const fullTitle = `${title} · ${site.name}`;
 ---
 
 <!doctype html>
@@ -20,7 +19,8 @@ const { title, description } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/img/logo-mark-colored.svg" />
     <meta name="robots" content="noindex, nofollow" />
-    <meta name="generator" content={Astro.generator} />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
     <script is:inline>
       (function () {
         var root = document.documentElement;
@@ -31,17 +31,19 @@ const { title, description } = Astro.props;
         }
       })();
     </script>
-    <Seo title={title} description={description} canonical="https://admin.dynasai.ai" noindex />
   </head>
   <body class="admin-body">
     <a class="skip-link" href="#content">Skip to content</a>
     <header class="admin-bar">
       <div class="admin-bar-inner">
-        <a class="brand brand--header" href="https://dynasai.ai" aria-label={`${site.name} marketing site`}>
-          <img class="brand-mark" src={site.logoMark} alt={site.name} width="130" height="36" decoding="async" />
-          <span class="brand-tagline">Internal activity</span>
-        </a>
-        <ThemeToggle />
+        <p class="brand">
+          <img class="brand-mark" src={site.logoMark} alt="" width="130" height="36" decoding="async" loading="eager" />
+          <span class="brand-tagline">Visitor analytics</span>
+        </p>
+        <div class="admin-bar-actions">
+          <a href="https://dynasai.ai">View site</a>
+          <ThemeToggle />
+        </div>
       </div>
     </header>
     <main id="content">

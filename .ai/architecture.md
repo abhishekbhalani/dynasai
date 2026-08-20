@@ -21,6 +21,4 @@ This repo is the marketing Worker only. Do not put authenticated app routes here
 
 Cloudflare Zaraz on the **dynasai.ai** zone loads GA4 (and optional Google tools). Do not embed GTM/gtag in app source. Cookie banner maps consent to Zaraz.
 
-Zaraz custom actions are managed via the local MCP `.cursor/zaraz-mcp.mjs` (official Cloudflare MCP does not include Tag setup). First-party `/api/track` events power the admin dashboard; Zaraz does not write those events.
-
-Admin is `https://admin.dynasai.ai` (not `/admin`). Public `/admin` returns 404. Do not load Zaraz or the activity tracker on the admin host.
+First-party `/api/track` events power `https://admin.dynasai.ai` (Cloudflare Analytics-style visitors, pages, countries). Assets use `run_worker_first` so the admin host is not the marketing homepage.

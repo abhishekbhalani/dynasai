@@ -1,5 +1,6 @@
 {
   "name": "dynasai-web",
+  "account_id": "67547d9fd5363024d30f53c31487cf48",
   "main": "workers/site.ts",
   "compatibility_date": "2026-08-17",
   "compatibility_flags": ["nodejs_compat"],
@@ -26,7 +27,8 @@
     "directory": "./dist",
     "binding": "ASSETS",
     "not_found_handling": "404-page",
-    "html_handling": "auto-trailing-slash"
+    "html_handling": "auto-trailing-slash",
+    "run_worker_first": true
   },
   "observability": {
     "enabled": true
@@ -47,7 +49,7 @@
   "kv_namespaces": [
     {
       "binding": "LEADS",
-      "id": "ca0206ce0e284d1e85b08f04c30c447a"
+      "id": "3b73d03580214ee4b95cd231d42bc59e"
     }
   ]
 }

@@ -19,6 +19,7 @@
     "cf:check": "node scripts/check-cloudflare.mjs",
     "zaraz:status": "node .cursor/zaraz-mcp.mjs --status",
     "zaraz:skip-admin": "node .cursor/zaraz-mcp.mjs --skip-admin",
+    "images:optimize": "npx -p sharp node scripts/optimize-images.mjs",
     "pages:create": "node scripts/create-pages.mjs"
   },
   "dependencies": {

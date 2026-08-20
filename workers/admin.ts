@@ -1,5 +1,5 @@
 import { cookieValue, json, originOk, sha256, timingSafeEqual } from './http';
-import { listRecent } from './track';
+import { listRecent, summarizeActivity } from './track';
 import { isAdminHost } from './hosts';
 
 const COOKIE = 'dynasai_admin';
@@ -63,18 +63,9 @@ export async function handleAdmin(request: Request, env: Env) {
   }
 
   if (request.method === 'GET' && path === '/api/admin/activity') {
-    const events = await listRecent(env, 120);
-    const countries: Record<string, number> = {};
-    const pages: Record<string, number> = {};
-    for (const event of events) {
-      const country = String(event.country || '??');
-      const pathName = String(event.path || '/');
-      countries[country] = (countries[country] || 0) + 1;
-      if (event.type === 'page_view' || event.type === 'page_timing') {
-        pages[pathName] = (pages[pathName] || 0) + 1;
-      }
-    }
-    return json({ ok: true, count: events.length, countries, pages, events });
+    const events = await listRecent(env, 250);
+    const summary = summarizeActivity(events);
+    return json({ ok: true, ...summary, recent: events.slice(0, 80) });
   }
 
   return json({ ok: false, error: 'Not found' }, 404);

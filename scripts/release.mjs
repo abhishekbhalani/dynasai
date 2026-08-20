@@ -63,7 +63,7 @@ function loadCloudflareEnv() {
       value = value.slice(1, -1);
     }
 
-    if (key.startsWith('CLOUDFLARE_') && !process.env[key]) {
+    if (key.startsWith('CLOUDFLARE_')) {
       process.env[key] = value;
     }
   }
@@ -116,7 +116,10 @@ function checkWranglerAuth() {
   log('Checking Cloudflare auth (wrangler whoami)...');
 
   if (process.env.CLOUDFLARE_API_TOKEN) {
-    console.log('  Using CLOUDFLARE_API_TOKEN from environment');
+    console.log('  Using CLOUDFLARE_API_TOKEN from .env');
+  }
+  if (process.env.CLOUDFLARE_ACCOUNT_ID) {
+    console.log(`  Account ID: ${process.env.CLOUDFLARE_ACCOUNT_ID}`);
   }
 
   const result = spawnSync(npxCmd, ['wrangler', 'whoami'], {
