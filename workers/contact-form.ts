@@ -1,6 +1,6 @@
 import { json, originOk, clientIp } from './http';
 import { insertLead } from './leads';
-import { queueMail, sendMails } from './mail';
+import { queueMail, sendMails, leadRecipients } from './mail';
 import { contactEmailHtml, contactEmailText, thankYouEmailHtml, thankYouEmailText } from './email-template';
 import { buildContactPayload } from './visitor';
 import { assertReplyEmail } from './email-mailbox';
@@ -74,12 +74,13 @@ export async function handleContactForm(request: Request, env: Env, ctx?: Execut
     console.error('contact_lead_failed', { error: String(error) });
   }
 
-  const notify = env.LEAD_NOTIFY || 'hello@dynasai.ai';
+  const notify = leadRecipients(env);
   const who = company || name;
   await queueMail(ctx, () =>
     sendMails(env, [
       {
-        to: notify,
+        to: notify.to,
+        cc: notify.cc,
         subject: `New enquiry: ${who}`,
         text: message,
         html: contactEmailHtml(payload),

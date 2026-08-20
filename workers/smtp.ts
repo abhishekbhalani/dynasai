@@ -14,6 +14,7 @@ type SmtpMessage = {
   from: string;
   fromName: string;
   to: string;
+  cc?: string[];
   subject: string;
   text: string;
   html?: string;
@@ -49,11 +50,15 @@ function buildMime(message: SmtpMessage) {
   const headers = [
     `From: ${address(message.from, message.fromName)}`,
     `To: ${address(message.to)}`,
+  ];
+  const cc = [...new Set((message.cc || []).map((e) => e.trim().toLowerCase()).filter((e) => e && e !== message.to.toLowerCase()))];
+  if (cc.length) headers.push(`Cc: ${cc.map((e) => address(e)).join(', ')}`);
+  headers.push(
     `Subject: ${encodeSubject(message.subject)}`,
     `Date: ${date}`,
     `Message-ID: <${crypto.randomUUID()}@dynasai.ai>`,
     'MIME-Version: 1.0',
-  ];
+  );
   if (message.replyTo?.email) {
     headers.push(`Reply-To: ${address(message.replyTo.email, message.replyTo.name)}`);
   }
@@ -205,6 +210,11 @@ export async function sendSmtp(auth: SmtpAuth, messages: SmtpMessage | SmtpMessa
     if (from.code !== 250) throw new Error(`SMTP MAIL FROM ${from.lines.join(' | ')}`);
     const rcpt = await session.command(`RCPT TO:<${message.to}>`);
     if (rcpt.code !== 250) throw new Error(`SMTP RCPT ${rcpt.lines.join(' | ')}`);
+    const copies = [...new Set((message.cc || []).map((e) => e.trim().toLowerCase()).filter((e) => e && e !== message.to.toLowerCase()))];
+    for (const copy of copies) {
+      const ccRcpt = await session.command(`RCPT TO:<${copy}>`);
+      if (ccRcpt.code !== 250) throw new Error(`SMTP CC ${copy} ${ccRcpt.lines.join(' | ')}`);
+    }
     const data = await session.data(buildMime(message));
     if (data.code !== 250) throw new Error(`SMTP message rejected ${data.lines.join(' | ')}`);
   }

@@ -3,7 +3,7 @@ import { listRecent, summarizeActivity } from './track';
 import { isAdminHost } from './hosts';
 import { verifyTurnstile } from './turnstile';
 import { insertLead, listLeads } from './leads';
-import { queueMail, sendMail, sendMails } from './mail';
+import { queueMail, sendMails, leadRecipients } from './mail';
 import { contactEmailHtml, contactEmailText, thankYouEmailHtml, thankYouEmailText } from './email-template';
 import { buildContactPayload } from './visitor';
 import { assertReplyEmail } from './email-mailbox';
@@ -184,10 +184,12 @@ export async function handleQuickContact(request: Request, env: Env, ctx?: Execu
   } catch (error) {
     console.error('lead_insert_failed', { error: String(error) });
   }
+  const notify = leadRecipients(env);
   await queueMail(ctx, () =>
     sendMails(env, [
       {
-        to: env.LEAD_NOTIFY || 'hello@dynasai.ai',
+        to: notify.to,
+        cc: notify.cc,
         subject: `New enquiry: ${name}`,
         text: message,
         html: contactEmailHtml(payload),

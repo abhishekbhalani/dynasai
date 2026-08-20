@@ -7,6 +7,7 @@ interface __BaseEnv_Env {
 	ASSETS: Fetcher;
 	PLAYBOOK_FROM: "hello@dynasai.ai";
 	LEAD_NOTIFY: "hello@dynasai.ai";
+	LEAD_CC: string;
 	SMTP_HOST: string;
 	SMTP_PORT: string;
 	SMTP_USER: string;

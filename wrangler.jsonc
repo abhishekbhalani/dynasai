@@ -43,6 +43,7 @@
     "ENVIRONMENT": "production",
     "PLAYBOOK_FROM": "hello@dynasai.ai",
     "LEAD_NOTIFY": "hello@dynasai.ai",
+    "LEAD_CC": "bhalaniabhishek@gmail.com",
     "SMTP_HOST": "mail.dynasai.ai",
     "SMTP_PORT": "587",
     "SMTP_USER": "hello@dynasai.ai",

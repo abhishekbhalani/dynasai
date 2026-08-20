@@ -5,7 +5,7 @@ import { handleTrack } from './track';
 import { handleChat } from './chat';
 import { handleAdmin, handleQuickContact, hasAdminSession } from './admin';
 import { insertLead } from './leads';
-import { sendMail } from './mail';
+import { sendMail, leadRecipients } from './mail';
 import { handleContactForm } from './contact-form';
 import { isAdminHost, isCrawler, isLocalHost, isStaticAssetPath } from './hosts';
 import { applySecurityHeaders, redirectHttpToHttps } from './security';
@@ -168,12 +168,15 @@ async function handleVerifyOtp(request: Request, env: Env) {
   );
 
   try {
-    const notify = env.LEAD_NOTIFY || 'hello@dynasai.ai';
+    const notify = leadRecipients(env);
     await sendMail(
       env,
-      notify,
+      notify.to,
       `Playbook lead: ${otp.company}`,
       `Verified playbook lead\nName: ${otp.name}\nEmail: ${email}\nCompany: ${otp.company}\nSource: ${playbookMeta.source}`,
+      undefined,
+      undefined,
+      notify.cc,
     );
   } catch (error) {
     console.error('playbook_lead_notify_failed', { error: String(error) });
