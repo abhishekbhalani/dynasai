@@ -3,8 +3,8 @@ import { listRecent, summarizeActivity } from './track';
 import { isAdminHost } from './hosts';
 import { verifyTurnstile } from './turnstile';
 import { insertLead, listLeads } from './leads';
-import { queueMail, sendMail } from './mail';
-import { contactEmailHtml, contactEmailText } from './email-template';
+import { queueMail, sendMail, sendMails } from './mail';
+import { contactEmailHtml, contactEmailText, thankYouEmailHtml, thankYouEmailText } from './email-template';
 import { buildContactPayload } from './visitor';
 import { assertReplyEmail } from './email-mailbox';
 import { inspectEmail } from '../shared/email-guard';
@@ -185,10 +185,24 @@ export async function handleQuickContact(request: Request, env: Env, ctx?: Execu
     console.error('lead_insert_failed', { error: String(error) });
   }
   await queueMail(ctx, () =>
-    sendMail(env, env.LEAD_NOTIFY || 'hello@dynasai.ai', `New enquiry: ${name}`, message, contactEmailHtml(payload), {
-      email,
-      name,
-    }),
+    sendMails(env, [
+      {
+        to: env.LEAD_NOTIFY || 'hello@dynasai.ai',
+        subject: `New enquiry: ${name}`,
+        text: message,
+        html: contactEmailHtml(payload),
+        replyTo: { email, name },
+      },
+      {
+        to: email,
+        subject: 'Thanks for contacting DynasAI',
+        text: thankYouEmailText(name),
+        html: thankYouEmailHtml(name),
+      },
+    ]),
   );
-  return json({ ok: true, message: 'Thanks. We will reply from hello@dynasai.ai.' });
+  return json({
+    ok: true,
+    message: 'Thanks. We emailed you a confirmation. We will get back to you within 2–3 working days.',
+  });
 }

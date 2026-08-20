@@ -60,12 +60,7 @@ export type ContactEmailPayload = {
   utmCampaign: string;
 };
 
-export function contactEmailHtml(data: ContactEmailPayload) {
-  const pages = data.pages.length
-    ? data.pages.map((p, i) => `${i + 1}. ${esc(p)}`).join('<br>')
-    : '';
-  const location = [data.city, data.region, data.country].filter(Boolean).join(', ');
-
+function brandedEmail(eyebrow: string, inner: string) {
   return `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
@@ -83,12 +78,31 @@ export function contactEmailHtml(data: ContactEmailPayload) {
                 <td style="padding-left:14px;color:#ffffff;font-size:20px;font-weight:700;letter-spacing:0.02em;">DynasAI</td>
               </tr>
             </table>
-            <p style="margin:16px 0 0;color:#d9e3f7;font-size:13px;">New contact enquiry</p>
+            <p style="margin:16px 0 0;color:#d9e3f7;font-size:13px;">${esc(eyebrow)}</p>
           </td>
         </tr>
         <tr>
           <td style="padding:28px;">
-            <p style="margin:0 0 16px;color:#0b1f3a;font-size:16px;">${esc(data.name)} submitted the contact form.</p>
+            ${inner}
+            <p style="margin:28px 0 0;font-size:12px;color:#4b5563;"><a href="${SITE}" style="color:#2563eb;">dynasai.ai</a></p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+}
+
+export function contactEmailHtml(data: ContactEmailPayload) {
+  const pages = data.pages.length
+    ? data.pages.map((p, i) => `${i + 1}. ${esc(p)}`).join('<br>')
+    : '';
+  const location = [data.city, data.region, data.country].filter(Boolean).join(', ');
+
+  return brandedEmail(
+    'New contact enquiry',
+    `<p style="margin:0 0 16px;color:#0b1f3a;font-size:16px;">${esc(data.name)} submitted the contact form.</p>
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
               ${row('Name', data.name)}
               ${row('Email', data.email)}
@@ -135,14 +149,33 @@ export function contactEmailHtml(data: ContactEmailPayload) {
               ${row('Language', data.language)}
               ${row('Viewport', data.viewport)}
             </table>
-            <p style="margin:28px 0 0;font-size:12px;color:#4b5563;">Reply to this email to reach ${esc(data.email)}. <a href="${SITE}" style="color:#2563eb;">dynasai.ai</a></p>
-          </td>
-        </tr>
-      </table>
-    </td></tr>
-  </table>
-</body>
-</html>`;
+            <p style="margin:28px 0 0;font-size:12px;color:#4b5563;">Reply to this email to reach ${esc(data.email)}.</p>`,
+  );
+}
+
+export function thankYouEmailHtml(name: string) {
+  const who = name.trim() || 'there';
+  return brandedEmail(
+    'We received your message',
+    `<p style="margin:0 0 16px;color:#0b1f3a;font-size:16px;">Hi ${esc(who)},</p>
+      <p style="margin:0 0 16px;color:#0b1f3a;font-size:15px;line-height:1.6;">Thank you for contacting DynasAI. We have received your enquiry and a member of our team will get back to you within <strong>2–3 working days</strong>.</p>
+      <p style="margin:0 0 16px;color:#0b1f3a;font-size:15px;line-height:1.6;">If you need to add anything, reply to this email or write to <a href="mailto:hello@dynasai.ai" style="color:#2563eb;">hello@dynasai.ai</a>.</p>
+      <p style="margin:0;color:#0b1f3a;font-size:15px;line-height:1.6;">— The DynasAI team</p>`,
+  );
+}
+
+export function thankYouEmailText(name: string) {
+  const who = name.trim() || 'there';
+  return [
+    `Hi ${who},`,
+    '',
+    'Thank you for contacting DynasAI. We have received your enquiry and a member of our team will get back to you within 2–3 working days.',
+    '',
+    'If you need to add anything, reply to this email or write to hello@dynasai.ai.',
+    '',
+    '— The DynasAI team',
+    SITE,
+  ].join('\n');
 }
 
 export function contactEmailText(data: ContactEmailPayload) {

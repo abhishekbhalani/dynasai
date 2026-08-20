@@ -1,7 +1,7 @@
 import { json, originOk, clientIp } from './http';
 import { insertLead } from './leads';
-import { queueMail, sendMail } from './mail';
-import { contactEmailHtml, contactEmailText } from './email-template';
+import { queueMail, sendMails } from './mail';
+import { contactEmailHtml, contactEmailText, thankYouEmailHtml, thankYouEmailText } from './email-template';
 import { buildContactPayload } from './visitor';
 import { assertReplyEmail } from './email-mailbox';
 import { inspectEmail } from '../shared/email-guard';
@@ -77,11 +77,25 @@ export async function handleContactForm(request: Request, env: Env, ctx?: Execut
   const notify = env.LEAD_NOTIFY || 'hello@dynasai.ai';
   const who = company || name;
   await queueMail(ctx, () =>
-    sendMail(env, notify, `New enquiry: ${who}`, message, contactEmailHtml(payload), { email, name }),
+    sendMails(env, [
+      {
+        to: notify,
+        subject: `New enquiry: ${who}`,
+        text: message,
+        html: contactEmailHtml(payload),
+        replyTo: { email, name },
+      },
+      {
+        to: email,
+        subject: 'Thanks for contacting DynasAI',
+        text: thankYouEmailText(name),
+        html: thankYouEmailHtml(name),
+      },
+    ]),
   );
 
   return json({
     ok: true,
-    message: 'Thanks. We will reply from hello@dynasai.ai within one business day.',
+    message: 'Thanks. We emailed you a confirmation. We will get back to you within 2–3 working days.',
   });
 }
