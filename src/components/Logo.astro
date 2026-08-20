@@ -14,12 +14,16 @@ const showTagline = variant === 'header';
   <img
     class="brand-mark"
     src={markSrc}
-    alt={site.name}
+    alt=""
     width="130"
     height="36"
     decoding="async"
     loading={variant === 'header' ? 'eager' : 'lazy'}
     fetchpriority={variant === 'header' ? 'high' : 'auto'}
   />
-  {showTagline && <span class="brand-tagline">{site.tagline}</span>}
+  {showTagline && (
+    <span class="brand-tagline" aria-hidden="true">
+      {site.tagline}
+    </span>
+  )}
 </a>

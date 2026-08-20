@@ -1,3 +1,5 @@
+import { isAdminHost } from './hosts';
+
 const HSTS = 'max-age=31536000; includeSubDomains; preload';
 
 function nonce() {
@@ -5,8 +7,8 @@ function nonce() {
   return [...bytes].map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
-function csp(value: string) {
-  return [
+function csp(value: string, trustedTypes: boolean) {
+  const parts = [
     "default-src 'self'",
     `script-src 'self' 'nonce-${value}' https://challenges.cloudflare.com https://static.cloudflareinsights.com https://www.googletagmanager.com https://www.google-analytics.com https://www.gstatic.com`,
     "style-src 'self' 'unsafe-inline'",
@@ -20,9 +22,27 @@ function csp(value: string) {
     "form-action 'self'",
     "frame-ancestors 'none'",
     'upgrade-insecure-requests',
-    "require-trusted-types-for 'script'",
-    'trusted-types default',
-  ].join('; ');
+  ];
+  if (trustedTypes) {
+    parts.push("require-trusted-types-for 'script'", 'trusted-types default');
+  }
+  return parts.join('; ');
+}
+
+function withScriptNonces(html: string, token: string) {
+  return html.replace(/<script\b([^>]*)>/gi, (full, attrs: string) => {
+    if (/\bnonce\s*=/i.test(attrs)) return full;
+    if (/\btype\s*=\s*["']application\/(?:ld\+json|json)["']/i.test(attrs)) return full;
+    return `<script nonce="${token}"${attrs}>`;
+  });
+}
+
+function withTrustedTypesPolicy(html: string, token: string) {
+  const policy = `<script nonce="${token}">(function(){if(window.trustedTypes&&trustedTypes.createPolicy){try{trustedTypes.createPolicy("default",{createHTML:function(v){return v},createScriptURL:function(v){return v},createScript:function(v){return v}})}catch(e){}}})();</script>`;
+  if (/<head[^>]*>/i.test(html)) {
+    return html.replace(/<head[^>]*>/i, (open) => `${open}${policy}`);
+  }
+  return policy + html;
 }
 
 export function redirectHttpToHttps(request: Request) {
@@ -38,10 +58,11 @@ export function redirectHttpToHttps(request: Request) {
   });
 }
 
-export async function applySecurityHeaders(res: Response) {
+export async function applySecurityHeaders(res: Response, request?: Request) {
   const headers = new Headers(res.headers);
   const token = nonce();
   const type = headers.get('content-type') || '';
+  const admin = request ? isAdminHost(new URL(request.url).hostname) : false;
 
   headers.set('strict-transport-security', HSTS);
   headers.set('x-frame-options', 'DENY');
@@ -49,14 +70,15 @@ export async function applySecurityHeaders(res: Response) {
   headers.set('referrer-policy', 'strict-origin-when-cross-origin');
   headers.set('cross-origin-opener-policy', 'same-origin');
   headers.set('permissions-policy', 'camera=(), microphone=(), geolocation=(), browsing-topics=()');
-  headers.set('content-security-policy', csp(token));
+  headers.set('content-security-policy', csp(token, admin));
 
   if (!type.includes('text/html')) {
     return new Response(res.body, { status: res.status, statusText: res.statusText, headers });
   }
 
-  const html = await res.text();
-  const next = html.replace(/<script(?![^>]*\bnonce=)/gi, `<script nonce="${token}"`);
+  let html = await res.text();
+  if (admin) html = withTrustedTypesPolicy(html, token);
+  html = withScriptNonces(html, token);
   headers.delete('content-length');
-  return new Response(next, { status: res.status, statusText: res.statusText, headers });
+  return new Response(html, { status: res.status, statusText: res.statusText, headers });
 }

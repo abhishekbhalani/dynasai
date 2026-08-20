@@ -358,13 +358,13 @@ async function routeRequest(request: Request, env: Env, ctx?: ExecutionContext) 
 export default {
   async fetch(request, env, ctx) {
     const https = redirectHttpToHttps(request);
-    if (https) return applySecurityHeaders(https);
+    if (https) return applySecurityHeaders(https, request);
     const res = await routeRequest(request, env, ctx);
     const task = recordPageView(request, env, res).catch((error) => {
       console.error('visit_record_failed', { error: String(error) });
     });
     ctx?.waitUntil(task);
-    return applySecurityHeaders(res);
+    return applySecurityHeaders(res, request);
   },
   async scheduled(_event, env, ctx) {
     ctx.waitUntil(
