@@ -10,7 +10,7 @@ function nonce() {
 function csp(value: string, trustedTypes: boolean) {
   const parts = [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${value}' https://challenges.cloudflare.com https://static.cloudflareinsights.com https://www.googletagmanager.com https://www.google-analytics.com https://www.gstatic.com`,
+    `script-src 'self' 'nonce-${value}' 'sha256-nY7wpcztm08/B9kiTvy4UjW/kLifE4nUB6x47pSLJuk=' 'sha256-CaFgxX+3fPpYPpeS3bHwFmQwlkA2XHxdpygPf1h8EbE=' 'sha256-WNIEwO2j3Fiu2W4B/I5p3WxFAZeXN4nygfjOr22MFAk=' 'sha256-hkom6IEhgpUDTTvAQes287GDHiTuSHGmsGoO3UoccAs=' 'sha256-7mUjU7gu/hHw0iipnmiZ2Xwb8pwtGoIx5ENf2+XABJk=' https://challenges.cloudflare.com https://static.cloudflareinsights.com https://www.googletagmanager.com https://www.google-analytics.com https://www.gstatic.com`,
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: https:",
     "font-src 'self'",
@@ -100,9 +100,9 @@ export async function applySecurityHeaders(res: Response, request?: Request) {
   let html = await htmlFromResponse(res);
   if (admin) html = withTrustedTypesPolicy(html, token);
   html = withScriptNonces(html, token);
-  withNoTransform(headers);
   headers.delete('content-length');
   headers.delete('content-encoding');
   headers.set('content-type', 'text/html; charset=utf-8');
+  headers.append('vary', 'Accept-Encoding');
   return new Response(html, { status: res.status, statusText: res.statusText, headers });
 }

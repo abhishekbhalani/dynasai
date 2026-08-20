@@ -312,6 +312,10 @@ async function routeRequest(request: Request, env: Env, ctx?: ExecutionContext) 
     }
 
     const path = url.pathname;
+    if (request.method === 'GET' && url.search && /^\/(contact|start)\/?$/.test(path)) {
+      url.search = '';
+      return Response.redirect(url.toString(), 301);
+    }
     const local = isLocalHost(url.hostname);
     if (!local && (path === '/admin' || path.startsWith('/admin/') || path === '/admin-app' || path.startsWith('/admin-app/'))) {
       return servePublicNotFound(request, env);

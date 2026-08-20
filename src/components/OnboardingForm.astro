@@ -5,7 +5,7 @@ import { onboardingQuestions } from '../content/onboarding';
 const email = import.meta.env.PUBLIC_CONTACT_EMAIL || site.email;
 ---
 
-<form class="form panel onboarding-form" id="onboarding-form" data-onboarding data-contact-email={email} novalidate>
+<form class="form panel onboarding-form" id="onboarding-form" data-onboarding data-contact-email={email} method="post" action="/contact" novalidate>
   <h3>Start with a plan</h3>
   <p class="muted onboarding-lead">
     Five questions. We recommend a service and a cloud path — we do not ask you to pick a server or expose your network.

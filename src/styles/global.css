@@ -60,7 +60,7 @@ a:hover {
 .skip-link {
   position: absolute;
   left: var(--space-2);
-  top: -40px;
+  top: var(--space-2);
   z-index: 100;
   padding: 8px 12px;
   background: var(--accent);
@@ -68,8 +68,16 @@ a:hover {
   border-radius: 8px;
 }
 
-.skip-link:focus {
-  top: var(--space-2);
+.skip-link:not(:focus):not(:focus-visible) {
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 .container {
@@ -86,7 +94,6 @@ a:hover {
   border-bottom: 1px solid var(--border);
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
   overflow: visible;
-  isolation: isolate;
 }
 
 .site-header:has(.mega-menu-layer:not([hidden])) {
@@ -249,8 +256,8 @@ a:hover {
 }
 
 .mega-menu-layer {
-  position: absolute;
-  top: 100%;
+  position: fixed;
+  top: var(--header-h);
   left: 0;
   right: 0;
   z-index: 50;
