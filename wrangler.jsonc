@@ -1,27 +1,59 @@
 {
   "name": "dynasai-web",
+  "account_id": "67547d9fd5363024d30f53c31487cf48",
   "main": "workers/site.ts",
   "compatibility_date": "2026-08-17",
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": true,
   "preview_urls": true,
   "routes": [
-    { "pattern": "dynasai.ai", "custom_domain": true },
-    { "pattern": "www.dynasai.ai", "custom_domain": true }
+    {
+      "pattern": "dynasai.ai",
+      "zone_id": "deba22f5a6c2a3a60082565beb8f2968",
+      "custom_domain": true
+    },
+    {
+      "pattern": "www.dynasai.ai",
+      "zone_id": "deba22f5a6c2a3a60082565beb8f2968",
+      "custom_domain": true
+    },
+    {
+      "pattern": "admin.dynasai.ai",
+      "zone_id": "deba22f5a6c2a3a60082565beb8f2968",
+      "custom_domain": true
+    }
   ],
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
     "not_found_handling": "404-page",
-    "html_handling": "auto-trailing-slash"
+    "html_handling": "auto-trailing-slash",
+    "run_worker_first": true
   },
   "observability": {
     "enabled": true
   },
+  "triggers": {
+    "crons": ["*/10 * * * *"]
+  },
+  "ai": {
+    "binding": "AI"
+  },
   "vars": {
     "ENVIRONMENT": "production",
     "PLAYBOOK_FROM": "hello@dynasai.ai",
-    "LEAD_NOTIFY": "hello@dynasai.ai"
+    "LEAD_NOTIFY": "hello@dynasai.ai",
+    "LEAD_CC": "bhalaniabhishek@gmail.com",
+    "SMTP_HOST": "mail.dynasai.ai",
+    "SMTP_PORT": "587",
+    "SMTP_USER": "hello@dynasai.ai",
+    "SMTP_FROM": "hello@dynasai.ai",
+    "SMTP_TLS_SERVERNAME": "p4475.fra1.stableserver.net",
+    "CHAT_MODEL": "@cf/meta/llama-3.2-3b-instruct",
+    "ADMIN_HOST": "admin.dynasai.ai",
+    "ADMIN_USERNAME": "dynAdmin",
+    "PUBLIC_TURNSTILE_SITEKEY": "0x4AAAAAAEWny9BePf9cxE_u",
+    "CF_ZONE_ID": "deba22f5a6c2a3a60082565beb8f2968"
   },
   "send_email": [
     { "name": "EMAIL" }
@@ -29,7 +61,15 @@
   "kv_namespaces": [
     {
       "binding": "LEADS",
-      "id": "ca0206ce0e284d1e85b08f04c30c447a"
+      "id": "3b73d03580214ee4b95cd231d42bc59e"
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "dynasai-leads",
+      "database_id": "64ccd522-716b-417d-a150-1dfc4034fdcb",
+      "migrations_dir": "migrations"
     }
   ]
 }

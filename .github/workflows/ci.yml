@@ -31,4 +31,5 @@ jobs:
           PUBLIC_SITE_URL: ${{ vars.PUBLIC_SITE_URL || 'https://dynasai.ai' }}
           PUBLIC_APP_URL: ${{ vars.PUBLIC_APP_URL || 'https://app.dynasai.ai' }}
           PUBLIC_GTM_ID: ${{ vars.PUBLIC_GTM_ID || 'GTM-KDPPRVV2' }}
+          PUBLIC_GA_MEASUREMENT_ID: ${{ vars.PUBLIC_GA_MEASUREMENT_ID }}
           PUBLIC_CONTACT_EMAIL: ${{ vars.PUBLIC_CONTACT_EMAIL || 'hello@dynasai.ai' }}

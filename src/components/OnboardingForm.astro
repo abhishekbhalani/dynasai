@@ -5,31 +5,55 @@ import { onboardingQuestions } from '../content/onboarding';
 const email = import.meta.env.PUBLIC_CONTACT_EMAIL || site.email;
 ---
 
-<form class="form panel onboarding-form" id="onboarding-form" data-onboarding data-contact-email={email}>
+<form class="form panel onboarding-form" id="onboarding-form" data-onboarding data-contact-email={email} method="post" action="/contact" novalidate>
   <h3>Start with a plan</h3>
   <p class="muted onboarding-lead">
     Five questions. We recommend a service and a cloud path — we do not ask you to pick a server or expose your network.
   </p>
+  <p class="form-req-note"><span class="req" aria-hidden="true">*</span> Required</p>
 
-  <label>
-    Full name
-    <input type="text" name="name" autocomplete="name" required />
+  <label for="contact-name">
+    <span class="field-caption">Full name <span class="req" aria-hidden="true">*</span></span>
+    <input
+      id="contact-name"
+      type="text"
+      name="name"
+      autocomplete="name"
+      required
+      minlength="2"
+      maxlength="80"
+      aria-required="true"
+      aria-describedby="contact-name-error"
+    />
+    <span class="field-error" id="contact-name-error" role="alert"></span>
   </label>
-  <label>
-    Work email
-    <input type="email" name="email" autocomplete="email" required />
+  <label for="contact-email">
+    <span class="field-caption">Work email <span class="req" aria-hidden="true">*</span></span>
+    <input
+      id="contact-email"
+      type="email"
+      name="email"
+      autocomplete="email"
+      required
+      maxlength="120"
+      aria-required="true"
+      aria-describedby="contact-email-error"
+    />
+    <span class="field-error" id="contact-email-error" role="alert"></span>
   </label>
-  <label>
-    Company
-    <input type="text" name="company" autocomplete="organization" required />
+  <label for="contact-company">
+    <span class="field-caption">Company <span class="optional">optional</span></span>
+    <input id="contact-company" type="text" name="company" autocomplete="organization" maxlength="120" />
   </label>
 
   {
     onboardingQuestions.map((q) => (
       <fieldset class="onboarding-fieldset">
-        <legend>{q.label}</legend>
+        <legend>
+          {q.label} <span class="optional">optional</span>
+        </legend>
         <p class="onboarding-hint">{q.hint}</p>
-        <select name={q.id} required data-onboarding-field>
+        <select name={q.id} data-onboarding-field>
           <option value="">Select…</option>
           {q.options.map((opt) => (
             <option value={opt.value}>{opt.label}</option>
@@ -39,9 +63,9 @@ const email = import.meta.env.PUBLIC_CONTACT_EMAIL || site.email;
     ))
   }
 
-  <label>
-    Anything else we should know?
-    <textarea name="notes" rows="4"></textarea>
+  <label for="contact-notes">
+    <span class="field-caption">Anything else we should know? <span class="optional">optional</span></span>
+    <textarea id="contact-notes" name="notes" rows="4" maxlength="800"></textarea>
   </label>
 
   <input type="hidden" name="recommended_service" data-onboarding-service />
@@ -60,6 +84,7 @@ const email = import.meta.env.PUBLIC_CONTACT_EMAIL || site.email;
   </aside>
 
   <button class="btn btn-primary btn-lg" type="submit">Send request</button>
+  <p class="muted onboarding-status" data-onboarding-status hidden></p>
   <p class="muted onboarding-fallback">
     Or email <a href={`mailto:${email}`}>{email}</a> if the form is blocked.
   </p>
@@ -67,6 +92,9 @@ const email = import.meta.env.PUBLIC_CONTACT_EMAIL || site.email;
 
 <script>
   import { recommendPlan } from '../content/onboarding';
+  import { inspectEmail } from '../../shared/email-guard';
+
+  type VisitorFn = () => Record<string, unknown>;
 
   const form = document.querySelector<HTMLFormElement>('[data-onboarding]');
   const plan = document.querySelector<HTMLElement>('[data-onboarding-plan]');
@@ -80,7 +108,52 @@ const email = import.meta.env.PUBLIC_CONTACT_EMAIL || site.email;
     const serviceInput = form.querySelector<HTMLInputElement>('[data-onboarding-service]');
     const cloudInput = form.querySelector<HTMLInputElement>('[data-onboarding-cloud]');
     const summaryInput = form.querySelector<HTMLInputElement>('[data-onboarding-summary]');
-    const contactEmail = form.dataset.contactEmail || '';
+
+    function visitorMeta() {
+      const fn = (window as Window & { dynasaiVisitor?: VisitorFn }).dynasaiVisitor;
+      return typeof fn === 'function' ? fn() : {};
+    }
+
+    function fieldErrorEl(field: HTMLElement) {
+      return document.getElementById(`${field.id}-error`);
+    }
+
+    function clearField(field: HTMLInputElement) {
+      field.setCustomValidity('');
+      field.classList.remove('is-invalid');
+      field.removeAttribute('aria-invalid');
+      field.closest('label')?.classList.remove('is-invalid');
+      const err = fieldErrorEl(field);
+      if (err) err.textContent = '';
+    }
+
+    function markInvalid(field: HTMLInputElement, message: string) {
+      field.setCustomValidity(message);
+      field.classList.add('is-invalid');
+      field.setAttribute('aria-invalid', 'true');
+      field.closest('label')?.classList.add('is-invalid');
+      const err = fieldErrorEl(field);
+      if (err) err.textContent = message;
+    }
+
+    function validateForm() {
+      const name = form!.elements.namedItem('name') as HTMLInputElement;
+      const email = form!.elements.namedItem('email') as HTMLInputElement;
+      clearField(name);
+      clearField(email);
+      if (name.value.trim().length < 2) {
+        markInvalid(name, 'Enter your full name.');
+      }
+      if (!email.value.trim()) {
+        markInvalid(email, 'Enter your email.');
+      } else {
+        const mailbox = inspectEmail(email.value);
+        if (!mailbox.ok) markInvalid(email, mailbox.error);
+      }
+      const first = form!.querySelector<HTMLInputElement>('.is-invalid');
+      first?.focus();
+      return !first;
+    }
 
     function readAnswers() {
       const data = new FormData(form!);
@@ -119,26 +192,72 @@ const email = import.meta.env.PUBLIC_CONTACT_EMAIL || site.email;
     }
 
     form.addEventListener('change', updatePlan);
+    form.addEventListener('input', (event) => {
+      const target = event.target;
+      if (target instanceof HTMLInputElement && target.classList.contains('is-invalid')) {
+        clearField(target);
+      }
+    });
 
-    form.addEventListener('submit', (event) => {
+    form.addEventListener('submit', async (event) => {
       event.preventDefault();
+      if (!validateForm()) return;
       updatePlan();
       const data = new FormData(form);
-      const lines = [
-        `Name: ${data.get('name')}`,
-        `Email: ${data.get('email')}`,
-        `Company: ${data.get('company')}`,
-        `Job: ${data.get('job')}`,
-        `Industry: ${data.get('industry')}`,
-        `Existing cloud: ${data.get('cloud')}`,
-        `Residency: ${data.get('residency')}`,
-        `Start: ${data.get('start')}`,
-        `Recommended service: ${data.get('recommended_service')}`,
-        `Recommended cloud path: ${data.get('recommended_cloud')}`,
-        `Notes: ${data.get('notes') || '(none)'}`,
-      ];
-      const href = `mailto:${contactEmail}?subject=${encodeURIComponent('DynasAI plan request')}&body=${encodeURIComponent(lines.join('\n'))}`;
-      window.location.href = href;
+      const status = form.querySelector<HTMLElement>('[data-onboarding-status]');
+      const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+      if (status) {
+        status.hidden = false;
+        status.textContent = 'Sending…';
+      }
+      if (submit) submit.disabled = true;
+      try {
+        const res = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            name: data.get('name'),
+            email: data.get('email'),
+            company: data.get('company'),
+            job: data.get('job'),
+            industry: data.get('industry'),
+            cloud: data.get('cloud'),
+            residency: data.get('residency'),
+            start: data.get('start'),
+            recommended_service: data.get('recommended_service'),
+            recommended_cloud: data.get('recommended_cloud'),
+            notes: data.get('notes'),
+            path: location.pathname,
+            ...visitorMeta(),
+          }),
+        });
+        const raw = await res.text();
+        let json: { ok?: boolean; error?: string; message?: string; field?: string } = {};
+        try {
+          json = raw ? (JSON.parse(raw) as typeof json) : {};
+        } catch {
+          json = {
+            ok: false,
+            error:
+              res.status >= 400
+                ? `Could not send (${res.status}). Email hello@dynasai.ai.`
+                : 'Could not send. Email hello@dynasai.ai.',
+          };
+        }
+        if (!json.ok && json.field === 'email') {
+          const emailField = form.querySelector<HTMLInputElement>('#contact-email');
+          if (emailField) markInvalid(emailField, json.error || 'Enter a valid email address.');
+        }
+        if (status) {
+          status.textContent = json.ok
+            ? json.message || 'Thanks. We emailed you a confirmation. We will get back to you within 2–3 working days.'
+            : json.error || 'Could not send. Email hello@dynasai.ai.';
+        }
+        if (json.ok) form.reset();
+      } catch {
+        if (status) status.textContent = 'Could not send. Email hello@dynasai.ai.';
+      }
+      if (submit) submit.disabled = false;
     });
   }
 </script>

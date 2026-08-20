@@ -36,25 +36,14 @@ function fail(message, code = 1) {
   process.exit(code);
 }
 
-function loadCloudflareEnv() {
+function loadDotEnv() {
   const envPath = join(root, '.env');
-  if (!existsSync(envPath)) {
-    return;
-  }
-
-  const content = readFileSync(envPath, 'utf8');
-  for (const line of content.split('\n')) {
+  const fileEnv = {};
+  if (!existsSync(envPath)) return fileEnv;
+  for (const line of readFileSync(envPath, 'utf8').split('\n')) {
     const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith('#')) {
-      continue;
-    }
-
+    if (!trimmed || trimmed.startsWith('#') || !trimmed.includes('=')) continue;
     const eq = trimmed.indexOf('=');
-    if (eq === -1) {
-      continue;
-    }
-
-    const key = trimmed.slice(0, eq).trim();
     let value = trimmed.slice(eq + 1).trim();
     if (
       (value.startsWith('"') && value.endsWith('"')) ||
@@ -62,11 +51,35 @@ function loadCloudflareEnv() {
     ) {
       value = value.slice(1, -1);
     }
-
-    if (key.startsWith('CLOUDFLARE_') && !process.env[key]) {
-      process.env[key] = value;
-    }
+    fileEnv[trimmed.slice(0, eq).trim()] = value;
   }
+  return fileEnv;
+}
+
+function loadCloudflareEnv() {
+  const fileEnv = loadDotEnv();
+  for (const [key, value] of Object.entries(fileEnv)) {
+    if (key.startsWith('CLOUDFLARE_')) process.env[key] = value;
+  }
+}
+
+function putSmtpSecret() {
+  const pass = loadDotEnv().SMTP_PASS;
+  if (!pass) {
+    console.log('  SMTP_PASS not in .env — Worker secret unchanged');
+    return;
+  }
+  log('Updating SMTP_PASS Worker secret...');
+  const result = spawnSync(npxCmd, ['wrangler', 'secret', 'put', 'SMTP_PASS'], {
+    cwd: root,
+    input: `${pass}\n`,
+    encoding: 'utf8',
+    shell: process.platform === 'win32',
+    stdio: ['pipe', 'inherit', 'inherit'],
+    env: process.env,
+  });
+  if (result.error) fail(result.error.message);
+  if (result.status !== 0) fail('wrangler secret put SMTP_PASS failed', result.status ?? 1);
 }
 
 function run(command, commandArgs, options = {}) {
@@ -116,7 +129,10 @@ function checkWranglerAuth() {
   log('Checking Cloudflare auth (wrangler whoami)...');
 
   if (process.env.CLOUDFLARE_API_TOKEN) {
-    console.log('  Using CLOUDFLARE_API_TOKEN from environment');
+    console.log('  Using CLOUDFLARE_API_TOKEN from .env');
+  }
+  if (process.env.CLOUDFLARE_ACCOUNT_ID) {
+    console.log(`  Account ID: ${process.env.CLOUDFLARE_ACCOUNT_ID}`);
   }
 
   const result = spawnSync(npxCmd, ['wrangler', 'whoami'], {
@@ -187,6 +203,7 @@ function main() {
   }
 
   log('Deploying to Cloudflare Workers...');
+  putSmtpSecret();
   run(npxCmd, ['wrangler', 'deploy']);
 
   console.log('\n✔ Release complete.');

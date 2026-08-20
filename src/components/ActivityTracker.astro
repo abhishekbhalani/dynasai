@@ -1,0 +1,104 @@
+<script>
+  const KEY = 'dynasai_cookie_consent';
+  const SID = 'dynasai_sid';
+
+  type Prefs = { performance?: boolean };
+
+  function consented() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(KEY) || '') as Prefs;
+      return parsed.performance === true;
+    } catch {
+      return false;
+    }
+  }
+
+  function sessionId() {
+    let id = localStorage.getItem(SID);
+    if (!id) {
+      id = crypto.randomUUID();
+      localStorage.setItem(SID, id);
+    }
+    return id;
+  }
+
+  function networkInfo() {
+    const conn = (navigator as Navigator & { connection?: { effectiveType?: string; downlink?: number; saveData?: boolean; type?: string } }).connection;
+    return {
+      network: conn?.type || conn?.effectiveType || '',
+      downlink: conn?.downlink || 0,
+      saveData: Boolean(conn?.saveData),
+    };
+  }
+
+  function navTiming() {
+    const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
+    return {
+      ttfbMs: nav ? Math.round(nav.responseStart) : 0,
+      loadMs: nav ? Math.round(nav.loadEventEnd) : Math.round(performance.now()),
+    };
+  }
+
+  function send(type: string, extra: Record<string, unknown> = {}) {
+    if (!consented()) return;
+    if (location.hostname === 'admin.dynasai.ai' || location.pathname.startsWith('/admin')) return;
+    const payload = {
+      consent: true,
+      type,
+      sessionId: sessionId(),
+      path: location.pathname,
+      title: document.title,
+      referrer: document.referrer,
+      lang: navigator.language,
+      tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      viewport: `${window.innerWidth}x${window.innerHeight}`,
+      ...networkInfo(),
+      ...navTiming(),
+      ...extra,
+    };
+    const body = JSON.stringify(payload);
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon('/api/track', new Blob([body], { type: 'application/json' }));
+      return;
+    }
+    void fetch('/api/track', { method: 'POST', headers: { 'content-type': 'application/json' }, body, keepalive: true });
+  }
+
+  const visibleStarted = Date.now();
+  send('page_view');
+
+  const seen = new Set<string>();
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting || entry.intersectionRatio < 0.45) return;
+        const node = entry.target as HTMLElement;
+        const label = node.getAttribute('data-track-section') || node.querySelector('h1,h2,h3')?.textContent || node.id || node.tagName;
+        const key = String(label).trim().slice(0, 80);
+        if (!key || seen.has(key)) return;
+        seen.add(key);
+        send('section_view', { section: key });
+      });
+    },
+    { threshold: 0.45 },
+  );
+  document.querySelectorAll('main section, [data-track-section]').forEach((el) => io.observe(el));
+
+  document.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    const hit = target.closest('a, button, summary, [data-track]');
+    if (!hit) return;
+    send('click', { section: (hit.textContent || hit.getAttribute('href') || '').trim().slice(0, 80) });
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') {
+      send('page_leave', { visibleMs: Date.now() - visibleStarted, dwellMs: Date.now() - visibleStarted });
+    }
+  });
+
+  window.addEventListener('pagehide', () => {
+    send('page_leave', { visibleMs: Date.now() - visibleStarted, dwellMs: Date.now() - visibleStarted });
+  });
+</script>

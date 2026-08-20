@@ -11,7 +11,9 @@ const lede =
 <section class="hero-banner" aria-labelledby="hero-heading">
   <div class="hero-banner-media">
     <img
-      src="/img/hero-banner.png"
+      src="/img/hero-banner-960.webp"
+      srcset="/img/hero-banner-960.webp 960w, /img/hero-banner.webp 1920w"
+      sizes="100vw"
       alt=""
       width="1920"
       height="1080"
@@ -28,7 +30,11 @@ const lede =
       </h1>
       <p class="hero-banner-lede">{lede}</p>
       <div class="hero-actions">
-        <a class="btn btn-primary btn-lg" href={site.appUrl}>Start Building</a>
+        {site.appEnabled ? (
+          <a class="btn btn-primary btn-lg" href={site.appUrl}>Start Building</a>
+        ) : (
+          <a class="btn btn-primary btn-lg" href="/contact">Contact Sales</a>
+        )}
         <a class="btn btn-secondary btn-lg btn-secondary--on-dark" href="/pricing">Our Services</a>
       </div>
 

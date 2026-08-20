@@ -162,7 +162,7 @@ export const impactPage: MarketingPage = {
     {
       type: 'cta',
       title: 'Ready to build your case study?',
-      body: 'Start with a discovery sprint or toolkit pilot on app.dynasai.ai.',
+      body: 'Start with a discovery sprint or toolkit pilot.',
       primary: { label: 'Contact sales', href: '/contact' },
       secondary: { label: 'View services', href: '/pricing' },
     },
@@ -392,7 +392,7 @@ export const agentsPage: MarketingPage = {
     {
       type: 'cta',
       title: 'Explore agents in the workspace',
-      body: 'Templates, builder, and operated deployments on app.dynasai.ai.',
+      body: 'Templates, builder, and operated deployments — workspace demo coming later.',
       primary: { label: 'Open workspace', href: 'https://app.dynasai.ai' },
       secondary: { label: 'Dynas Toolkit', href: '/platform/toolkit' },
     },
@@ -428,7 +428,7 @@ export const intelligencePage: MarketingPage = {
     {
       type: 'cta',
       title: 'See the platform in action',
-      body: 'Read the docs or start building in the workspace.',
+      body: 'Read the docs or talk to our team about a guided rollout.',
       primary: { label: 'Platform docs', href: '/docs' },
       secondary: { label: 'Start building', href: 'https://app.dynasai.ai' },
     },

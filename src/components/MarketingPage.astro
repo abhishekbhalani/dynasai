@@ -3,6 +3,7 @@ import Breadcrumb from './Breadcrumb.astro';
 import Icon from './Icon.astro';
 import BrandLogo from './BrandLogo.astro';
 import { iconForTitle } from '../lib/icon-map';
+import { site, isAppHref } from '../config';
 import type { MarketingPage as MarketingPageType } from '../content/stitch-pages';
 
 interface Props {
@@ -135,10 +136,24 @@ const brandLogos = new Set(['aws', 'azure', 'gcp', 'microsoft']);
                 <p class="muted">{section.body}</p>
               </div>
               <div class="cta-band-actions">
-                <a class="btn btn-primary" href={section.primary.href}>{section.primary.label}</a>
-                {section.secondary && (
-                  <a class="btn btn-secondary" href={section.secondary.href}>{section.secondary.label}</a>
-                )}
+                {(() => {
+                  const primary =
+                    site.appEnabled || !isAppHref(section.primary.href)
+                      ? section.primary
+                      : { label: 'Contact sales', href: '/contact' };
+                  const secondary =
+                    section.secondary && (site.appEnabled || !isAppHref(section.secondary.href))
+                      ? section.secondary
+                      : undefined;
+                  return (
+                    <>
+                      <a class="btn btn-primary" href={primary.href}>{primary.label}</a>
+                      {secondary && (
+                        <a class="btn btn-secondary" href={secondary.href}>{secondary.label}</a>
+                      )}
+                    </>
+                  );
+                })()}
               </div>
             </div>
           </div>

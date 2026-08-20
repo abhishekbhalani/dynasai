@@ -7,23 +7,32 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && vite build --config admin/vite.config.ts",
+    "build:admin": "vite build --config admin/vite.config.ts",
     "preview": "astro preview",
     "astro": "astro",
-    "preview:cf": "astro build && wrangler dev",
-    "deploy": "astro build && wrangler deploy",
+    "preview:cf": "npm run build && wrangler dev",
+    "deploy": "npm run build && wrangler deploy",
     "release": "node scripts/release.mjs",
     "release:dry": "node scripts/release.mjs --dry-run",
+    "release:cf": "node scripts/release.mjs",
     "cicd:github": "node scripts/setup-github-cicd.mjs",
-    "cf:check": "node scripts/check-cloudflare.mjs"
+    "cf:check": "node scripts/check-cloudflare.mjs",
+    "zaraz:status": "node .cursor/zaraz-mcp.mjs --status",
+    "zaraz:skip-admin": "node .cursor/zaraz-mcp.mjs --skip-admin",
+    "images:optimize": "npx -p sharp node scripts/optimize-images.mjs",
+    "pages:create": "node scripts/create-pages.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.5",
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.3",
-    "astro": "^7.2.2"
+    "astro": "^7.2.2",
+    "vue": "^3.5.41",
+    "vue-router": "^5.2.0"
   },
   "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.8",
     "wrangler": "^4.123.0"
   }
 }

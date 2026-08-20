@@ -1,18 +1,20 @@
 # DynasAI
 
-Active task: GitHub Actions manual release to Cloudflare Workers (dynasai.ai).
+Active task: Wave 0 release, then Zaraz GA4. Admin is `admin.dynasai.ai` (not `/admin`).
 
 ## Product
 
 - Studio (AI delivery) + developer platform/API
 - Domain: dynasai.ai (this repo)
+- Admin: admin.dynasai.ai (same Worker, no tracking)
 - App later: app.dynasai.ai (separate Workers project)
 
 ## Constraints
 
 - Static HTML, Cloudflare Workers static assets (not Pages)
 - Light + dark via CSS variables, WCAG AA
-- GTM-KDPPRVV2 in production
+- Analytics: Cloudflare Zaraz + GA4 (no in-app GTM)
+- Admin: admin.dynasai.ai (unguessable path not required; host is still guessable — password + later Cloudflare Access)
 - Do not commit `.cursor/mcp.json`
 
 ## Pending

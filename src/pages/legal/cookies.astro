@@ -8,7 +8,8 @@ const updated = '17 August 2026';
 
 const sections = [
   { id: 'essential', label: 'Essential' },
-  { id: 'gtm', label: 'Google Tag Manager' },
+  { id: 'gtm', label: 'Cloudflare Zaraz' },
+  { id: 'ga', label: 'Google Analytics' },
   { id: 'control', label: 'Control' },
 ];
 ---
@@ -39,11 +40,19 @@ const sections = [
           reload. That is not a tracking cookie.
         </p>
 
-        <h2 id="gtm">Google Tag Manager</h2>
+        <h2 id="gtm">Cloudflare Zaraz (Google Analytics)</h2>
         <p>
-          In production we load Google Tag Manager (GTM-KDPPRVV2). GTM itself is a container. Tags you
-          publish inside it (Analytics, ads, heatmaps) may set cookies. Configure Consent Mode in GTM
-          before enabling advertising tags.
+          Tags are not embedded in the app. Cloudflare Zaraz on the <code>dynasai.ai</code> zone
+          loads Google Analytics 4 (and optional Google tools) at the edge. Hits wait for
+          performance-cookie consent from this banner.
+        </p>
+
+        <h2 id="ga">First-party activity</h2>
+        <p>
+          With performance-cookie consent we also store first-party activity on Cloudflare (page, section, clicks,
+          time on page, approximate location/ISP from Cloudflare, hashed IP). This powers the internal
+          admin activity view (served on a separate admin host that we do not measure). We cannot see Wi‑Fi SSIDs, exact GPS, or personal identity unless you
+          type it into a form.
         </p>
 
         <h2 id="control">Control</h2>

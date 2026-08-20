@@ -119,9 +119,9 @@ export const toolkitAccess = {
     },
     {
       label: 'Workspace',
-      description: 'Visual builder, evals, and operated deployments on app.dynasai.ai.',
-      href: 'https://app.dynasai.ai',
-      status: 'Available now',
+      description: 'Visual builder, evals, and operated deployments — coming on app.dynasai.ai when the demo is ready.',
+      href: '/contact',
+      status: 'Coming soon',
     },
     {
       label: 'npm SDK',
@@ -257,7 +257,7 @@ export const homeHero = {
     { value: 'BYO', label: 'VPC and data stay in your account' },
     { value: 'EU / US', label: 'Residency you approve' },
   ],
-  primaryCta: { label: 'Start Building', href: 'https://app.dynasai.ai' },
+  primaryCta: { label: 'Contact Sales', href: '/contact' },
   secondaryCta: { label: 'Insurance solutions', href: '/solutions/insurance' },
   tertiaryCta: { label: 'Explore Toolkit', href: '/platform/toolkit' },
 } as const;

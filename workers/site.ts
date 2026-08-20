@@ -1,21 +1,21 @@
 import { playbookMeta, playbookPages } from '../src/content/playbook-pages';
 import { buildPlaybookPdf } from './pdf';
+import { json } from './http';
+import { handleTrack } from './track';
+import { handleChat } from './chat';
+import { handleAdmin, handleQuickContact, hasAdminSession } from './admin';
+import { insertLead } from './leads';
+import { sendMail, leadRecipients } from './mail';
+import { handleContactForm } from './contact-form';
+import { isAdminHost, isCrawler, isLocalHost, isStaticAssetPath } from './hosts';
+import { applySecurityHeaders, redirectHttpToHttps } from './security';
+import { recordPageView } from './visits';
+import { refreshTrafficCache } from './cf-analytics';
 
 const OTP_TTL_SEC = 10 * 60;
 const SESSION_TTL_SEC = 12 * 60 * 60;
 const COOKIE = 'dynasai_playbook';
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-function json(data: unknown, status = 200, extra?: HeadersInit) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: {
-      'content-type': 'application/json; charset=utf-8',
-      'cache-control': 'no-store',
-      ...extra,
-    },
-  });
-}
 
 function clientIp(request: Request) {
   return request.headers.get('CF-Connecting-IP') || request.headers.get('x-forwarded-for') || 'unknown';
@@ -72,18 +72,6 @@ async function readSession(request: Request, env: Env) {
   const session = JSON.parse(raw) as { email: string; exp: number };
   if (session.exp < Date.now()) return null;
   return session;
-}
-
-async function sendMail(env: Env, to: string, subject: string, text: string) {
-  if (!env.EMAIL) throw new Error('EMAIL binding missing');
-  const from = env.PLAYBOOK_FROM || 'hello@dynasai.ai';
-  await env.EMAIL.send({
-    to,
-    from: { email: from, name: 'DynasAI' },
-    subject,
-    text,
-    html: `<p>${text.replace(/\n/g, '<br/>')}</p>`,
-  });
 }
 
 async function handleRequestOtp(request: Request, env: Env) {
@@ -163,6 +151,16 @@ async function handleVerifyOtp(request: Request, env: Env) {
     verifiedAt: new Date().toISOString(),
   };
   await env.LEADS.put(`lead:${email}`, JSON.stringify(lead));
+  try {
+    await insertLead(env, {
+      source: 'playbook',
+      name: otp.name,
+      email,
+      company: otp.company,
+    });
+  } catch (error) {
+    console.error('lead_insert_failed', { error: String(error) });
+  }
   await env.LEADS.put(
     `session:${token}`,
     JSON.stringify({ ...lead, exp: Date.now() + SESSION_TTL_SEC * 1000 }),
@@ -170,12 +168,15 @@ async function handleVerifyOtp(request: Request, env: Env) {
   );
 
   try {
-    const notify = env.LEAD_NOTIFY || 'hello@dynasai.ai';
+    const notify = leadRecipients(env);
     await sendMail(
       env,
-      notify,
-      `Playbook lead: ${company}`,
+      notify.to,
+      `Playbook lead: ${otp.company}`,
       `Verified playbook lead\nName: ${otp.name}\nEmail: ${email}\nCompany: ${otp.company}\nSource: ${playbookMeta.source}`,
+      undefined,
+      undefined,
+      notify.cc,
     );
   } catch (error) {
     console.error('playbook_lead_notify_failed', { error: String(error) });
@@ -227,22 +228,147 @@ async function handlePlaybook(request: Request, env: Env) {
   return json({ ok: false, error: 'Not found' }, 404);
 }
 
-export default {
-  async fetch(request, env) {
+async function withRobots(res: Response) {
+  const headers = new Headers(res.headers);
+  headers.set('x-robots-tag', 'noindex, nofollow, noarchive, nosnippet');
+  return new Response(res.body, { status: res.status, headers });
+}
+
+async function servePublicNotFound(request: Request, env: Env) {
+  const url = new URL(request.url);
+  url.pathname = '/404';
+  const res = await env.ASSETS.fetch(new Request(url.toString(), request));
+  return new Response(res.body, { status: 404, headers: res.headers });
+}
+
+async function serveAdminSpa(request: Request, env: Env) {
+  const assetUrl = new URL(request.url);
+  assetUrl.pathname = '/admin-app/';
+  const res = await env.ASSETS.fetch(new Request(assetUrl.toString(), { method: 'GET' }));
+  if (!res.ok) return servePublicNotFound(request, env);
+
+  const authed = await hasAdminSession(request, env);
+  const host = new URL(request.url).hostname;
+  const base = isLocalHost(host) ? '/admin/' : '/';
+  const sitekey = env.PUBLIC_TURNSTILE_SITEKEY || '';
+  let html = await res.text();
+  html = html
+    .replace('data-auth="0"', `data-auth="${authed ? '1' : '0'}"`)
+    .replace('data-base="/"', `data-base="${base}"`)
+    .replace('data-turnstile=""', `data-turnstile="${sitekey}"`);
+
+  const headers = new Headers(res.headers);
+  headers.set('content-type', 'text/html; charset=utf-8');
+  headers.set('cache-control', 'no-store');
+  return withRobots(new Response(html, { status: 200, headers }));
+}
+
+async function handleAdminHost(request: Request, env: Env, ctx?: ExecutionContext) {
+  if (isCrawler(request)) {
+    return new Response('Not found', {
+      status: 404,
+      headers: {
+        'content-type': 'text/plain; charset=utf-8',
+        'x-robots-tag': 'noindex, nofollow, noarchive, nosnippet',
+      },
+    });
+  }
+
+  const url = new URL(request.url);
+  const path = url.pathname.replace(/\/$/, '') || '/';
+
+  if (path === '/robots.txt') {
+    return new Response('User-agent: *\nDisallow: /\n', {
+      headers: {
+        'content-type': 'text/plain; charset=utf-8',
+        'cache-control': 'no-store',
+        'x-robots-tag': 'noindex, nofollow, noarchive, nosnippet',
+      },
+    });
+  }
+
+  try {
+    if (path.startsWith('/api/admin')) return await handleAdmin(request, env, ctx);
+  } catch (error) {
+    console.error('api_error', { path, error: String(error) });
+    return json({ ok: false, error: 'Something went wrong.' }, 500);
+  }
+
+  if (path.startsWith('/api/')) return json({ ok: false, error: 'Not found' }, 404);
+  if (isStaticAssetPath(path)) {
+    const res = await env.ASSETS.fetch(request);
+    return withRobots(res);
+  }
+  return serveAdminSpa(request, env);
+}
+
+async function routeRequest(request: Request, env: Env, ctx?: ExecutionContext) {
     const url = new URL(request.url);
     if (url.hostname === 'www.dynasai.ai') {
       url.hostname = 'dynasai.ai';
+      url.protocol = 'https:';
       return Response.redirect(url.toString(), 301);
     }
-    if (url.pathname.startsWith('/api/playbook')) {
-      if (request.method === 'OPTIONS') return new Response(null, { status: 204 });
-      try {
-        return await handlePlaybook(request, env);
-      } catch (error) {
-        console.error('playbook_api_error', { error: String(error) });
-        return json({ ok: false, error: 'Something went wrong.' }, 500);
-      }
+
+    if (isAdminHost(url.hostname, env) && !['localhost', '127.0.0.1'].includes(url.hostname)) {
+      return handleAdminHost(request, env, ctx);
     }
+
+    const path = url.pathname;
+    if (request.method === 'GET' && url.search && /^\/(contact|start)\/?$/.test(path)) {
+      url.search = '';
+      return Response.redirect(url.toString(), 301);
+    }
+    const local = isLocalHost(url.hostname);
+    if (!local && (path === '/admin' || path.startsWith('/admin/') || path === '/admin-app' || path.startsWith('/admin-app/'))) {
+      return servePublicNotFound(request, env);
+    }
+
+    try {
+      if (path.startsWith('/api/track')) return await handleTrack(request, env);
+      if (path.startsWith('/api/chat')) return await handleChat(request, env);
+      if (path.startsWith('/api/contact-quick')) return await handleQuickContact(request, env, ctx);
+      if (path.startsWith('/api/contact')) return await handleContactForm(request, env, ctx);
+      if (path.startsWith('/api/admin')) {
+        if (!local) return json({ ok: false, error: 'Not found' }, 404);
+        return await handleAdmin(request, env, ctx);
+      }
+      if (path.startsWith('/api/playbook')) {
+        if (request.method === 'OPTIONS') return new Response(null, { status: 204 });
+        return await handlePlaybook(request, env);
+      }
+    } catch (error) {
+      console.error('api_error', { path, error: String(error) });
+      return json({ ok: false, error: 'Something went wrong.' }, 500);
+    }
+
+    if (local && (path === '/admin' || path.startsWith('/admin/') || path.startsWith('/admin-app/'))) {
+      if (isStaticAssetPath(path)) {
+        const res = await env.ASSETS.fetch(request);
+        return withRobots(res);
+      }
+      return serveAdminSpa(request, env);
+    }
+
     return env.ASSETS.fetch(request);
+}
+
+export default {
+  async fetch(request, env, ctx) {
+    const https = redirectHttpToHttps(request);
+    if (https) return applySecurityHeaders(https, request);
+    const res = await routeRequest(request, env, ctx);
+    const task = recordPageView(request, env, res).catch((error) => {
+      console.error('visit_record_failed', { error: String(error) });
+    });
+    ctx?.waitUntil(task);
+    return applySecurityHeaders(res, request);
+  },
+  async scheduled(_event, env, ctx) {
+    ctx.waitUntil(
+      refreshTrafficCache(env).catch((error) => {
+        console.error('traffic_warm_failed', { error: String(error) });
+      }),
+    );
   },
 };

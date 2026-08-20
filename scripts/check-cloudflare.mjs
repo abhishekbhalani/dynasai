@@ -5,7 +5,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const npxCmd = process.platform === 'win32' ? 'npx.cmd' : 'npx';
+const wranglerJs = join(root, 'node_modules', 'wrangler', 'bin', 'wrangler.js');
 
 const envPath = join(root, '.env');
 if (existsSync(envPath)) {
@@ -22,7 +22,7 @@ if (existsSync(envPath)) {
     ) {
       value = value.slice(1, -1);
     }
-    if (key.startsWith('CLOUDFLARE_') && value && !process.env[key]) {
+    if (key.startsWith('CLOUDFLARE_') && value) {
       process.env[key] = value;
     }
   }
@@ -31,11 +31,15 @@ if (existsSync(envPath)) {
 console.log('CLOUDFLARE_API_TOKEN:', process.env.CLOUDFLARE_API_TOKEN ? 'set' : 'missing');
 console.log('CLOUDFLARE_ACCOUNT_ID:', process.env.CLOUDFLARE_ACCOUNT_ID ? 'set' : 'missing');
 
-const result = spawnSync(npxCmd, ['wrangler', 'whoami'], {
+const result = spawnSync(process.execPath, [wranglerJs, 'whoami'], {
   cwd: root,
   stdio: 'inherit',
   shell: false,
   env: process.env,
 });
+
+if (result.error) {
+  console.error(result.error.message);
+}
 
 process.exit(result.status ?? 1);

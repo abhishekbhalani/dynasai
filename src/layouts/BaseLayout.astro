@@ -3,9 +3,12 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import CookieConsent from '../components/CookieConsent.astro';
+import ActivityTracker from '../components/ActivityTracker.astro';
+import QuickContact from '../components/QuickContact.astro';
+import VisitorChat from '../components/VisitorChat.astro';
 import Seo from '../components/Seo.astro';
 import JsonLd from '../components/JsonLd.astro';
-import { site } from '../config';
+import '../styles/visitor.css';
 
 interface Props {
   title: string;
@@ -17,8 +20,7 @@ interface Props {
 }
 
 const { title, description, canonical, type, noindex, jsonLd } = Astro.props;
-const gtmId = import.meta.env.PUBLIC_GTM_ID || site.gtmId;
-const loadGtm = Boolean(gtmId) && import.meta.env.PROD;
+const isAdmin = Astro.url.pathname.startsWith('/admin');
 ---
 
 <!doctype html>
@@ -29,81 +31,21 @@ const loadGtm = Boolean(gtmId) && import.meta.env.PROD;
     <link rel="icon" type="image/svg+xml" href="/img/logo-mark-colored.svg" />
     <link rel="apple-touch-icon" href="/img/logo-mark-colored.svg" />
     <meta name="generator" content={Astro.generator} />
-    <script is:inline>
-      (function () {
-        var root = document.documentElement;
-        try {
-          var stored = localStorage.getItem('theme');
-          root.setAttribute('data-theme', stored || 'light');
-        } catch (e) {
-          root.setAttribute('data-theme', 'light');
-        }
-        try {
-          if (localStorage.getItem('dynasai_cookie_consent')) {
-            root.setAttribute('data-cookie-ok', '1');
-          } else {
-            root.setAttribute('data-cookie-needed', '1');
-          }
-        } catch (e) {
-          root.setAttribute('data-cookie-needed', '1');
-        }
-      })();
-    </script>
-    <script is:inline>
-      window.dataLayer = window.dataLayer || [];
-      window.gtag = function () {
-        window.dataLayer.push(arguments);
-      };
-      window.gtag('consent', 'default', {
-        ad_storage: 'denied',
-        analytics_storage: 'denied',
-        ad_user_data: 'denied',
-        ad_personalization: 'denied',
-        functionality_storage: 'granted',
-        security_storage: 'granted',
-        wait_for_update: 500,
-      });
-    </script>
-    {
-      loadGtm && (
-        <script is:inline define:vars={{ gtmId }}>
-          (function (w, d, s, l, i) {
-            w[l] = w[l] || [];
-            w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
-            var f = d.getElementsByTagName(s)[0];
-            var j = d.createElement(s);
-            var dl = l != 'dataLayer' ? '&l=' + l : '';
-            j.async = true;
-            j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
-            f.parentNode.insertBefore(j, f);
-          })(window, document, 'script', 'dataLayer', gtmId);
-        </script>
-      )
-    }
+    <script is:inline src="/js/boot.js"></script>
     <Seo title={title} description={description} canonical={canonical} type={type} noindex={noindex} />
     <JsonLd extra={jsonLd} />
   </head>
   <body>
-    {
-      loadGtm && (
-        <noscript>
-          <iframe
-            src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
-            height="0"
-            width="0"
-            class="gtm-frame"
-            title="Google Tag Manager"
-          />
-        </noscript>
-      )
-    }
     <a class="skip-link" href="#content">Skip to content</a>
     <Header />
     <main id="content">
       <slot />
     </main>
     <Footer />
-    <CookieConsent />
+    {!isAdmin && <CookieConsent />}
+    {!isAdmin && <ActivityTracker />}
+    {!isAdmin && <QuickContact />}
+    {!isAdmin && <VisitorChat />}
     <script>
       const root = document.documentElement;
       document.querySelector('[data-theme-toggle]')?.addEventListener('click', () => {
