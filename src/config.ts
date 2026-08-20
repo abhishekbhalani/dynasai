@@ -9,6 +9,7 @@ export const site = {
   tagline: 'Turn enterprise complexity into intelligent action.',
   email: 'hello@dynasai.ai',
   gtmId: 'GTM-KDPPRVV2',
+  gaMeasurementId: '',
   twitter: '@dynasai',
   logo: '/img/transparent-logo.svg',
   logoMark: '/img/logo-mark.svg',

@@ -105,6 +105,10 @@ function main() {
   }
 
   const env = loadDotEnv();
+  if (env.PUBLIC_GA_MEASUREMENT_ID) {
+    setVariable('PUBLIC_GA_MEASUREMENT_ID', env.PUBLIC_GA_MEASUREMENT_ID);
+    setVariable('PUBLIC_GA_MEASUREMENT_ID', env.PUBLIC_GA_MEASUREMENT_ID, 'production');
+  }
   const missing = [];
 
   console.log('\n▸ Production secrets');

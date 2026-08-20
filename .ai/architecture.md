@@ -18,4 +18,4 @@ This repo is the marketing Worker only. Do not put authenticated app routes here
 
 ## Analytics
 
-GTM container in `BaseLayout.astro` when `import.meta.env.PROD`. Configure GA4 inside GTM, not in source.
+GTM container (`GTM-KDPPRVV2`) in `BaseLayout.astro` when `import.meta.env.PROD`. GA4 gtag loads in production when `PUBLIC_GA_MEASUREMENT_ID` is set. Consent Mode defaults to denied until cookie opt-in. Do not duplicate the same GA4 ID as a GTM tag.

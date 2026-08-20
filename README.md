@@ -10,6 +10,7 @@ Static marketing site for https://dynasai.ai — Astro SSG on Cloudflare Workers
 - CSS variables, light/dark
 - `@astrojs/sitemap`, MDX blog/docs, RSS
 - Google Tag Manager (`GTM-KDPPRVV2`) in production builds
+- Google Analytics 4 in production when `PUBLIC_GA_MEASUREMENT_ID` is set (Consent Mode)
 - Wrangler deploy to Workers static assets
 
 ## Local
@@ -87,7 +88,16 @@ See `.env.example`:
 - `CLOUDFLARE_API_TOKEN` — wrangler deploy auth (gitignored)
 - `CLOUDFLARE_ACCOUNT_ID` — optional; wrangler can infer from token
 
-Never commit `.env`. GTM is omitted in `astro dev` so local traffic does not pollute analytics.
+Never commit `.env`. GTM and GA4 are omitted in `astro dev` so local traffic does not pollute analytics.
+
+## Google Tags MCP (Cursor)
+
+`.cursor/mcp.json` (gitignored) includes:
+
+- `dynasai-google-tags` — Google Tag Manager (Stape remote MCP; Google sign-in on first use)
+- `dynasai-google-analytics` — GA4 Data API MCP
+
+Reload MCP servers in Cursor after changing `.cursor/mcp.json`. Set `PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXX` in `.env` and GitHub Actions variables. Do not also publish a GA4 Config tag in GTM for the same ID.
 
 ## Cloudflare agent setup
 

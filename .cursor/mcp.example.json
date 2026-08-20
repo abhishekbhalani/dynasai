@@ -21,6 +21,14 @@
     },
     "cloudflare-observability": {
       "url": "https://observability.mcp.cloudflare.com/mcp"
+    },
+    "dynasai-google-tags": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://gtm-mcp.stape.ai/mcp"]
+    },
+    "dynasai-google-analytics": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://analyticsdata.googleapis.com/mcp/v1"]
     }
   }
 }

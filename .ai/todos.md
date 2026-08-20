@@ -12,7 +12,9 @@
 - [ ] First production release from GitHub Actions → Release
 - [ ] wrangler login + first deploy (user will run login)
 - [x] Attach dynasai.ai / www in wrangler.jsonc (applied on deploy)
-- [ ] GTM: GA4 tag + Consent Mode
+- [ ] GTM: advertising tags only after Consent Mode (already in site)
+- [ ] Paste GA4 measurement ID into `.env` as `PUBLIC_GA_MEASUREMENT_ID` and GitHub variable
+- [ ] Reload Cursor MCP: `dynasai-google-tags` (sign in to Google)
 - [ ] Google Search Console property for dynasai.ai
 - [ ] Contact form Worker (replace mailto)
 - [ ] Separate Worker for app.dynasai.ai

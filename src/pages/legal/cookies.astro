@@ -9,6 +9,7 @@ const updated = '17 August 2026';
 const sections = [
   { id: 'essential', label: 'Essential' },
   { id: 'gtm', label: 'Google Tag Manager' },
+  { id: 'ga', label: 'Google Analytics' },
   { id: 'control', label: 'Control' },
 ];
 ---
@@ -44,6 +45,13 @@ const sections = [
           In production we load Google Tag Manager (GTM-KDPPRVV2). GTM itself is a container. Tags you
           publish inside it (Analytics, ads, heatmaps) may set cookies. Configure Consent Mode in GTM
           before enabling advertising tags.
+        </p>
+
+        <h2 id="ga">Google Analytics</h2>
+        <p>
+          In production we also load Google Analytics 4 when <code>PUBLIC_GA_MEASUREMENT_ID</code> is set.
+          Hits are held until you grant performance cookies (Consent Mode: <code>analytics_storage</code>).
+          Do not add a second GA4 Configuration tag in GTM for the same measurement ID, or traffic will double-count.
         </p>
 
         <h2 id="control">Control</h2>

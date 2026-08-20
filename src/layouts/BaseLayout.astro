@@ -18,7 +18,9 @@ interface Props {
 
 const { title, description, canonical, type, noindex, jsonLd } = Astro.props;
 const gtmId = import.meta.env.PUBLIC_GTM_ID || site.gtmId;
+const gaId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || site.gaMeasurementId;
 const loadGtm = Boolean(gtmId) && import.meta.env.PROD;
+const loadGa = Boolean(gaId) && import.meta.env.PROD;
 ---
 
 <!doctype html>
@@ -64,6 +66,23 @@ const loadGtm = Boolean(gtmId) && import.meta.env.PROD;
         wait_for_update: 500,
       });
     </script>
+    {
+      loadGa && (
+        <script is:inline define:vars={{ gaId }}>
+          (function (id) {
+            var s = document.createElement('script');
+            s.async = true;
+            s.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;
+            document.head.appendChild(s);
+            window.gtag('js', new Date());
+            window.gtag('config', id, {
+              anonymize_ip: true,
+              cookie_flags: 'SameSite=None;Secure',
+            });
+          })(gaId);
+        </script>
+      )
+    }
     {
       loadGtm && (
         <script is:inline define:vars={{ gtmId }}>
