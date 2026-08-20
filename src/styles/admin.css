@@ -295,8 +295,10 @@ a {
 .admin-kpis p {
   margin: 0;
   color: var(--text);
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   font-weight: 700;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
 }
 
 .admin-grid {
@@ -316,19 +318,35 @@ a {
 .admin-chart {
   display: flex;
   align-items: flex-end;
-  gap: 4px;
+  gap: 8px;
   height: 168px;
 }
 
-.admin-chart button {
+.admin-chart-col {
   flex: 1;
   min-width: 0;
+  display: grid;
+  gap: 8px;
+  height: 100%;
+  align-content: end;
+}
+
+.admin-chart-col button {
+  width: 100%;
   height: var(--h, 8%);
+  min-height: 4px;
   padding: 0;
   border: 0;
   border-radius: 3px 3px 0 0;
   background: var(--accent);
   cursor: default;
+}
+
+.admin-chart-col span {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.6875rem;
+  text-align: center;
 }
 
 .admin-rank {

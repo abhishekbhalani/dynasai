@@ -3,6 +3,7 @@ import { listRecent, summarizeActivity } from './track';
 import { isAdminHost } from './hosts';
 import { verifyTurnstile } from './turnstile';
 import { insertLead, listLeads } from './leads';
+import { summarizeVisits } from './visits';
 
 const COOKIE = 'dynasai_admin';
 const SESSION_TTL = 12 * 60 * 60;
@@ -76,9 +77,20 @@ export async function handleAdmin(request: Request, env: Env) {
   }
 
   if (request.method === 'GET' && path === '/api/admin/activity') {
+    const visits = await summarizeVisits(env);
+    if (visits) {
+      return json({
+        ok: true,
+        source: 'edge',
+        window: '7d',
+        ...visits,
+        events: visits.pageViews,
+        recent: [],
+      });
+    }
     const events = await listRecent(env, 250);
     const summary = summarizeActivity(events);
-    return json({ ok: true, ...summary, recent: events.slice(0, 80) });
+    return json({ ok: true, source: 'consented', ...summary, recent: events.slice(0, 80) });
   }
 
   if (request.method === 'GET' && path === '/api/admin/leads') {

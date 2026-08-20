@@ -7,6 +7,7 @@ import { handleAdmin, handleQuickContact, hasAdminSession } from './admin';
 import { insertLead } from './leads';
 import { isAdminHost, isCrawler, isLocalHost, isStaticAssetPath } from './hosts';
 import { applySecurityHeaders, redirectHttpToHttps } from './security';
+import { recordPageView } from './visits';
 
 const OTP_TTL_SEC = 10 * 60;
 const SESSION_TTL_SEC = 12 * 60 * 60;
@@ -354,9 +355,14 @@ async function routeRequest(request: Request, env: Env) {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const https = redirectHttpToHttps(request);
     if (https) return applySecurityHeaders(https);
-    return applySecurityHeaders(await routeRequest(request, env));
+    const res = await routeRequest(request, env);
+    const task = recordPageView(request, env, res).catch((error) => {
+      console.error('visit_record_failed', { error: String(error) });
+    });
+    ctx?.waitUntil(task);
+    return applySecurityHeaders(res);
   },
 };
