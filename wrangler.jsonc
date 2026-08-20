@@ -6,8 +6,16 @@
   "workers_dev": true,
   "preview_urls": true,
   "routes": [
-    { "pattern": "dynasai.ai", "custom_domain": true },
-    { "pattern": "www.dynasai.ai", "custom_domain": true }
+    {
+      "pattern": "dynasai.ai",
+      "zone_id": "deba22f5a6c2a3a60082565beb8f2968",
+      "custom_domain": true
+    },
+    {
+      "pattern": "www.dynasai.ai",
+      "zone_id": "deba22f5a6c2a3a60082565beb8f2968",
+      "custom_domain": true
+    }
   ],
   "assets": {
     "directory": "./dist",
