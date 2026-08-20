@@ -6,6 +6,7 @@ interface ImportMetaEnv {
   readonly PUBLIC_GTM_ID?: string;
   readonly PUBLIC_GA_MEASUREMENT_ID?: string;
   readonly PUBLIC_CONTACT_EMAIL?: string;
+  readonly PUBLIC_TURNSTILE_SITEKEY?: string;
 }
 
 interface ImportMeta {

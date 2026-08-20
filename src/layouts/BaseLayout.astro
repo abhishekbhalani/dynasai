@@ -31,26 +31,7 @@ const isAdmin = Astro.url.pathname.startsWith('/admin');
     <link rel="icon" type="image/svg+xml" href="/img/logo-mark-colored.svg" />
     <link rel="apple-touch-icon" href="/img/logo-mark-colored.svg" />
     <meta name="generator" content={Astro.generator} />
-    <script is:inline>
-      (function () {
-        var root = document.documentElement;
-        try {
-          var stored = localStorage.getItem('theme');
-          root.setAttribute('data-theme', stored || 'light');
-        } catch (e) {
-          root.setAttribute('data-theme', 'light');
-        }
-        try {
-          if (localStorage.getItem('dynasai_cookie_consent')) {
-            root.setAttribute('data-cookie-ok', '1');
-          } else {
-            root.setAttribute('data-cookie-needed', '1');
-          }
-        } catch (e) {
-          root.setAttribute('data-cookie-needed', '1');
-        }
-      })();
-    </script>
+    <script is:inline src="/js/boot.js"></script>
     <Seo title={title} description={description} canonical={canonical} type={type} noindex={noindex} />
     <JsonLd extra={jsonLd} />
   </head>

@@ -9,5 +9,7 @@ interface Env {
     ): Promise<{ response?: string } | string>;
   };
   ADMIN_PASSWORD?: string;
+  ADMIN_USERNAME?: string;
   ADMIN_HOST?: string;
+  TURNSTILE_SECRET?: string;
 }

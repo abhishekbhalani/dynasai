@@ -22,3 +22,5 @@ This repo is the marketing Worker only. Do not put authenticated app routes here
 Cloudflare Zaraz on the **dynasai.ai** zone loads GA4 (and optional Google tools). Do not embed GTM/gtag in app source. Cookie banner maps consent to Zaraz.
 
 First-party `/api/track` events power `https://admin.dynasai.ai` (Cloudflare Analytics-style visitors, pages, countries). Assets use `run_worker_first` so the admin host is not the marketing homepage.
+
+Security headers and HTTP→HTTPS live in the Worker (`workers/security.ts`). Admin login uses Turnstile (`data-action="admin-login"`).

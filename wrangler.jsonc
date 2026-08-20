@@ -41,7 +41,8 @@
     "PLAYBOOK_FROM": "hello@dynasai.ai",
     "LEAD_NOTIFY": "hello@dynasai.ai",
     "CHAT_MODEL": "@cf/meta/llama-3.2-3b-instruct",
-    "ADMIN_HOST": "admin.dynasai.ai"
+    "ADMIN_HOST": "admin.dynasai.ai",
+    "ADMIN_USERNAME": "dynAdmin"
   },
   "send_email": [
     { "name": "EMAIL" }

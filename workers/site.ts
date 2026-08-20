@@ -4,7 +4,8 @@ import { json } from './http';
 import { handleTrack } from './track';
 import { handleChat } from './chat';
 import { handleAdmin, handleQuickContact } from './admin';
-import { isAdminHost, isStaticAssetPath } from './hosts';
+import { isAdminHost, isCrawler, isStaticAssetPath } from './hosts';
+import { applySecurityHeaders, redirectHttpToHttps } from './security';
 
 const OTP_TTL_SEC = 10 * 60;
 const SESSION_TTL_SEC = 12 * 60 * 60;
@@ -221,9 +222,9 @@ async function handlePlaybook(request: Request, env: Env) {
   return json({ ok: false, error: 'Not found' }, 404);
 }
 
-async function withRobots(res: Response, value: string) {
+async function withRobots(res: Response) {
   const headers = new Headers(res.headers);
-  headers.set('x-robots-tag', value);
+  headers.set('x-robots-tag', 'noindex, nofollow, noarchive, nosnippet');
   return new Response(res.body, { status: res.status, headers });
 }
 
@@ -239,12 +240,22 @@ async function serveAdminPage(request: Request, env: Env) {
     const url = new URL(request.url);
     url.pathname = pathname;
     const res = await env.ASSETS.fetch(new Request(url.toString(), request));
-    if (res.ok) return withRobots(res, 'noindex, nofollow');
+    if (res.ok) return withRobots(res);
   }
   return servePublicNotFound(request, env);
 }
 
 async function handleAdminHost(request: Request, env: Env) {
+  if (isCrawler(request)) {
+    return new Response('Not found', {
+      status: 404,
+      headers: {
+        'content-type': 'text/plain; charset=utf-8',
+        'x-robots-tag': 'noindex, nofollow, noarchive, nosnippet',
+      },
+    });
+  }
+
   const url = new URL(request.url);
   const path = url.pathname.replace(/\/$/, '') || '/';
 
@@ -253,7 +264,7 @@ async function handleAdminHost(request: Request, env: Env) {
       headers: {
         'content-type': 'text/plain; charset=utf-8',
         'cache-control': 'no-store',
-        'x-robots-tag': 'noindex, nofollow',
+        'x-robots-tag': 'noindex, nofollow, noarchive, nosnippet',
       },
     });
   }
@@ -269,16 +280,16 @@ async function handleAdminHost(request: Request, env: Env) {
   if (path === '/' || path === '/admin') return serveAdminPage(request, env);
   if (isStaticAssetPath(path)) {
     const res = await env.ASSETS.fetch(request);
-    return withRobots(res, 'noindex, nofollow');
+    return withRobots(res);
   }
   return servePublicNotFound(request, env);
 }
 
-export default {
-  async fetch(request, env) {
+async function routeRequest(request: Request, env: Env) {
     const url = new URL(request.url);
     if (url.hostname === 'www.dynasai.ai') {
       url.hostname = 'dynasai.ai';
+      url.protocol = 'https:';
       return Response.redirect(url.toString(), 301);
     }
 
@@ -310,5 +321,12 @@ export default {
     }
 
     return env.ASSETS.fetch(request);
+}
+
+export default {
+  async fetch(request, env) {
+    const https = redirectHttpToHttps(request);
+    if (https) return applySecurityHeaders(https);
+    return applySecurityHeaders(await routeRequest(request, env));
   },
 };

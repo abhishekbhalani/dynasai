@@ -18,19 +18,11 @@ const fullTitle = `${title} · ${site.name}`;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/img/logo-mark-colored.svg" />
-    <meta name="robots" content="noindex, nofollow" />
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    <script is:inline>
-      (function () {
-        var root = document.documentElement;
-        try {
-          root.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
-        } catch (e) {
-          root.setAttribute('data-theme', 'light');
-        }
-      })();
-    </script>
+    <script is:inline src="/js/boot.js"></script>
+    <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   </head>
   <body class="admin-body">
     <a class="skip-link" href="#content">Skip to content</a>

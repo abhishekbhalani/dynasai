@@ -1,6 +1,7 @@
 import { cookieValue, json, originOk, sha256, timingSafeEqual } from './http';
 import { listRecent, summarizeActivity } from './track';
 import { isAdminHost } from './hosts';
+import { verifyTurnstile } from './turnstile';
 
 const COOKIE = 'dynasai_admin';
 const SESSION_TTL = 12 * 60 * 60;
@@ -34,11 +35,18 @@ export async function handleAdmin(request: Request, env: Env) {
   const path = url.pathname.replace(/\/$/, '') || '/';
 
   if (request.method === 'POST' && path === '/api/admin/login') {
-    const body = (await request.json()) as { password?: string };
-    const expected = env.ADMIN_PASSWORD || '';
-    if (!expected || !timingSafeEqual(String(body.password || ''), expected)) {
-      return json({ ok: false, error: 'Wrong password.' }, 401);
-    }
+    const body = (await request.json()) as {
+      username?: string;
+      password?: string;
+      turnstileToken?: string;
+    };
+    const expectedUser = env.ADMIN_USERNAME || 'dynAdmin';
+    const expectedPass = env.ADMIN_PASSWORD || '';
+    const userOk = timingSafeEqual(String(body.username || ''), expectedUser);
+    const passOk = Boolean(expectedPass) && timingSafeEqual(String(body.password || ''), expectedPass);
+    const humanOk = env.TURNSTILE_SECRET ? await verifyTurnstile(request, env, body.turnstileToken) : true;
+    if (!humanOk) return json({ ok: false, error: 'Confirm you are not a robot.' }, 403);
+    if (!userOk || !passOk) return json({ ok: false, error: 'Wrong username or password.' }, 401);
     const token = await sha256(`${crypto.randomUUID()}:${Date.now()}`);
     await env.LEADS.put(`admin:sess:${token}`, JSON.stringify({ at: Date.now() }), {
       expirationTtl: SESSION_TTL,

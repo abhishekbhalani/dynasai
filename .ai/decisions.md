@@ -9,3 +9,4 @@
 - 2026-08-17: Insurance playbook OTP/leads are designed (KV + email). Do not enable Email Sending or treat KV as a live lead facility until the playbook UI is finalized. Ask the user on chat resume.
 - 2026-08-20: Dual release (GitHub Action or wrangler). GA4/GTM stay in Cloudflare Zaraz, not app source. Sequential waves in `.ai/release-plan.md` from planning.md §134/§136.
 - 2026-08-20: Worker and custom domains must live on the same Cloudflare account as zone dynasai.ai (`67547d9f…`, Pbsureja). Do not deploy with the Bhalaniabhishek account token (`30c88490…`). `scripts/release.mjs` always loads `.env` over the shell.
+- 2026-08-20: Security headers (CSP + nonce, COOP, HSTS, XFO, Trusted Types default policy) are applied in `workers/security.ts`. Admin Turnstile widget `dynasai-admin-login` sitekey is `PUBLIC_TURNSTILE_SITEKEY`; secret is Worker secret `TURNSTILE_SECRET`.

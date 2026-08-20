@@ -1,5 +1,7 @@
 ---
 import AdminLayout from '../../layouts/AdminLayout.astro';
+
+const turnstileSitekey = import.meta.env.PUBLIC_TURNSTILE_SITEKEY || '';
 ---
 
 <AdminLayout
@@ -15,9 +17,20 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
     <form class="admin-login" data-admin-login>
       <label>
-        Admin password
+        Username
+        <input name="username" type="text" required autocomplete="username" spellcheck="false" />
+      </label>
+      <label>
+        Password
         <input name="password" type="password" required autocomplete="current-password" />
       </label>
+      {
+        turnstileSitekey ? (
+          <div class="cf-turnstile" data-sitekey={turnstileSitekey} data-action="admin-login" data-theme="auto"></div>
+        ) : (
+          <p class="admin-status">Turnstile is not configured yet. Add PUBLIC_TURNSTILE_SITEKEY and TURNSTILE_SECRET.</p>
+        )
+      }
       <button class="admin-btn admin-btn-primary" type="submit">Sign in</button>
       <p class="admin-status" data-admin-login-status hidden></p>
     </form>
@@ -181,22 +194,30 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
   loginForm?.addEventListener('submit', async (event) => {
     event.preventDefault();
-    const password = new FormData(loginForm).get('password');
+    const form = new FormData(loginForm);
+    const username = form.get('username');
+    const password = form.get('password');
+    const turnstileToken = form.get('cf-turnstile-response');
     if (loginStatus) {
       loginStatus.hidden = false;
       loginStatus.textContent = 'Signing in…';
     }
-    const res = await fetch('/api/admin/login', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ password }),
-    });
-    const json = (await res.json()) as { ok?: boolean; error?: string };
-    if (!json.ok) {
-      if (loginStatus) loginStatus.textContent = json.error || 'Could not sign in.';
-      return;
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ username, password, turnstileToken }),
+      });
+      const json = (await res.json()) as { ok?: boolean; error?: string };
+      if (!json.ok) {
+        if (loginStatus) loginStatus.textContent = json.error || 'Could not sign in.';
+        return;
+      }
+      await load();
+    } finally {
+      const turnstile = (window as Window & { turnstile?: { reset: () => void } }).turnstile;
+      turnstile?.reset();
     }
-    await load();
   });
 
   document.querySelector('[data-admin-refresh]')?.addEventListener('click', () => void load());

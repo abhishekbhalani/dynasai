@@ -3,7 +3,7 @@ import { site } from '../config';
 const maxChars = 400;
 ---
 
-<div class="vc-root" data-vc-root>
+<div class="vc-root" data-vc-root data-vc-email={site.email} data-vc-max={String(maxChars)}>
   <button class="vc-toggle" type="button" data-vc-toggle aria-expanded="false" aria-controls="vc-panel">
     Ask DynasAI
   </button>
@@ -27,8 +27,10 @@ const maxChars = 400;
   </section>
 </div>
 
-<script define:vars={{ email: site.email, maxChars }}>
+<script>
   const root = document.querySelector('[data-vc-root]');
+  const email = root?.getAttribute('data-vc-email') || '';
+  const maxChars = Number(root?.getAttribute('data-vc-max') || '400');
   const panel = document.querySelector<HTMLElement>('[data-vc-panel]');
   const toggle = document.querySelector<HTMLButtonElement>('[data-vc-toggle]');
   const log = document.querySelector('[data-vc-log]');

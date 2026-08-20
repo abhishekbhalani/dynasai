@@ -35,6 +35,14 @@ export function originHostname(request: Request) {
   }
 }
 
+export function isCrawler(request: Request) {
+  const ua = (request.headers.get('user-agent') || '').toLowerCase();
+  if (!ua) return false;
+  return /googlebot|bingbot|slurp|duckduckbot|baiduspider|yandex|facebookexternalhit|twitterbot|linkedinbot|applebot|ia_archiver|semrush|ahrefs|mj12bot|dotbot|gptbot|chatgpt|claudebot|anthropic|ccbot|bytespider|petalsearch|amazonbot|meta-externalagent/.test(
+    ua,
+  );
+}
+
 export function isStaticAssetPath(path: string) {
   return (
     path.startsWith('/_astro/') ||

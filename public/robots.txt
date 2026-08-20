@@ -4,4 +4,10 @@ Disallow: /admin
 Disallow: /api/
 Disallow: /cdn-cgi/
 
+User-agent: GPTBot
+Disallow: /admin
+
+User-agent: CCBot
+Disallow: /admin
+
 Sitemap: https://dynasai.ai/sitemap-index.xml
