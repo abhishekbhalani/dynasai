@@ -8,7 +8,6 @@ import QuickContact from '../components/QuickContact.astro';
 import VisitorChat from '../components/VisitorChat.astro';
 import Seo from '../components/Seo.astro';
 import JsonLd from '../components/JsonLd.astro';
-import { site } from '../config';
 import '../styles/visitor.css';
 
 interface Props {
@@ -21,10 +20,6 @@ interface Props {
 }
 
 const { title, description, canonical, type, noindex, jsonLd } = Astro.props;
-const gtmId = import.meta.env.PUBLIC_GTM_ID || site.gtmId;
-const gaId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || site.gaMeasurementId;
-const loadGtm = Boolean(gtmId) && import.meta.env.PROD;
-const loadGa = Boolean(gaId) && import.meta.env.PROD;
 const isAdmin = Astro.url.pathname.startsWith('/admin');
 ---
 
@@ -56,78 +51,17 @@ const isAdmin = Astro.url.pathname.startsWith('/admin');
         }
       })();
     </script>
-    <script is:inline>
-      window.dataLayer = window.dataLayer || [];
-      window.gtag = function () {
-        window.dataLayer.push(arguments);
-      };
-      window.gtag('consent', 'default', {
-        ad_storage: 'denied',
-        analytics_storage: 'denied',
-        ad_user_data: 'denied',
-        ad_personalization: 'denied',
-        functionality_storage: 'granted',
-        security_storage: 'granted',
-        wait_for_update: 500,
-      });
-    </script>
-    {
-      loadGa && (
-        <script is:inline define:vars={{ gaId }}>
-          (function (id) {
-            var s = document.createElement('script');
-            s.async = true;
-            s.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;
-            document.head.appendChild(s);
-            window.gtag('js', new Date());
-            window.gtag('config', id, {
-              anonymize_ip: true,
-              cookie_flags: 'SameSite=None;Secure',
-            });
-          })(gaId);
-        </script>
-      )
-    }
-    {
-      loadGtm && (
-        <script is:inline define:vars={{ gtmId }}>
-          (function (w, d, s, l, i) {
-            w[l] = w[l] || [];
-            w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
-            var f = d.getElementsByTagName(s)[0];
-            var j = d.createElement(s);
-            var dl = l != 'dataLayer' ? '&l=' + l : '';
-            j.async = true;
-            j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
-            f.parentNode.insertBefore(j, f);
-          })(window, document, 'script', 'dataLayer', gtmId);
-        </script>
-      )
-    }
     <Seo title={title} description={description} canonical={canonical} type={type} noindex={noindex} />
     <JsonLd extra={jsonLd} />
   </head>
   <body>
-    {
-      loadGtm && (
-        <noscript>
-          <iframe
-            src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
-            height="0"
-            width="0"
-            class="gtm-frame"
-            title="Google Tag Manager"
-          />
-        </noscript>
-      )
-    }
     <a class="skip-link" href="#content">Skip to content</a>
     <Header />
     <main id="content">
       <slot />
     </main>
     <Footer />
-    <CookieConsent />
+    {!isAdmin && <CookieConsent />}
     {!isAdmin && <ActivityTracker />}
     {!isAdmin && <QuickContact />}
     {!isAdmin && <VisitorChat />}

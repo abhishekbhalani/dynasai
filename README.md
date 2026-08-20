@@ -61,24 +61,28 @@ npm run preview:cf    # local preview via wrangler dev
 
 Custom domains `dynasai.ai` and `www.dynasai.ai` are set in `wrangler.jsonc` and applied on deploy. `www` 301s to the apex.
 
-## GitHub Actions (manual production release)
+## Release (GitHub **or** Cloudflare — pick one)
 
-This repo uses **Workers static assets**, not Cloudflare Pages. After a PR merges to `main`, production is not auto-deployed.
+### Path A — GitHub Actions
 
-1. Create a Cloudflare API token ([API Tokens](https://dash.cloudflare.com/profile/api-tokens) → **Edit Cloudflare Workers**)
-2. Put `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` in `.env`
-3. Push them to GitHub:
+Actions → **Release** → **Run workflow** → **Use workflow from** (any branch).
+
+### Path B — Cloudflare CLI
 
 ```powershell
-npm run cicd:github
+npx wrangler whoami
+npm run release
 ```
 
-4. Merge a PR to `main`
-5. GitHub → **Actions** → **Release** → **Run workflow** → pick any branch in **Use workflow from**
+`npm run release` loads `CLOUDFLARE_*` from `.env`. Do not enable Cloudflare Git auto-deploy at the same time as GitHub Release, or the same commit ships twice.
 
-Optional: GitHub → Settings → Environments → **production** → add required reviewers so Release waits for approval.
+Custom domains `dynasai.ai` / `www` are in `wrangler.jsonc` (zone id required).
 
-Later, create a second Worker for `app.dynasai.ai`.
+## Analytics (Cloudflare Zaraz, not the app)
+
+Add **Google Analytics 4** under Cloudflare → Zaraz on the `dynasai.ai` zone. The cookie banner sends consent to Zaraz. Do not embed GTM/gtag in source.
+
+Sequence: `.ai/release-plan.md` (planning.md waves, one at a time).
 
 ## Env
 
@@ -88,16 +92,7 @@ See `.env.example`:
 - `CLOUDFLARE_API_TOKEN` — wrangler deploy auth (gitignored)
 - `CLOUDFLARE_ACCOUNT_ID` — optional; wrangler can infer from token
 
-Never commit `.env`. GTM and GA4 are omitted in `astro dev` so local traffic does not pollute analytics.
-
-## Google Tags MCP (Cursor)
-
-`.cursor/mcp.json` (gitignored) includes:
-
-- `dynasai-google-tags` — Google Tag Manager (Stape remote MCP; Google sign-in on first use)
-- `dynasai-google-analytics` — GA4 Data API MCP
-
-Reload MCP servers in Cursor after changing `.cursor/mcp.json`. Set `PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXX` in `.env` and GitHub Actions variables. Do not also publish a GA4 Config tag in GTM for the same ID.
+Never commit `.env`. Analytics are Cloudflare Zaraz in production, not local `astro dev`.
 
 ## Cloudflare agent setup
 

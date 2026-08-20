@@ -170,6 +170,31 @@
   font-size: 0.8125rem;
 }
 
+.admin-body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.admin-bar {
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.admin-bar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.admin-bar .brand-tagline {
+  color: var(--text-muted);
+}
+
 .admin-wrap h1 {
   color: var(--text);
 }

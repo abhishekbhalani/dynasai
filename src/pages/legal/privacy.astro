@@ -145,9 +145,8 @@ const sections = [
         <p>We share personal data only as needed to run the service:</p>
         <ul>
           <li><strong>Cloud backends</strong> — AWS, Azure, or GCP for hosting, storage, and model APIs, in the account/region you choose or a managed template.</li>
-          <li><strong>Google Tag Manager</strong> — container for site tags in production (GTM-KDPPRVV2).</li>
-          <li><strong>Google Analytics 4</strong> — site usage measurement in production when a <code>G-</code> measurement ID is configured, after performance-cookie consent.</li>
-          <li><strong>First-party activity log</strong> — consented page, click, and timing events stored on Cloudflare for the internal admin view. IP addresses are hashed. Approximate country/city/ISP come from Cloudflare, not a device GPS or Wi‑Fi scan.</li>
+          <li><strong>Cloudflare Zaraz</strong> — edge tag manager for Google Analytics 4 (and optional ads tools) on the dynasai.ai zone. Not injected from application source.</li>
+          <li><strong>First-party activity log</strong> — consented page, click, and timing events stored on Cloudflare for the internal view at the admin subdomain. The admin host itself is not measured. IP addresses are hashed. Approximate country/city/ISP come from Cloudflare, not a device GPS or Wi‑Fi scan.</li>
           <li><strong>Professional advisers</strong> — lawyers, accountants, under confidentiality.</li>
           <li><strong>Authorities</strong> — when required by law.</li>
         </ul>

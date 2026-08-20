@@ -15,6 +15,11 @@
       "pattern": "www.dynasai.ai",
       "zone_id": "deba22f5a6c2a3a60082565beb8f2968",
       "custom_domain": true
+    },
+    {
+      "pattern": "admin.dynasai.ai",
+      "zone_id": "deba22f5a6c2a3a60082565beb8f2968",
+      "custom_domain": true
     }
   ],
   "assets": {
@@ -33,7 +38,8 @@
     "ENVIRONMENT": "production",
     "PLAYBOOK_FROM": "hello@dynasai.ai",
     "LEAD_NOTIFY": "hello@dynasai.ai",
-    "CHAT_MODEL": "@cf/meta/llama-3.2-3b-instruct"
+    "CHAT_MODEL": "@cf/meta/llama-3.2-3b-instruct",
+    "ADMIN_HOST": "admin.dynasai.ai"
   },
   "send_email": [
     { "name": "EMAIL" }

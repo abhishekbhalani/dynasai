@@ -30,7 +30,15 @@ export function originOk(request: Request) {
   if (!origin) return true;
   try {
     const host = new URL(origin).hostname;
-    return host === 'dynasai.ai' || host === 'www.dynasai.ai' || host.endsWith('.dynasai.pages.dev') || host === 'localhost' || host === '127.0.0.1';
+    return (
+      host === 'dynasai.ai' ||
+      host === 'www.dynasai.ai' ||
+      host === 'admin.dynasai.ai' ||
+      host.endsWith('.dynasai.pages.dev') ||
+      host.endsWith('.workers.dev') ||
+      host === 'localhost' ||
+      host === '127.0.0.1'
+    );
   } catch {
     return false;
   }

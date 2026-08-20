@@ -14,8 +14,11 @@
     "deploy": "astro build && wrangler deploy",
     "release": "node scripts/release.mjs",
     "release:dry": "node scripts/release.mjs --dry-run",
+    "release:cf": "node scripts/release.mjs",
     "cicd:github": "node scripts/setup-github-cicd.mjs",
     "cf:check": "node scripts/check-cloudflare.mjs",
+    "zaraz:status": "node .cursor/zaraz-mcp.mjs --status",
+    "zaraz:skip-admin": "node .cursor/zaraz-mcp.mjs --skip-admin",
     "pages:create": "node scripts/create-pages.mjs"
   },
   "dependencies": {

@@ -38,7 +38,7 @@ import { site } from '../config';
       <div class="cookie-dialog-body">
         <h2 id="cookie-dialog-title">Privacy Preference Center</h2>
         <p>
-          We use cookies to run dynasai.ai, measure performance, and — only if you allow — support marketing tags in Google Tag Manager.
+          We use cookies to run dynasai.ai and, if you allow, measure performance through Cloudflare Zaraz (Google Analytics 4). Marketing tags stay off unless you opt in.
           See the{' '}
           <a href="/legal/privacy">Privacy Policy</a>
           {' '}and{' '}
@@ -71,7 +71,7 @@ import { site } from '../config';
           <p>Help us understand how the site is used (for example analytics loaded through GTM) so we can improve pages and performance.</p>
           <details>
             <summary>Cookies Details</summary>
-            <p>Set only after you opt in. Google Analytics 4 (if a <code>G-</code> ID is configured) and first-party activity used for the internal admin dashboard.</p>
+            <p>Set only after you opt in. Google Analytics 4 is loaded by Cloudflare Zaraz, not by scripts in this app. First-party activity still powers the internal admin view.</p>
           </details>
         </section>
 
@@ -110,7 +110,7 @@ import { site } from '../config';
 
   type Prefs = { necessary: true; performance: boolean; marketing: boolean };
 
-  function applyGtm(prefs: Prefs) {
+  function applyConsent(prefs: Prefs) {
     const gtag = (window as Window & { gtag?: (...args: unknown[]) => void }).gtag;
     gtag?.('consent', 'update', {
       analytics_storage: prefs.performance ? 'granted' : 'denied',
@@ -120,6 +120,22 @@ import { site } from '../config';
       functionality_storage: 'granted',
       security_storage: 'granted',
     });
+
+    const zaraz = (
+      window as Window & {
+        zaraz?: {
+          setConsent?: (value: Record<string, boolean>) => void;
+          consent?: { set?: (value: Record<string, boolean>) => void; setAll?: (value: boolean) => void };
+        };
+      }
+    ).zaraz;
+    const payload = {
+      functional: true,
+      analytics: prefs.performance,
+      marketing: prefs.marketing,
+    };
+    zaraz?.setConsent?.(payload);
+    zaraz?.consent?.set?.(payload);
   }
 
   function readPrefs(): Prefs | null {
@@ -138,7 +154,7 @@ import { site } from '../config';
     localStorage.setItem(KEY, JSON.stringify({ ...prefs, savedAt: new Date().toISOString() }));
     document.documentElement.setAttribute('data-cookie-ok', '1');
     document.documentElement.removeAttribute('data-cookie-needed');
-    applyGtm(prefs);
+    applyConsent(prefs);
   }
 
   function hideBanner() {
@@ -194,7 +210,7 @@ import { site } from '../config';
 
   if (root && banner && overlay) {
     const existing = readPrefs();
-    if (existing) applyGtm(existing);
+    if (existing) applyConsent(existing);
 
     root.addEventListener('click', (event) => {
       const target = event.target;

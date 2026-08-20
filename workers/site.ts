@@ -4,6 +4,7 @@ import { json } from './http';
 import { handleTrack } from './track';
 import { handleChat } from './chat';
 import { handleAdmin, handleQuickContact } from './admin';
+import { isAdminHost, isStaticAssetPath } from './hosts';
 
 const OTP_TTL_SEC = 10 * 60;
 const SESSION_TTL_SEC = 12 * 60 * 60;
@@ -220,6 +221,56 @@ async function handlePlaybook(request: Request, env: Env) {
   return json({ ok: false, error: 'Not found' }, 404);
 }
 
+async function withRobots(res: Response, value: string) {
+  const headers = new Headers(res.headers);
+  headers.set('x-robots-tag', value);
+  return new Response(res.body, { status: res.status, headers });
+}
+
+async function servePublicNotFound(request: Request, env: Env) {
+  const url = new URL(request.url);
+  url.pathname = '/404';
+  const res = await env.ASSETS.fetch(new Request(url.toString(), request));
+  return new Response(res.body, { status: 404, headers: res.headers });
+}
+
+async function serveAdminPage(request: Request, env: Env) {
+  const url = new URL(request.url);
+  url.pathname = '/admin';
+  const res = await env.ASSETS.fetch(new Request(url.toString(), request));
+  return withRobots(res, 'noindex, nofollow');
+}
+
+async function handleAdminHost(request: Request, env: Env) {
+  const url = new URL(request.url);
+  const path = url.pathname.replace(/\/$/, '') || '/';
+
+  if (path === '/robots.txt') {
+    return new Response('User-agent: *\nDisallow: /\n', {
+      headers: {
+        'content-type': 'text/plain; charset=utf-8',
+        'cache-control': 'no-store',
+        'x-robots-tag': 'noindex, nofollow',
+      },
+    });
+  }
+
+  try {
+    if (path.startsWith('/api/admin')) return await handleAdmin(request, env);
+  } catch (error) {
+    console.error('api_error', { path, error: String(error) });
+    return json({ ok: false, error: 'Something went wrong.' }, 500);
+  }
+
+  if (path.startsWith('/api/')) return json({ ok: false, error: 'Not found' }, 404);
+  if (path === '/' || path === '/admin') return serveAdminPage(request, env);
+  if (isStaticAssetPath(path)) {
+    const res = await env.ASSETS.fetch(request);
+    return withRobots(res, 'noindex, nofollow');
+  }
+  return servePublicNotFound(request, env);
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -228,12 +279,24 @@ export default {
       return Response.redirect(url.toString(), 301);
     }
 
+    if (isAdminHost(url.hostname, env) && !['localhost', '127.0.0.1'].includes(url.hostname)) {
+      return handleAdminHost(request, env);
+    }
+
     const path = url.pathname;
+    const local = url.hostname === 'localhost' || url.hostname === '127.0.0.1';
+    if (!local && (path === '/admin' || path.startsWith('/admin/'))) {
+      return servePublicNotFound(request, env);
+    }
+
     try {
       if (path.startsWith('/api/track')) return await handleTrack(request, env);
       if (path.startsWith('/api/chat')) return await handleChat(request, env);
       if (path.startsWith('/api/contact-quick')) return await handleQuickContact(request, env);
-      if (path.startsWith('/api/admin')) return await handleAdmin(request, env);
+      if (path.startsWith('/api/admin')) {
+        if (!local) return json({ ok: false, error: 'Not found' }, 404);
+        return await handleAdmin(request, env);
+      }
       if (path.startsWith('/api/playbook')) {
         if (request.method === 'OPTIONS') return new Response(null, { status: 204 });
         return await handlePlaybook(request, env);

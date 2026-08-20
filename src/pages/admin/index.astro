@@ -1,16 +1,15 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import AdminLayout from '../../layouts/AdminLayout.astro';
 ---
 
-<BaseLayout
+<AdminLayout
   title="Activity admin"
   description="Internal activity dashboard for dynasai.ai."
-  noindex
 >
   <section class="section admin-wrap" data-admin>
     <div class="container">
       <h1>Site activity</h1>
-      <p class="lede">First-party events from consented visits. IP is hashed. Sign in with the Worker admin password.</p>
+      <p class="lede">First-party events from consented public visits. This host is not measured. Sign in with the Worker admin password.</p>
 
       <form class="admin-login" data-admin-login>
         <label>
@@ -47,7 +46,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       </div>
     </div>
   </section>
-</BaseLayout>
+</AdminLayout>
 
 <script>
   const loginForm = document.querySelector<HTMLFormElement>('[data-admin-login]');
@@ -153,3 +152,4 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     if (res.ok) void load();
   });
 </script>
+</AdminLayout>

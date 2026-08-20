@@ -1,5 +1,6 @@
 import { cookieValue, json, originOk, sha256, timingSafeEqual } from './http';
 import { listRecent } from './track';
+import { isAdminHost } from './hosts';
 
 const COOKIE = 'dynasai_admin';
 const SESSION_TTL = 12 * 60 * 60;
@@ -24,6 +25,8 @@ async function requireAdmin(request: Request, env: Env) {
 }
 
 export async function handleAdmin(request: Request, env: Env) {
+  const host = new URL(request.url).hostname;
+  if (!isAdminHost(host, env)) return json({ ok: false, error: 'Not found' }, 404);
   if (!originOk(request)) return json({ ok: false, error: 'Forbidden' }, 403);
   if (request.method === 'OPTIONS') return new Response(null, { status: 204 });
 

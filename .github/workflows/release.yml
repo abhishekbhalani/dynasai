@@ -1,7 +1,8 @@
 name: Release
 
-# Manual deploy to Cloudflare. GitHub shows a branch dropdown under
-# Actions → Release → Run workflow → "Use workflow from".
+# Deploy from GitHub (any branch via "Use workflow from").
+# Alternative: local/Cloudflare CLI — npm run release
+# Do not also enable automatic Cloudflare Git deploys, or you will ship twice.
 on:
   workflow_dispatch:
     inputs:

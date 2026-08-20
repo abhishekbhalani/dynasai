@@ -41,6 +41,7 @@
 
   function send(type: string, extra: Record<string, unknown> = {}) {
     if (!consented()) return;
+    if (location.hostname === 'admin.dynasai.ai' || location.pathname.startsWith('/admin')) return;
     const payload = {
       consent: true,
       type,

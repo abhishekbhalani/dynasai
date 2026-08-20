@@ -7,16 +7,16 @@
 
 ## Open
 
-- [ ] Restart Cursor to load Cloudflare MCP servers (OAuth on first use)
+- [ ] Restart Cursor to load MCP: Cloudflare (OAuth) + `dynasai-zaraz` (reads `.env` token)
 - [x] GitHub Actions Release (manual) + production env/variables/secrets
-- [ ] First production release from GitHub Actions → Release
+- [ ] First production release from GitHub Actions → Release (includes `admin.dynasai.ai`)
 - [ ] wrangler login + first deploy (user will run login)
-- [x] Attach dynasai.ai / www in wrangler.jsonc (applied on deploy)
-- [ ] GTM: advertising tags only after Consent Mode (already in site)
-- [ ] Create a GA4 property and paste G-XXXXXXXX (not GTM) into PUBLIC_GA_MEASUREMENT_ID
-- [ ] Set production secret: wrangler secret put ADMIN_PASSWORD
-- [ ] First production release (tracking, /admin, chat)
-- [ ] Reload Cursor MCP: `dynasai-google-tags` (sign in to Google)
+- [x] Attach dynasai.ai / www / admin in wrangler.jsonc (applied on deploy)
+- [x] Dual release: GitHub Action or `npm run release` (Cloudflare)
+- [x] GTM/GA removed from app — use Cloudflare Zaraz
+- [ ] Token: add Zone **Zaraz Edit** + **Config Rules Edit** (Workers token is not enough for Tag setup)
+- [ ] Push and run **one** Release
+- [ ] Zaraz: add GA4 `G-XXXXXXXX` on the dynasai.ai zone; skip Zaraz on admin host
 - [ ] Google Search Console property for dynasai.ai
 - [ ] Contact form Worker (replace mailto)
 - [ ] Separate Worker for app.dynasai.ai

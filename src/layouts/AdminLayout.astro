@@ -1,0 +1,59 @@
+---
+import '../styles/global.css';
+import '../styles/visitor.css';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import Seo from '../components/Seo.astro';
+import { site } from '../config';
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/img/logo-mark-colored.svg" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="generator" content={Astro.generator} />
+    <script is:inline>
+      (function () {
+        var root = document.documentElement;
+        try {
+          root.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+        } catch (e) {
+          root.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <Seo title={title} description={description} canonical="https://admin.dynasai.ai" noindex />
+  </head>
+  <body class="admin-body">
+    <a class="skip-link" href="#content">Skip to content</a>
+    <header class="admin-bar">
+      <div class="admin-bar-inner">
+        <a class="brand brand--header" href="https://dynasai.ai" aria-label={`${site.name} marketing site`}>
+          <img class="brand-mark" src={site.logoMark} alt={site.name} width="130" height="36" decoding="async" />
+          <span class="brand-tagline">Internal activity</span>
+        </a>
+        <ThemeToggle />
+      </div>
+    </header>
+    <main id="content">
+      <slot />
+    </main>
+    <script>
+      const root = document.documentElement;
+      document.querySelector('[data-theme-toggle]')?.addEventListener('click', () => {
+        const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+      });
+    </script>
+  </body>
+</html>

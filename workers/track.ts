@@ -1,4 +1,5 @@
 import { clientIp, clip, json, originOk, sha256 } from './http';
+import { adminHostName, hostnameOf, originHostname } from './hosts';
 
 const RECENT_KEY = 'track:recent';
 const RECENT_MAX = 250;
@@ -37,6 +38,13 @@ export async function handleTrack(request: Request, env: Env) {
   }
 
   if (body.consent !== true) {
+    return json({ ok: true, stored: false });
+  }
+
+  const host = hostnameOf(request);
+  const from = originHostname(request);
+  const pathHint = clip(body.path, 180);
+  if (host === adminHostName(env) || from === adminHostName(env) || pathHint.startsWith('/admin')) {
     return json({ ok: true, stored: false });
   }
 
