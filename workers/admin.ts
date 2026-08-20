@@ -4,6 +4,7 @@ import { isAdminHost } from './hosts';
 import { verifyTurnstile } from './turnstile';
 import { insertLead, listLeads } from './leads';
 import { summarizeVisits } from './visits';
+import { fetchCloudflareTraffic } from './cf-analytics';
 
 const COOKIE = 'dynasai_admin';
 const SESSION_TTL = 12 * 60 * 60;
@@ -77,15 +78,30 @@ export async function handleAdmin(request: Request, env: Env) {
   }
 
   if (request.method === 'GET' && path === '/api/admin/activity') {
+    try {
+      const cloudflare = await fetchCloudflareTraffic(env);
+      if (cloudflare) {
+        const visits = await summarizeVisits(env);
+        return json({
+          ok: true,
+          ...cloudflare,
+          referrers: visits?.referrers?.length ? visits.referrers : cloudflare.referrers,
+          pages: cloudflare.pages.length ? cloudflare.pages : visits?.pages || [],
+        });
+      }
+    } catch (error) {
+      console.error('cf_analytics_failed', { error: String(error) });
+    }
     const visits = await summarizeVisits(env);
     if (visits) {
       return json({
         ok: true,
         source: 'edge',
         window: '7d',
+        requests: visits.pageViews,
+        bytes: 0,
         ...visits,
         events: visits.pageViews,
-        recent: [],
       });
     }
     const events = await listRecent(env, 250);

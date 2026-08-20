@@ -5,8 +5,11 @@ type Rank = { name: string; count: number };
 type Series = { t: string; visitors: number; pageViews: number };
 type Activity = {
   ok?: boolean;
+  source?: string;
   visitors?: number;
   pageViews?: number;
+  requests?: number;
+  bytes?: number;
   countriesCount?: number;
   avgPages?: number;
   series?: Series[];
@@ -22,6 +25,14 @@ const fmt = new Intl.NumberFormat('en-US');
 
 function n(value: unknown) {
   return fmt.format(Number(value) || 0);
+}
+
+function bytes(value: unknown) {
+  const n = Number(value) || 0;
+  if (n >= 1024 * 1024 * 1024) return `${(n / (1024 * 1024 * 1024)).toFixed(1)} GB`;
+  if (n >= 1024 * 1024) return `${(n / (1024 * 1024)).toFixed(1)} MB`;
+  if (n >= 1024) return `${(n / 1024).toFixed(1)} KB`;
+  return `${n} B`;
 }
 
 function maxCount(list: Rank[]) {
@@ -67,11 +78,10 @@ const maxVisitors = computed(() => Math.max(...(data.value.series || []).map((it
   <section class="admin-shell">
     <h1>Traffic</h1>
     <p class="admin-lede">
-      Unique visitors on dynasai.ai for the last 7 days. Counted at the Cloudflare edge from real page loads, not
-      cookie banners or Google Analytics.
+      Unique visitors on dynasai.ai from Cloudflare Analytics — the same traffic numbers as the Cloudflare dashboard.
     </p>
     <div class="admin-toolbar">
-      <p>Last 7 days · unique visitors</p>
+      <p>{{ data.source === 'cloudflare' ? 'Cloudflare Analytics · last 7 days' : 'Last 7 days · unique visitors' }}</p>
       <button class="admin-btn" type="button" @click="load">Refresh</button>
     </div>
     <p v-if="error" class="admin-status">{{ error }}</p>
@@ -87,12 +97,12 @@ const maxVisitors = computed(() => Math.max(...(data.value.series || []).map((it
           <p>{{ n(data.pageViews) }}</p>
         </article>
         <article>
-          <h2>Pages / visitor</h2>
-          <p>{{ data.avgPages || 0 }}</p>
+          <h2>Requests</h2>
+          <p>{{ n(data.requests) }}</p>
         </article>
         <article>
-          <h2>Countries</h2>
-          <p>{{ n(data.countriesCount || (data.countries || []).length) }}</p>
+          <h2>Bandwidth</h2>
+          <p>{{ bytes(data.bytes) }}</p>
         </article>
       </div>
       <div class="admin-grid">
@@ -123,7 +133,7 @@ const maxVisitors = computed(() => Math.max(...(data.value.series || []).map((it
               </div>
             </li>
           </ol>
-          <p v-else class="admin-empty">No visits recorded yet. Open dynasai.ai, then refresh this page.</p>
+          <p v-else class="admin-empty">No country data in this window.</p>
         </section>
       </div>
       <div class="admin-split">

@@ -43,7 +43,8 @@
     "CHAT_MODEL": "@cf/meta/llama-3.2-3b-instruct",
     "ADMIN_HOST": "admin.dynasai.ai",
     "ADMIN_USERNAME": "dynAdmin",
-    "PUBLIC_TURNSTILE_SITEKEY": "0x4AAAAAAEWny9BePf9cxE_u"
+    "PUBLIC_TURNSTILE_SITEKEY": "0x4AAAAAAEWny9BePf9cxE_u",
+    "CF_ZONE_ID": "deba22f5a6c2a3a60082565beb8f2968"
   },
   "send_email": [
     { "name": "EMAIL" }

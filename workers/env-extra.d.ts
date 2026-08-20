@@ -13,5 +13,7 @@ interface Env {
   ADMIN_HOST?: string;
   TURNSTILE_SECRET?: string;
   PUBLIC_TURNSTILE_SITEKEY?: string;
+  CF_ANALYTICS_TOKEN?: string;
+  CF_ZONE_ID?: string;
   DB?: D1Database;
 }
