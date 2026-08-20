@@ -27,7 +27,9 @@ function loadDotEnv() {
     if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
       value = value.slice(1, -1);
     }
-    if (!process.env[key]) process.env[key] = value;
+    if (!process.env[key] || key === 'CLOUDFLARE_API_TOKEN' || key === 'CLOUDFLARE_ZONE_ID' || key === 'CLOUDFLARE_ACCOUNT_ID') {
+      process.env[key] = value;
+    }
   }
 }
 
