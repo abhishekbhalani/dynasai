@@ -1,14 +1,32 @@
 import { json, originOk, clientIp } from './http';
 import { insertLead } from './leads';
-import { sendMail } from './mail';
+import { queueMail, sendMail } from './mail';
 import { contactEmailHtml, contactEmailText } from './email-template';
 import { buildContactPayload } from './visitor';
+import { assertReplyEmail } from './email-mailbox';
+import { inspectEmail } from '../shared/email-guard';
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+async function mailboxFor(env: Env, raw: unknown) {
+  try {
+    return await assertReplyEmail(env, raw);
+  } catch (error) {
+    console.error('mailbox_check_failed', { error: String(error) });
+    return inspectEmail(raw);
+  }
+}
 
-export async function handleContactForm(request: Request, env: Env) {
+export async function handleContactForm(request: Request, env: Env, ctx?: ExecutionContext) {
   if (!originOk(request)) return json({ ok: false, error: 'Forbidden' }, 403);
-  if (request.method === 'OPTIONS') return new Response(null, { status: 204 });
+  if (request.method === 'OPTIONS') {
+    return new Response(null, {
+      status: 204,
+      headers: {
+        'access-control-allow-origin': request.headers.get('origin') || 'https://dynasai.ai',
+        'access-control-allow-methods': 'POST, OPTIONS',
+        'access-control-allow-headers': 'content-type',
+      },
+    });
+  }
   if (request.method !== 'POST') return json({ ok: false, error: 'Method not allowed' }, 405);
 
   const ip = clientIp(request);
@@ -16,13 +34,23 @@ export async function handleContactForm(request: Request, env: Env) {
   if (hits >= 8) return json({ ok: false, error: 'Too many requests. Try again later.' }, 429);
   await env.LEADS.put(`rl:contact:${ip}`, String(hits + 1), { expirationTtl: 3600 });
 
-  const body = (await request.json()) as Record<string, unknown>;
-  const name = String(body.name || '').trim();
-  const email = String(body.email || '').trim().toLowerCase();
-  const company = String(body.company || '').trim();
-  if (name.length < 2 || !EMAIL_RE.test(email)) {
-    return json({ ok: false, error: 'Enter your name and a valid email.' }, 400);
+  let body: Record<string, unknown>;
+  try {
+    body = (await request.json()) as Record<string, unknown>;
+  } catch {
+    return json({ ok: false, error: 'Invalid request.' }, 400);
   }
+
+  const name = String(body.name || '').trim();
+  const company = String(body.company || '').trim();
+  const mailbox = await mailboxFor(env, body.email);
+  if (name.length < 2) {
+    return json({ ok: false, error: 'Enter your name and a valid email.', field: 'name' }, 400);
+  }
+  if (!mailbox.ok) {
+    return json({ ok: false, error: mailbox.error, field: 'email' }, 400);
+  }
+  const email = mailbox.email;
 
   const payload = buildContactPayload(request, body, {
     name,
@@ -48,18 +76,9 @@ export async function handleContactForm(request: Request, env: Env) {
 
   const notify = env.LEAD_NOTIFY || 'hello@dynasai.ai';
   const who = company || name;
-  try {
-    await sendMail(
-      env,
-      notify,
-      `New enquiry: ${who}`,
-      message,
-      contactEmailHtml(payload),
-      { email, name },
-    );
-  } catch (error) {
-    console.error('contact_mail_failed', { error: String(error) });
-  }
+  await queueMail(ctx, () =>
+    sendMail(env, notify, `New enquiry: ${who}`, message, contactEmailHtml(payload), { email, name }),
+  );
 
   return json({
     ok: true,

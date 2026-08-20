@@ -66,14 +66,17 @@ function withNoTransform(headers: Headers) {
   headers.set('cache-control', current ? `${current}, no-transform` : 'no-transform');
 }
 
-async function htmlBody(html: string, headers: Headers, request?: Request) {
-  withNoTransform(headers);
-  headers.delete('content-length');
-  const accept = request?.headers.get('accept-encoding') || '';
-  if (!/\bgzip\b/i.test(accept)) return html;
-  const body = new Blob([html], { type: 'text/html; charset=utf-8' }).stream().pipeThrough(new CompressionStream('gzip'));
-  headers.set('content-encoding', 'gzip');
-  return body;
+function isGzip(bytes: Uint8Array) {
+  return bytes.length >= 2 && bytes[0] === 0x1f && bytes[1] === 0x8b;
+}
+
+async function htmlFromResponse(res: Response) {
+  let bytes = new Uint8Array(await res.arrayBuffer());
+  for (let i = 0; i < 3 && isGzip(bytes); i += 1) {
+    const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
+    bytes = new Uint8Array(await new Response(stream).arrayBuffer());
+  }
+  return new TextDecoder('utf-8').decode(bytes);
 }
 
 export async function applySecurityHeaders(res: Response, request?: Request) {
@@ -94,9 +97,12 @@ export async function applySecurityHeaders(res: Response, request?: Request) {
     return new Response(res.body, { status: res.status, statusText: res.statusText, headers });
   }
 
-  let html = await res.text();
+  let html = await htmlFromResponse(res);
   if (admin) html = withTrustedTypesPolicy(html, token);
   html = withScriptNonces(html, token);
-  const body = await htmlBody(html, headers, request);
-  return new Response(body, { status: res.status, statusText: res.statusText, headers });
+  withNoTransform(headers);
+  headers.delete('content-length');
+  headers.delete('content-encoding');
+  headers.set('content-type', 'text/html; charset=utf-8');
+  return new Response(html, { status: res.status, statusText: res.statusText, headers });
 }

@@ -320,8 +320,8 @@ async function routeRequest(request: Request, env: Env, ctx?: ExecutionContext) 
     try {
       if (path.startsWith('/api/track')) return await handleTrack(request, env);
       if (path.startsWith('/api/chat')) return await handleChat(request, env);
-      if (path.startsWith('/api/contact-quick')) return await handleQuickContact(request, env);
-      if (path.startsWith('/api/contact')) return await handleContactForm(request, env);
+      if (path.startsWith('/api/contact-quick')) return await handleQuickContact(request, env, ctx);
+      if (path.startsWith('/api/contact')) return await handleContactForm(request, env, ctx);
       if (path.startsWith('/api/admin')) {
         if (!local) return json({ ok: false, error: 'Not found' }, 404);
         return await handleAdmin(request, env, ctx);

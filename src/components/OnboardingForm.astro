@@ -92,6 +92,7 @@ const email = import.meta.env.PUBLIC_CONTACT_EMAIL || site.email;
 
 <script>
   import { recommendPlan } from '../content/onboarding';
+  import { inspectEmail } from '../../shared/email-guard';
 
   type VisitorFn = () => Record<string, unknown>;
 
@@ -107,7 +108,6 @@ const email = import.meta.env.PUBLIC_CONTACT_EMAIL || site.email;
     const serviceInput = form.querySelector<HTMLInputElement>('[data-onboarding-service]');
     const cloudInput = form.querySelector<HTMLInputElement>('[data-onboarding-cloud]');
     const summaryInput = form.querySelector<HTMLInputElement>('[data-onboarding-summary]');
-    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     function visitorMeta() {
       const fn = (window as Window & { dynasaiVisitor?: VisitorFn }).dynasaiVisitor;
@@ -146,8 +146,9 @@ const email = import.meta.env.PUBLIC_CONTACT_EMAIL || site.email;
       }
       if (!email.value.trim()) {
         markInvalid(email, 'Enter your email.');
-      } else if (!emailRe.test(email.value.trim())) {
-        markInvalid(email, 'Enter a valid email address.');
+      } else {
+        const mailbox = inspectEmail(email.value);
+        if (!mailbox.ok) markInvalid(email, mailbox.error);
       }
       const first = form!.querySelector<HTMLInputElement>('.is-invalid');
       first?.focus();
@@ -230,7 +231,23 @@ const email = import.meta.env.PUBLIC_CONTACT_EMAIL || site.email;
             ...visitorMeta(),
           }),
         });
-        const json = (await res.json()) as { ok?: boolean; error?: string; message?: string };
+        const raw = await res.text();
+        let json: { ok?: boolean; error?: string; message?: string; field?: string } = {};
+        try {
+          json = raw ? (JSON.parse(raw) as typeof json) : {};
+        } catch {
+          json = {
+            ok: false,
+            error:
+              res.status >= 400
+                ? `Could not send (${res.status}). Email hello@dynasai.ai.`
+                : 'Could not send. Email hello@dynasai.ai.',
+          };
+        }
+        if (!json.ok && json.field === 'email') {
+          const emailField = form.querySelector<HTMLInputElement>('#contact-email');
+          if (emailField) markInvalid(emailField, json.error || 'Enter a valid email address.');
+        }
         if (status) {
           status.textContent = json.ok
             ? json.message || 'Thanks. We will reply from hello@dynasai.ai.'

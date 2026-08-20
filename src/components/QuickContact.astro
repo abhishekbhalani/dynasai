@@ -30,6 +30,7 @@ import { site } from '../config';
 </div>
 
 <script>
+  import { inspectEmail } from '../../shared/email-guard';
   const HOLD_MS = 2000;
   const SESSION = 'dynasai_qc_shown';
   const root = document.querySelector<HTMLElement>('[data-qc-root]');
@@ -136,8 +137,8 @@ import { site } from '../config';
     clearField(name);
     clearField(email);
     if (name.value.trim().length < 2) markInvalid(name, 'Enter your name.');
-    if (!email.value.trim()) markInvalid(email, 'Enter your email.');
-    else if (!emailRe.test(email.value.trim())) markInvalid(email, 'Enter a valid email address.');
+    const mailbox = inspectEmail(email.value);
+    if (!mailbox.ok) markInvalid(email, mailbox.error);
     const first = form.querySelector<HTMLInputElement>('.is-invalid');
     if (first) {
       first.focus();
@@ -157,7 +158,8 @@ import { site } from '../config';
         ...visitorMeta(),
       }),
     });
-    const json = (await res.json()) as { ok?: boolean; error?: string; message?: string };
+    const json = (await res.json()) as { ok?: boolean; error?: string; message?: string; field?: string };
+    if (!json.ok && json.field === 'email') markInvalid(email, json.error || 'Enter a valid email address.');
     status.textContent = json.ok ? json.message || 'Sent.' : json.error || 'Could not send.';
     if (json.ok) form.reset();
   });

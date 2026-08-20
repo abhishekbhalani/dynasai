@@ -3,9 +3,11 @@ import { listRecent, summarizeActivity } from './track';
 import { isAdminHost } from './hosts';
 import { verifyTurnstile } from './turnstile';
 import { insertLead, listLeads } from './leads';
-import { sendMail } from './mail';
+import { queueMail, sendMail } from './mail';
 import { contactEmailHtml, contactEmailText } from './email-template';
 import { buildContactPayload } from './visitor';
+import { assertReplyEmail } from './email-mailbox';
+import { inspectEmail } from '../shared/email-guard';
 import { summarizeVisits } from './visits';
 import { getCachedTraffic } from './cf-analytics';
 
@@ -127,18 +129,33 @@ export async function handleAdmin(request: Request, env: Env, ctx?: ExecutionCon
   return json({ ok: false, error: 'Not found' }, 404);
 }
 
-export async function handleQuickContact(request: Request, env: Env) {
+export async function handleQuickContact(request: Request, env: Env, ctx?: ExecutionContext) {
   if (!originOk(request)) return json({ ok: false, error: 'Forbidden' }, 403);
   if (request.method === 'OPTIONS') return new Response(null, { status: 204 });
   if (request.method !== 'POST') return json({ ok: false, error: 'Method not allowed' }, 405);
 
-  const body = (await request.json()) as Record<string, unknown>;
-  const name = String(body.name || '').trim();
-  const email = String(body.email || '').trim().toLowerCase();
-  const notes = String(body.message || '').trim();
-  if (name.length < 2 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return json({ ok: false, error: 'Enter your name and a valid email.' }, 400);
+  let body: Record<string, unknown>;
+  try {
+    body = (await request.json()) as Record<string, unknown>;
+  } catch {
+    return json({ ok: false, error: 'Invalid request.' }, 400);
   }
+  const name = String(body.name || '').trim();
+  let mailbox;
+  try {
+    mailbox = await assertReplyEmail(env, body.email);
+  } catch (error) {
+    console.error('mailbox_check_failed', { error: String(error) });
+    mailbox = inspectEmail(body.email);
+  }
+  const notes = String(body.message || '').trim();
+  if (name.length < 2) {
+    return json({ ok: false, error: 'Enter your name and a valid email.', field: 'name' }, 400);
+  }
+  if (!mailbox.ok) {
+    return json({ ok: false, error: mailbox.error, field: 'email' }, 400);
+  }
+  const email = mailbox.email;
   if (notes.length > 500) return json({ ok: false, error: 'Message is too long (500 character max).' }, 400);
 
   const payload = buildContactPayload(request, body, {
@@ -149,9 +166,13 @@ export async function handleQuickContact(request: Request, env: Env) {
   });
   const message = contactEmailText(payload);
 
-  await env.LEADS.put(`quick:${email}:${Date.now()}`, JSON.stringify({ name, email, message: notes, path: payload.path }), {
-    expirationTtl: 30 * 24 * 60 * 60,
-  });
+  try {
+    await env.LEADS.put(`quick:${email}:${Date.now()}`, JSON.stringify({ name, email, message: notes, path: payload.path }), {
+      expirationTtl: 30 * 24 * 60 * 60,
+    });
+  } catch (error) {
+    console.error('quick_kv_failed', { error: String(error) });
+  }
   try {
     await insertLead(env, {
       source: 'quick-contact',
@@ -163,17 +184,11 @@ export async function handleQuickContact(request: Request, env: Env) {
   } catch (error) {
     console.error('lead_insert_failed', { error: String(error) });
   }
-  try {
-    await sendMail(
-      env,
-      env.LEAD_NOTIFY || 'hello@dynasai.ai',
-      `New enquiry: ${name}`,
-      message,
-      contactEmailHtml(payload),
-      { email, name },
-    );
-  } catch (error) {
-    console.error('quick_mail_failed', { error: String(error) });
-  }
+  await queueMail(ctx, () =>
+    sendMail(env, env.LEAD_NOTIFY || 'hello@dynasai.ai', `New enquiry: ${name}`, message, contactEmailHtml(payload), {
+      email,
+      name,
+    }),
+  );
   return json({ ok: true, message: 'Thanks. We will reply from hello@dynasai.ai.' });
 }
