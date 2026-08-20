@@ -230,6 +230,10 @@ async function handlePlaybook(request: Request, env: Env) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (url.hostname === 'www.dynasai.ai') {
+      url.hostname = 'dynasai.ai';
+      return Response.redirect(url.toString(), 301);
+    }
     if (url.pathname.startsWith('/api/playbook')) {
       if (request.method === 'OPTIONS') return new Response(null, { status: 204 });
       try {

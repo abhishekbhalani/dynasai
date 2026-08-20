@@ -191,7 +191,7 @@ function main() {
 
   console.log('\n✔ Release complete.');
   console.log(`  Worker: ${workerName}`);
-  console.log('  Next: attach custom domains dynasai.ai and www.dynasai.ai in Cloudflare dashboard.');
+  console.log('  Site: https://dynasai.ai (www.dynasai.ai → 301 to apex)');
 }
 
 main();

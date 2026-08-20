@@ -8,8 +8,10 @@
 ## Open
 
 - [ ] Restart Cursor to load Cloudflare MCP servers (OAuth on first use)
+- [x] GitHub Actions Release (manual) + production env/variables/secrets
+- [ ] First production release from GitHub Actions → Release
 - [ ] wrangler login + first deploy (user will run login)
-- [ ] Attach dynasai.ai / www in Cloudflare
+- [x] Attach dynasai.ai / www in wrangler.jsonc (applied on deploy)
 - [ ] GTM: GA4 tag + Consent Mode
 - [ ] Google Search Console property for dynasai.ai
 - [ ] Contact form Worker (replace mailto)

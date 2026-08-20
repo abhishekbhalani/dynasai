@@ -58,7 +58,26 @@ npm run deploy        # build + wrangler deploy (no auth check)
 npm run preview:cf    # local preview via wrangler dev
 ```
 
-Then in Cloudflare: attach custom domain `dynasai.ai` (and `www`) to this Worker. Later, create a second Worker for `app.dynasai.ai`.
+Custom domains `dynasai.ai` and `www.dynasai.ai` are set in `wrangler.jsonc` and applied on deploy. `www` 301s to the apex.
+
+## GitHub Actions (manual production release)
+
+This repo uses **Workers static assets**, not Cloudflare Pages. After a PR merges to `main`, production is not auto-deployed.
+
+1. Create a Cloudflare API token ([API Tokens](https://dash.cloudflare.com/profile/api-tokens) → **Edit Cloudflare Workers**)
+2. Put `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` in `.env`
+3. Push them to GitHub:
+
+```powershell
+npm run cicd:github
+```
+
+4. Merge a PR to `main`
+5. GitHub → **Actions** → **Release** → **Run workflow** (branch `main`)
+
+Optional: GitHub → Settings → Environments → **production** → add required reviewers so Release waits for approval.
+
+Later, create a second Worker for `app.dynasai.ai`.
 
 ## Env
 

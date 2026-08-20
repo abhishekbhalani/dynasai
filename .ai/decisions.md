@@ -7,3 +7,4 @@
 - 2026-08-17: app.dynasai.ai is a later, separate project — not a route on this site.
 - 2026-08-17: Dynas Toolkit page at `/platform/toolkit` — public counterpart to TigerML (docs + workspace now; npm SDK planned).
 - 2026-08-17: Insurance playbook OTP/leads are designed (KV + email). Do not enable Email Sending or treat KV as a live lead facility until the playbook UI is finalized. Ask the user on chat resume.
+- 2026-08-20: Production deploys from GitHub Actions are manual (`workflow_dispatch` on Release). PR merge does not auto-deploy. Custom domains dynasai.ai + www.dynasai.ai live in wrangler.jsonc.

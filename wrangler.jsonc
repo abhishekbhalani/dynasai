@@ -3,6 +3,12 @@
   "main": "workers/site.ts",
   "compatibility_date": "2026-08-17",
   "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "preview_urls": true,
+  "routes": [
+    { "pattern": "dynasai.ai", "custom_domain": true },
+    { "pattern": "www.dynasai.ai", "custom_domain": true }
+  ],
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",

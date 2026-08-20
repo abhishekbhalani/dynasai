@@ -1,0 +1,32 @@
+name: Release ready
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+jobs:
+  comment:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Remind to run Release
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const url = `https://github.com/${owner}/${repo}/actions/workflows/release.yml`;
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: context.payload.pull_request.number,
+              body: [
+                'Merged to `main`. Production is **not** auto-deployed.',
+                '',
+                `To ship to Cloudflare (\`dynasai.ai\`), open **[Release](${url})** → **Run workflow** → branch \`main\`.`,
+              ].join('\n'),
+            });

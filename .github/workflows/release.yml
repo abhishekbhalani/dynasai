@@ -1,0 +1,102 @@
+name: Release
+
+# Manual production deploy to Cloudflare Workers (dynasai.ai).
+# After a PR is merged to main, run this from Actions → Release → Run workflow.
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Build only — skip Cloudflare deploy
+        type: boolean
+        default: false
+      also_pages:
+        description: Also create/deploy a Cloudflare Pages project on this account
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  deployments: write
+
+concurrency:
+  group: release-production
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Deploy production
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: production
+      url: ${{ vars.PUBLIC_SITE_URL || 'https://dynasai.ai' }}
+    steps:
+      - name: Require production branch
+        if: github.ref != 'refs/heads/main'
+        run: |
+          echo "Release from main only. Current ref: ${{ github.ref }}"
+          exit 1
+
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          PUBLIC_SITE_URL: ${{ vars.PUBLIC_SITE_URL || 'https://dynasai.ai' }}
+          PUBLIC_APP_URL: ${{ vars.PUBLIC_APP_URL || 'https://app.dynasai.ai' }}
+          PUBLIC_GTM_ID: ${{ vars.PUBLIC_GTM_ID || 'GTM-KDPPRVV2' }}
+          PUBLIC_CONTACT_EMAIL: ${{ vars.PUBLIC_CONTACT_EMAIL || 'hello@dynasai.ai' }}
+
+      - name: Check Cloudflare auth
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          packageManager: npm
+          command: whoami
+
+      - name: Dry run
+        if: ${{ inputs.dry_run }}
+        run: echo "Dry run complete. dist/ built; Cloudflare deploy skipped."
+
+      - name: Deploy Worker
+        if: ${{ !inputs.dry_run }}
+        id: deploy
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          packageManager: npm
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          command: deploy
+
+      - name: Create or deploy Pages
+        if: ${{ !inputs.dry_run && inputs.also_pages }}
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          packageManager: npm
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          command: pages deploy dist --project-name=dynasai --commit-dirty=true
+
+      - name: Summary
+        if: ${{ !inputs.dry_run }}
+        env:
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment-url }}
+          SITE_URL: ${{ vars.PUBLIC_SITE_URL || 'https://dynasai.ai' }}
+        run: |
+          {
+            echo "## Release complete"
+            echo "- Site: ${SITE_URL}"
+            echo "- Worker: dynasai-web"
+            echo "- Preview: ${DEPLOYMENT_URL}"
+          } >> "$GITHUB_STEP_SUMMARY"

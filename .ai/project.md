@@ -1,6 +1,6 @@
 # DynasAI
 
-Active task: marketing site on Cloudflare Workers (Astro static), SEO + GTM, later app.dynasai.ai.
+Active task: GitHub Actions manual release to Cloudflare Workers (dynasai.ai).
 
 ## Product
 
@@ -19,7 +19,7 @@ Active task: marketing site on Cloudflare Workers (Astro static), SEO + GTM, lat
 
 - Stitch MCP reload in Cursor (HTTP endpoint failed; stdio proxy configured)
 - Wrangler login + first deploy
-- Custom domain + Search Console property
+- Custom domains in wrangler.jsonc; Search Console property still pending
 - Consent Mode in GTM if EU traffic
 - Legal counsel review of privacy/terms
 - Real OG image (1200×630)
