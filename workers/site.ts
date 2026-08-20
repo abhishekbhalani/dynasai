@@ -3,8 +3,9 @@ import { buildPlaybookPdf } from './pdf';
 import { json } from './http';
 import { handleTrack } from './track';
 import { handleChat } from './chat';
-import { handleAdmin, handleQuickContact } from './admin';
-import { isAdminHost, isCrawler, isStaticAssetPath } from './hosts';
+import { handleAdmin, handleQuickContact, hasAdminSession } from './admin';
+import { insertLead } from './leads';
+import { isAdminHost, isCrawler, isLocalHost, isStaticAssetPath } from './hosts';
 import { applySecurityHeaders, redirectHttpToHttps } from './security';
 
 const OTP_TTL_SEC = 10 * 60;
@@ -158,6 +159,16 @@ async function handleVerifyOtp(request: Request, env: Env) {
     verifiedAt: new Date().toISOString(),
   };
   await env.LEADS.put(`lead:${email}`, JSON.stringify(lead));
+  try {
+    await insertLead(env, {
+      source: 'playbook',
+      name: otp.name,
+      email,
+      company: otp.company,
+    });
+  } catch (error) {
+    console.error('lead_insert_failed', { error: String(error) });
+  }
   await env.LEADS.put(
     `session:${token}`,
     JSON.stringify({ ...lead, exp: Date.now() + SESSION_TTL_SEC * 1000 }),
@@ -169,7 +180,7 @@ async function handleVerifyOtp(request: Request, env: Env) {
     await sendMail(
       env,
       notify,
-      `Playbook lead: ${company}`,
+      `Playbook lead: ${otp.company}`,
       `Verified playbook lead\nName: ${otp.name}\nEmail: ${email}\nCompany: ${otp.company}\nSource: ${playbookMeta.source}`,
     );
   } catch (error) {
@@ -235,14 +246,26 @@ async function servePublicNotFound(request: Request, env: Env) {
   return new Response(res.body, { status: 404, headers: res.headers });
 }
 
-async function serveAdminPage(request: Request, env: Env) {
-  for (const pathname of ['/admin/', '/admin', '/admin/index.html']) {
-    const url = new URL(request.url);
-    url.pathname = pathname;
-    const res = await env.ASSETS.fetch(new Request(url.toString(), request));
-    if (res.ok) return withRobots(res);
-  }
-  return servePublicNotFound(request, env);
+async function serveAdminSpa(request: Request, env: Env) {
+  const assetUrl = new URL(request.url);
+  assetUrl.pathname = '/admin-app/';
+  const res = await env.ASSETS.fetch(new Request(assetUrl.toString(), { method: 'GET' }));
+  if (!res.ok) return servePublicNotFound(request, env);
+
+  const authed = await hasAdminSession(request, env);
+  const host = new URL(request.url).hostname;
+  const base = isLocalHost(host) ? '/admin/' : '/';
+  const sitekey = env.PUBLIC_TURNSTILE_SITEKEY || '';
+  let html = await res.text();
+  html = html
+    .replace('data-auth="0"', `data-auth="${authed ? '1' : '0'}"`)
+    .replace('data-base="/"', `data-base="${base}"`)
+    .replace('data-turnstile=""', `data-turnstile="${sitekey}"`);
+
+  const headers = new Headers(res.headers);
+  headers.set('content-type', 'text/html; charset=utf-8');
+  headers.set('cache-control', 'no-store');
+  return withRobots(new Response(html, { status: 200, headers }));
 }
 
 async function handleAdminHost(request: Request, env: Env) {
@@ -277,12 +300,11 @@ async function handleAdminHost(request: Request, env: Env) {
   }
 
   if (path.startsWith('/api/')) return json({ ok: false, error: 'Not found' }, 404);
-  if (path === '/' || path === '/admin') return serveAdminPage(request, env);
   if (isStaticAssetPath(path)) {
     const res = await env.ASSETS.fetch(request);
     return withRobots(res);
   }
-  return servePublicNotFound(request, env);
+  return serveAdminSpa(request, env);
 }
 
 async function routeRequest(request: Request, env: Env) {
@@ -298,8 +320,8 @@ async function routeRequest(request: Request, env: Env) {
     }
 
     const path = url.pathname;
-    const local = url.hostname === 'localhost' || url.hostname === '127.0.0.1';
-    if (!local && (path === '/admin' || path.startsWith('/admin/'))) {
+    const local = isLocalHost(url.hostname);
+    if (!local && (path === '/admin' || path.startsWith('/admin/') || path === '/admin-app' || path.startsWith('/admin-app/'))) {
       return servePublicNotFound(request, env);
     }
 
@@ -318,6 +340,14 @@ async function routeRequest(request: Request, env: Env) {
     } catch (error) {
       console.error('api_error', { path, error: String(error) });
       return json({ ok: false, error: 'Something went wrong.' }, 500);
+    }
+
+    if (local && (path === '/admin' || path.startsWith('/admin/') || path.startsWith('/admin-app/'))) {
+      if (isStaticAssetPath(path)) {
+        const res = await env.ASSETS.fetch(request);
+        return withRobots(res);
+      }
+      return serveAdminSpa(request, env);
     }
 
     return env.ASSETS.fetch(request);

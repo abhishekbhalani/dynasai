@@ -46,6 +46,8 @@ export function isCrawler(request: Request) {
 export function isStaticAssetPath(path: string) {
   return (
     path.startsWith('/_astro/') ||
+    path === '/admin-app' ||
+    path.startsWith('/admin-app/') ||
     path.startsWith('/img/') ||
     path === '/favicon.ico' ||
     path === '/robots.txt' ||

@@ -139,6 +139,45 @@ a {
   gap: 16px;
 }
 
+.admin-boot {
+  margin: 32px 16px;
+  color: var(--text-muted);
+}
+
+.admin-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 16px 16px 0;
+}
+
+.admin-nav a {
+  min-height: 40px;
+  padding: 8px 16px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.admin-nav a:hover {
+  background: var(--accent-soft);
+}
+
+.admin-nav a.router-link-active {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.admin-nav .admin-btn {
+  margin-left: auto;
+}
+
 .admin-shell {
   max-width: 1120px;
   margin: 0 auto;

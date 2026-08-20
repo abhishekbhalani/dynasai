@@ -3,7 +3,7 @@
 ```
 dynasai.ai                 Astro SSG  →  Cloudflare Worker (static assets)
 www.dynasai.ai             301 to apex
-admin.dynasai.ai           Activity admin only (password). No Zaraz, no first-party tracker.
+admin.dynasai.ai           Vue admin (analytics + leads). Worker stamps session on HTML so refresh does not flash login. Same Worker as marketing.
 app.dynasai.ai             future product/demo app (separate Worker)
 api.dynasai.ai             future API (optional)
 ```
@@ -23,4 +23,4 @@ Cloudflare Zaraz on the **dynasai.ai** zone loads GA4 (and optional Google tools
 
 First-party `/api/track` events power `https://admin.dynasai.ai` (Cloudflare Analytics-style visitors, pages, countries). Assets use `run_worker_first` so the admin host is not the marketing homepage.
 
-Security headers and HTTP→HTTPS live in the Worker (`workers/security.ts`). Admin login uses Turnstile (`data-action="admin-login"`).
+Security headers and HTTP→HTTPS live in the Worker (`workers/security.ts`). Admin login uses Turnstile (`data-action="admin-login"`). Admin UI is Vue 3 (`admin/`) built to `dist/admin-app/`. Leads use D1 when `env.DB` exists; otherwise KV rows with the same schema (`workers/leads.ts`). Email sending for playbook OTP stays off until enabled.

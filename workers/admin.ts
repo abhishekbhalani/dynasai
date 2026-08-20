@@ -2,6 +2,7 @@ import { cookieValue, json, originOk, sha256, timingSafeEqual } from './http';
 import { listRecent, summarizeActivity } from './track';
 import { isAdminHost } from './hosts';
 import { verifyTurnstile } from './turnstile';
+import { insertLead, listLeads } from './leads';
 
 const COOKIE = 'dynasai_admin';
 const SESSION_TTL = 12 * 60 * 60;
@@ -23,6 +24,10 @@ async function requireAdmin(request: Request, env: Env) {
   if (!token) return null;
   const raw = await env.LEADS.get(`admin:sess:${token}`);
   return raw ? token : null;
+}
+
+export async function hasAdminSession(request: Request, env: Env) {
+  return Boolean(await requireAdmin(request, env));
 }
 
 export async function handleAdmin(request: Request, env: Env) {
@@ -76,6 +81,11 @@ export async function handleAdmin(request: Request, env: Env) {
     return json({ ok: true, ...summary, recent: events.slice(0, 80) });
   }
 
+  if (request.method === 'GET' && path === '/api/admin/leads') {
+    const leads = await listLeads(env, 200);
+    return json({ ok: true, store: env.DB ? 'd1' : 'kv', leads });
+  }
+
   return json({ ok: false, error: 'Not found' }, 404);
 }
 
@@ -102,5 +112,16 @@ export async function handleQuickContact(request: Request, env: Env) {
     at: new Date().toISOString(),
   };
   await env.LEADS.put(`quick:${email}:${Date.now()}`, JSON.stringify(lead), { expirationTtl: 30 * 24 * 60 * 60 });
+  try {
+    await insertLead(env, {
+      source: 'quick-contact',
+      name,
+      email,
+      message,
+      path: String(body.path || ''),
+    });
+  } catch (error) {
+    console.error('lead_insert_failed', { error: String(error) });
+  }
   return json({ ok: true, message: 'Thanks. We will reply from hello@dynasai.ai.' });
 }

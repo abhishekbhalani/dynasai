@@ -42,7 +42,8 @@
     "LEAD_NOTIFY": "hello@dynasai.ai",
     "CHAT_MODEL": "@cf/meta/llama-3.2-3b-instruct",
     "ADMIN_HOST": "admin.dynasai.ai",
-    "ADMIN_USERNAME": "dynAdmin"
+    "ADMIN_USERNAME": "dynAdmin",
+    "PUBLIC_TURNSTILE_SITEKEY": "0x4AAAAAAEWny9BePf9cxE_u"
   },
   "send_email": [
     { "name": "EMAIL" }
@@ -51,6 +52,14 @@
     {
       "binding": "LEADS",
       "id": "3b73d03580214ee4b95cd231d42bc59e"
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "dynasai-leads",
+      "database_id": "64ccd522-716b-417d-a150-1dfc4034fdcb",
+      "migrations_dir": "migrations"
     }
   ]
 }
