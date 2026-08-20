@@ -16,6 +16,8 @@ type Activity = {
   countries?: Rank[];
   pages?: Rank[];
   referrers?: Rank[];
+  cachedAt?: string;
+  cache?: 'fresh' | 'stale' | 'live';
 };
 
 const loading = ref(true);
@@ -48,22 +50,37 @@ function dayLabel(value: string) {
   return date.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'UTC' });
 }
 
+function cacheLabel(activity: Activity) {
+  const state = activity.cache || 'live';
+  const at = activity.cachedAt ? Date.parse(activity.cachedAt) : NaN;
+  if (!Number.isFinite(at)) return state === 'live' ? 'Live from Cloudflare' : 'Cached snapshot';
+  const mins = Math.max(0, Math.round((Date.now() - at) / 60000));
+  const when = mins < 1 ? 'just now' : `${mins} min ago`;
+  if (state === 'stale') return `Cached ${when} · updating`;
+  if (state === 'fresh') return `Cached ${when}`;
+  return `Fetched ${when}`;
+}
+
 async function load() {
   loading.value = true;
   error.value = '';
-  const res = await fetch('/api/admin/activity');
-  if (res.status === 401) {
-    document.documentElement.setAttribute('data-auth', '0');
-    window.location.reload();
-    return;
-  }
-  const json = (await res.json()) as Activity;
-  if (!json.ok) {
+  try {
+    const res = await fetch('/api/admin/activity', { cache: 'no-store', credentials: 'same-origin' });
+    if (res.status === 401) {
+      document.documentElement.setAttribute('data-auth', '0');
+      window.location.reload();
+      return;
+    }
+    const json = (await res.json()) as Activity & { error?: string };
+    if (!json.ok) {
+      error.value = json.error || 'Could not load analytics.';
+      loading.value = false;
+      return;
+    }
+    data.value = json;
+  } catch {
     error.value = 'Could not load analytics.';
-    loading.value = false;
-    return;
   }
-  data.value = json;
   loading.value = false;
 }
 
@@ -81,7 +98,17 @@ const maxVisitors = computed(() => Math.max(...(data.value.series || []).map((it
       Unique visitors on dynasai.ai from Cloudflare Analytics — the same traffic numbers as the Cloudflare dashboard.
     </p>
     <div class="admin-toolbar">
-      <p>{{ data.source === 'cloudflare' ? 'Cloudflare Analytics · last 7 days' : 'Last 7 days · unique visitors' }}</p>
+      <div class="admin-toolbar-copy">
+        <p>{{ data.source === 'cloudflare' ? 'Cloudflare Analytics · last 7 days' : 'Last 7 days · unique visitors' }}</p>
+        <p
+          v-if="!loading && data.cachedAt"
+          class="admin-cache"
+          :data-state="data.cache || 'live'"
+          aria-live="polite"
+        >
+          {{ cacheLabel(data) }}
+        </p>
+      </div>
       <button class="admin-btn" type="button" @click="load">Refresh</button>
     </div>
     <p v-if="error" class="admin-status">{{ error }}</p>

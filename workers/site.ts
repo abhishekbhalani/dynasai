@@ -8,6 +8,7 @@ import { insertLead } from './leads';
 import { isAdminHost, isCrawler, isLocalHost, isStaticAssetPath } from './hosts';
 import { applySecurityHeaders, redirectHttpToHttps } from './security';
 import { recordPageView } from './visits';
+import { refreshTrafficCache } from './cf-analytics';
 
 const OTP_TTL_SEC = 10 * 60;
 const SESSION_TTL_SEC = 12 * 60 * 60;
@@ -269,7 +270,7 @@ async function serveAdminSpa(request: Request, env: Env) {
   return withRobots(new Response(html, { status: 200, headers }));
 }
 
-async function handleAdminHost(request: Request, env: Env) {
+async function handleAdminHost(request: Request, env: Env, ctx?: ExecutionContext) {
   if (isCrawler(request)) {
     return new Response('Not found', {
       status: 404,
@@ -294,7 +295,7 @@ async function handleAdminHost(request: Request, env: Env) {
   }
 
   try {
-    if (path.startsWith('/api/admin')) return await handleAdmin(request, env);
+    if (path.startsWith('/api/admin')) return await handleAdmin(request, env, ctx);
   } catch (error) {
     console.error('api_error', { path, error: String(error) });
     return json({ ok: false, error: 'Something went wrong.' }, 500);
@@ -308,7 +309,7 @@ async function handleAdminHost(request: Request, env: Env) {
   return serveAdminSpa(request, env);
 }
 
-async function routeRequest(request: Request, env: Env) {
+async function routeRequest(request: Request, env: Env, ctx?: ExecutionContext) {
     const url = new URL(request.url);
     if (url.hostname === 'www.dynasai.ai') {
       url.hostname = 'dynasai.ai';
@@ -317,7 +318,7 @@ async function routeRequest(request: Request, env: Env) {
     }
 
     if (isAdminHost(url.hostname, env) && !['localhost', '127.0.0.1'].includes(url.hostname)) {
-      return handleAdminHost(request, env);
+      return handleAdminHost(request, env, ctx);
     }
 
     const path = url.pathname;
@@ -332,7 +333,7 @@ async function routeRequest(request: Request, env: Env) {
       if (path.startsWith('/api/contact-quick')) return await handleQuickContact(request, env);
       if (path.startsWith('/api/admin')) {
         if (!local) return json({ ok: false, error: 'Not found' }, 404);
-        return await handleAdmin(request, env);
+        return await handleAdmin(request, env, ctx);
       }
       if (path.startsWith('/api/playbook')) {
         if (request.method === 'OPTIONS') return new Response(null, { status: 204 });
@@ -358,11 +359,18 @@ export default {
   async fetch(request, env, ctx) {
     const https = redirectHttpToHttps(request);
     if (https) return applySecurityHeaders(https);
-    const res = await routeRequest(request, env);
+    const res = await routeRequest(request, env, ctx);
     const task = recordPageView(request, env, res).catch((error) => {
       console.error('visit_record_failed', { error: String(error) });
     });
     ctx?.waitUntil(task);
     return applySecurityHeaders(res);
+  },
+  async scheduled(_event, env, ctx) {
+    ctx.waitUntil(
+      refreshTrafficCache(env).catch((error) => {
+        console.error('traffic_warm_failed', { error: String(error) });
+      }),
+    );
   },
 };

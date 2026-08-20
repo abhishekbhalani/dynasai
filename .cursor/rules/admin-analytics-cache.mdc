@@ -1,0 +1,22 @@
+---
+description: Serve admin Traffic from KV. Never call Cloudflare GraphQL on every dashboard load.
+globs: src/workers/cf-analytics.ts,src/workers/admin.ts,src/workers/visits.ts,src/workers/site.ts,src/admin/src/views/AnalyticsView.vue,workers/cf-analytics.ts,workers/admin.ts,workers/visits.ts,workers/site.ts,admin/src/views/AnalyticsView.vue,wrangler.jsonc,src/wrangler.jsonc
+alwaysApply: false
+---
+
+# Admin analytics cache
+
+- `GET /api/admin/activity` must call `getCachedTraffic(env, ctx)`, never GraphQL directly.
+- One snapshot in KV: `analytics:traffic:v1`. Lock: `analytics:traffic:lock` (45s).
+- Fresh **15 min** → return KV. Stale **< 24h** → return KV + `ctx.waitUntil(refreshTrafficCache)`. Miss / older → sync refresh; on GraphQL failure serve last snapshot.
+- Cron `*/10 * * * *` warms the snapshot. Do not add a public Cache Rule on `/api/admin/activity` (cookie-auth; `private` only).
+- Put every Traffic field (totals, series, countries, pages, referrers) in that one snapshot so the UI does not issue a second Cloudflare query.
+- Keep action + view + Worker handler in sync: activity API, `AnalyticsView.vue`, `cf-analytics.ts`.
+
+```ts
+// ❌ BAD — GraphQL on every admin load
+const traffic = await fetchCloudflareTraffic(env);
+
+// ✅ GOOD — KV first, GraphQL only on miss / stale refresh / cron
+const traffic = await getCachedTraffic(env, ctx);
+```

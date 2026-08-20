@@ -4,7 +4,7 @@ import { isAdminHost } from './hosts';
 import { verifyTurnstile } from './turnstile';
 import { insertLead, listLeads } from './leads';
 import { summarizeVisits } from './visits';
-import { fetchCloudflareTraffic } from './cf-analytics';
+import { getCachedTraffic } from './cf-analytics';
 
 const COOKIE = 'dynasai_admin';
 const SESSION_TTL = 12 * 60 * 60;
@@ -32,7 +32,7 @@ export async function hasAdminSession(request: Request, env: Env) {
   return Boolean(await requireAdmin(request, env));
 }
 
-export async function handleAdmin(request: Request, env: Env) {
+export async function handleAdmin(request: Request, env: Env, ctx?: ExecutionContext) {
   const host = new URL(request.url).hostname;
   if (!isAdminHost(host, env)) return json({ ok: false, error: 'Not found' }, 404);
   if (!originOk(request)) return json({ ok: false, error: 'Forbidden' }, 403);
@@ -78,35 +78,42 @@ export async function handleAdmin(request: Request, env: Env) {
   }
 
   if (request.method === 'GET' && path === '/api/admin/activity') {
+    const headers = { 'cache-control': 'private, max-age=60, stale-while-revalidate=300' };
     try {
-      const cloudflare = await fetchCloudflareTraffic(env);
-      if (cloudflare) {
-        const visits = await summarizeVisits(env);
-        return json({
-          ok: true,
-          ...cloudflare,
-          referrers: visits?.referrers?.length ? visits.referrers : cloudflare.referrers,
-          pages: cloudflare.pages.length ? cloudflare.pages : visits?.pages || [],
-        });
-      }
+      const cloudflare = await getCachedTraffic(env, ctx);
+      if (cloudflare) return json({ ok: true, ...cloudflare }, 200, headers);
     } catch (error) {
       console.error('cf_analytics_failed', { error: String(error) });
     }
-    const visits = await summarizeVisits(env);
-    if (visits) {
-      return json({
-        ok: true,
-        source: 'edge',
-        window: '7d',
-        requests: visits.pageViews,
-        bytes: 0,
-        ...visits,
-        events: visits.pageViews,
-      });
+    try {
+      const visits = await summarizeVisits(env);
+      if (visits) {
+        return json(
+          {
+            ok: true,
+            source: 'edge',
+            window: '7d',
+            requests: visits.pageViews,
+            bytes: 0,
+            cachedAt: new Date().toISOString(),
+            cache: 'live',
+            ...visits,
+          },
+          200,
+          headers,
+        );
+      }
+    } catch (error) {
+      console.error('visits_summary_failed', { error: String(error) });
     }
-    const events = await listRecent(env, 250);
-    const summary = summarizeActivity(events);
-    return json({ ok: true, source: 'consented', ...summary, recent: events.slice(0, 80) });
+    try {
+      const events = await listRecent(env, 250);
+      const summary = summarizeActivity(events);
+      return json({ ok: true, source: 'consented', ...summary, recent: events.slice(0, 80) }, 200, headers);
+    } catch (error) {
+      console.error('activity_fallback_failed', { error: String(error) });
+      return json({ ok: false, error: 'Could not load analytics.' }, 500, headers);
+    }
   }
 
   if (request.method === 'GET' && path === '/api/admin/leads') {

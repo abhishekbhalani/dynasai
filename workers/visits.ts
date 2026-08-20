@@ -1,6 +1,7 @@
 import { clientIp, sha256 } from './http';
 import { isAdminHost, isCrawler, isLocalHost, isStaticAssetPath } from './hosts';
 
+const WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
 let schemaReady = false;
 
 async function ensureVisits(db: D1Database) {

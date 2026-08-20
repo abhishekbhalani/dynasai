@@ -1,12 +1,18 @@
+import { summarizeVisits } from './visits';
+
 const ZONE = 'deba22f5a6c2a3a60082565beb8f2968';
-const CACHE_KEY = 'analytics:cf:7d';
-const CACHE_TTL = 300;
+const SNAP_KEY = 'analytics:traffic:v1';
+const LOCK_KEY = 'analytics:traffic:lock';
+const FRESH_MS = 15 * 60 * 1000;
+const STALE_MS = 24 * 60 * 60 * 1000;
+const KV_TTL_SEC = 26 * 60 * 60;
+const LOCK_TTL_SEC = 45;
 
 type Rank = { name: string; count: number };
 type Series = { t: string; visitors: number; pageViews: number; requests: number };
 
 export type CloudflareTraffic = {
-  source: 'cloudflare';
+  source: 'cloudflare' | 'edge';
   window: '7d';
   visitors: number;
   pageViews: number;
@@ -18,7 +24,11 @@ export type CloudflareTraffic = {
   countries: Rank[];
   pages: Rank[];
   referrers: Rank[];
+  cachedAt: string;
+  cache: 'fresh' | 'stale' | 'live';
 };
+
+type Snapshot = { fetchedAt: number; payload: CloudflareTraffic };
 
 function isoDate(offsetDays: number) {
   return new Date(Date.now() + offsetDays * 86400000).toISOString().slice(0, 10);
@@ -33,6 +43,16 @@ function isContentPath(path: string) {
   return true;
 }
 
+function fillDays(rows: Series[]) {
+  const map = new Map(rows.map((row) => [row.t, row]));
+  const out: Series[] = [];
+  for (let i = 6; i >= 0; i -= 1) {
+    const t = isoDate(-i);
+    out.push(map.get(t) || { t, visitors: 0, pageViews: 0, requests: 0 });
+  }
+  return out;
+}
+
 async function graphql(token: string, query: string, variables: Record<string, string>) {
   const res = await fetch('https://api.cloudflare.com/client/v4/graphql', {
     method: 'POST',
@@ -44,11 +64,7 @@ async function graphql(token: string, query: string, variables: Record<string, s
   });
   const json = (await res.json()) as {
     errors?: { message?: string }[];
-    data?: {
-      viewer?: {
-        zones?: Array<Record<string, unknown>>;
-      };
-    };
+    data?: { viewer?: { zones?: Array<Record<string, unknown>> } };
   };
   if (!res.ok || json.errors?.length) {
     throw new Error(json.errors?.[0]?.message || `graphql ${res.status}`);
@@ -56,28 +72,38 @@ async function graphql(token: string, query: string, variables: Record<string, s
   return json.data?.viewer?.zones?.[0] || {};
 }
 
-function fillDays(rows: Series[]) {
-  const map = new Map(rows.map((row) => [row.t, row]));
-  const out: Series[] = [];
-  for (let i = 6; i >= 0; i -= 1) {
-    const t = isoDate(-i);
-    out.push(map.get(t) || { t, visitors: 0, pageViews: 0, requests: 0 });
+async function readSnapshot(env: Env): Promise<Snapshot | null> {
+  const raw = await env.LEADS.get(SNAP_KEY);
+  if (!raw) return null;
+  try {
+    const snap = JSON.parse(raw) as Snapshot;
+    if (!snap.fetchedAt || !snap.payload) return null;
+    return snap;
+  } catch {
+    return null;
   }
-  return out;
 }
 
-export async function fetchCloudflareTraffic(env: Env): Promise<CloudflareTraffic | null> {
-  const token = env.CF_ANALYTICS_TOKEN || '';
-  if (!token) return null;
+async function writeSnapshot(env: Env, payload: CloudflareTraffic) {
+  const snap: Snapshot = { fetchedAt: Date.now(), payload };
+  await env.LEADS.put(SNAP_KEY, JSON.stringify(snap), { expirationTtl: KV_TTL_SEC });
+}
 
-  const cached = await env.LEADS.get(CACHE_KEY);
-  if (cached) {
-    try {
-      return JSON.parse(cached) as CloudflareTraffic;
-    } catch {
-      /* ignore */
-    }
+async function withLock(env: Env, work: () => Promise<void>) {
+  const existing = await env.LEADS.get(LOCK_KEY);
+  if (existing) return false;
+  await env.LEADS.put(LOCK_KEY, String(Date.now()), { expirationTtl: LOCK_TTL_SEC });
+  try {
+    await work();
+  } finally {
+    await env.LEADS.delete(LOCK_KEY);
   }
+  return true;
+}
+
+async function loadFromCloudflare(env: Env): Promise<CloudflareTraffic> {
+  const token = env.CF_ANALYTICS_TOKEN || '';
+  if (!token) throw new Error('CF_ANALYTICS_TOKEN missing');
 
   const since = isoDate(-7);
   const until = isoDate(0);
@@ -147,16 +173,13 @@ export async function fetchCloudflareTraffic(env: Env): Promise<CloudflareTraffi
     .filter((row) => isContentPath(row.name))
     .slice(0, 12);
 
-  const series = fillDays(
-    daily.map((row) => ({
-      t: row.dimensions?.date || '',
-      visitors: Number(row.uniq?.uniques || 0),
-      pageViews: Number(row.sum?.pageViews || 0),
-      requests: Number(row.sum?.requests || 0),
-    })),
-  );
-
-  const data: CloudflareTraffic = {
+  let visits: Awaited<ReturnType<typeof summarizeVisits>> = null;
+  try {
+    visits = await summarizeVisits(env);
+  } catch (error) {
+    console.error('visits_summary_failed', { error: String(error) });
+  }
+  const payload: CloudflareTraffic = {
     source: 'cloudflare',
     window: '7d',
     visitors,
@@ -165,12 +188,67 @@ export async function fetchCloudflareTraffic(env: Env): Promise<CloudflareTraffi
     bytes,
     countriesCount: countries.length,
     avgPages: visitors ? Math.round((pageViews / visitors) * 10) / 10 : 0,
-    series,
+    series: fillDays(
+      daily.map((row) => ({
+        t: row.dimensions?.date || '',
+        visitors: Number(row.uniq?.uniques || 0),
+        pageViews: Number(row.sum?.pageViews || 0),
+        requests: Number(row.sum?.requests || 0),
+      })),
+    ),
     countries,
-    pages,
-    referrers: [],
+    pages: pages.length ? pages : visits?.pages || [],
+    referrers: visits?.referrers || [],
+    cachedAt: new Date().toISOString(),
+    cache: 'live',
   };
+  return payload;
+}
 
-  await env.LEADS.put(CACHE_KEY, JSON.stringify(data), { expirationTtl: CACHE_TTL });
-  return data;
+export async function refreshTrafficCache(env: Env) {
+  const token = env.CF_ANALYTICS_TOKEN || '';
+  if (!token) return false;
+  return withLock(env, async () => {
+    const payload = await loadFromCloudflare(env);
+    payload.cache = 'fresh';
+    await writeSnapshot(env, payload);
+  });
+}
+
+export async function getCachedTraffic(env: Env, ctx?: ExecutionContext): Promise<CloudflareTraffic | null> {
+  const token = env.CF_ANALYTICS_TOKEN || '';
+  if (!token) return null;
+
+  const snap = await readSnapshot(env);
+  const age = snap ? Date.now() - snap.fetchedAt : Number.POSITIVE_INFINITY;
+
+  const mark = (state: CloudflareTraffic['cache']): CloudflareTraffic => ({
+    ...snap!.payload,
+    cache: state,
+    cachedAt: snap!.payload.cachedAt,
+  });
+
+  if (snap && age < FRESH_MS) return mark('fresh');
+
+  if (snap && age < STALE_MS) {
+    ctx?.waitUntil(
+      refreshTrafficCache(env).catch((error) => {
+        console.error('cf_analytics_refresh_failed', { error: String(error) });
+      }),
+    );
+    return mark('stale');
+  }
+
+  try {
+    await refreshTrafficCache(env);
+    const next = await readSnapshot(env);
+    if (next) {
+      const nextAge = Date.now() - next.fetchedAt;
+      return { ...next.payload, cache: nextAge < FRESH_MS ? 'live' : 'stale' };
+    }
+  } catch (error) {
+    console.error('cf_analytics_failed', { error: String(error) });
+    if (snap) return mark('stale');
+  }
+  return snap ? mark('stale') : null;
 }
