@@ -1,7 +1,7 @@
 name: Release
 
-# Manual production deploy to Cloudflare Workers (dynasai.ai).
-# After a PR is merged to main, run this from Actions → Release → Run workflow.
+# Manual deploy to Cloudflare. GitHub shows a branch dropdown under
+# Actions → Release → Run workflow → "Use workflow from".
 on:
   workflow_dispatch:
     inputs:
@@ -24,20 +24,19 @@ concurrency:
 
 jobs:
   release:
-    name: Deploy production
+    name: Deploy ${{ github.ref_name }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment:
       name: production
       url: ${{ vars.PUBLIC_SITE_URL || 'https://dynasai.ai' }}
     steps:
-      - name: Require production branch
-        if: github.ref != 'refs/heads/main'
-        run: |
-          echo "Release from main only. Current ref: ${{ github.ref }}"
-          exit 1
+      - name: Selected branch
+        run: echo "Releasing ${{ github.ref }} (${{ github.sha }})"
 
       - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref }}
 
       - uses: actions/setup-node@v4
         with:
@@ -97,6 +96,8 @@ jobs:
         run: |
           {
             echo "## Release complete"
+            echo "- Branch: ${{ github.ref_name }}"
+            echo "- Commit: ${{ github.sha }}"
             echo "- Site: ${SITE_URL}"
             echo "- Worker: dynasai-web"
             echo "- Preview: ${DEPLOYMENT_URL}"

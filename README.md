@@ -74,7 +74,7 @@ npm run cicd:github
 ```
 
 4. Merge a PR to `main`
-5. GitHub → **Actions** → **Release** → **Run workflow** (branch `main`)
+5. GitHub → **Actions** → **Release** → **Run workflow** → pick any branch in **Use workflow from**
 
 Optional: GitHub → Settings → Environments → **production** → add required reviewers so Release waits for approval.
 
