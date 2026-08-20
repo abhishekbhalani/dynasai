@@ -21,6 +21,7 @@ const VARIABLES = {
   PUBLIC_GTM_ID: 'GTM-KDPPRVV2',
   PUBLIC_CONTACT_EMAIL: 'hello@dynasai.ai',
   CLOUDFLARE_WORKER_NAME: 'dynasai-web',
+  CLOUDFLARE_PAGES_PROJECT: 'dynasai',
   PRODUCTION_HOSTNAME: 'dynasai.ai',
 };
 
