@@ -3,6 +3,9 @@ import { listRecent, summarizeActivity } from './track';
 import { isAdminHost } from './hosts';
 import { verifyTurnstile } from './turnstile';
 import { insertLead, listLeads } from './leads';
+import { sendMail } from './mail';
+import { contactEmailHtml, contactEmailText } from './email-template';
+import { buildContactPayload } from './visitor';
 import { summarizeVisits } from './visits';
 import { getCachedTraffic } from './cf-analytics';
 
@@ -129,34 +132,48 @@ export async function handleQuickContact(request: Request, env: Env) {
   if (request.method === 'OPTIONS') return new Response(null, { status: 204 });
   if (request.method !== 'POST') return json({ ok: false, error: 'Method not allowed' }, 405);
 
-  const body = (await request.json()) as { name?: string; email?: string; message?: string; path?: string };
+  const body = (await request.json()) as Record<string, unknown>;
   const name = String(body.name || '').trim();
   const email = String(body.email || '').trim().toLowerCase();
-  const message = String(body.message || '').trim();
-  if (name.length < 2 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || message.length < 8) {
-    return json({ ok: false, error: 'Enter your name, email, and a short message.' }, 400);
+  const notes = String(body.message || '').trim();
+  if (name.length < 2 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return json({ ok: false, error: 'Enter your name and a valid email.' }, 400);
   }
-  if (message.length > 500) return json({ ok: false, error: 'Message is too long (500 character max).' }, 400);
+  if (notes.length > 500) return json({ ok: false, error: 'Message is too long (500 character max).' }, 400);
 
-  const lead = {
+  const payload = buildContactPayload(request, body, {
     name,
     email,
-    message,
+    notes,
     path: String(body.path || ''),
-    source: 'quick-contact',
-    at: new Date().toISOString(),
-  };
-  await env.LEADS.put(`quick:${email}:${Date.now()}`, JSON.stringify(lead), { expirationTtl: 30 * 24 * 60 * 60 });
+  });
+  const message = contactEmailText(payload);
+
+  await env.LEADS.put(`quick:${email}:${Date.now()}`, JSON.stringify({ name, email, message: notes, path: payload.path }), {
+    expirationTtl: 30 * 24 * 60 * 60,
+  });
   try {
     await insertLead(env, {
       source: 'quick-contact',
       name,
       email,
       message,
-      path: String(body.path || ''),
+      path: payload.path,
     });
   } catch (error) {
     console.error('lead_insert_failed', { error: String(error) });
+  }
+  try {
+    await sendMail(
+      env,
+      env.LEAD_NOTIFY || 'hello@dynasai.ai',
+      `New enquiry: ${name}`,
+      message,
+      contactEmailHtml(payload),
+      { email, name },
+    );
+  } catch (error) {
+    console.error('quick_mail_failed', { error: String(error) });
   }
   return json({ ok: true, message: 'Thanks. We will reply from hello@dynasai.ai.' });
 }

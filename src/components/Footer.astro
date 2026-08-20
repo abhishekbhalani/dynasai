@@ -33,7 +33,9 @@ import { site } from '../config';
         <li><a href="/start">Get started</a></li>
         <li><a href="/docs">Docs</a></li>
         <li><a href="/partners">Cloud partners</a></li>
-        <li><a href={site.appUrl}>Workspace</a></li>
+        {site.appEnabled && (
+          <li><a href={site.appUrl}>Workspace</a></li>
+        )}
       </ul>
     </div>
   </div>

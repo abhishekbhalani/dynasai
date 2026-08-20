@@ -5,6 +5,8 @@ import { handleTrack } from './track';
 import { handleChat } from './chat';
 import { handleAdmin, handleQuickContact, hasAdminSession } from './admin';
 import { insertLead } from './leads';
+import { sendMail } from './mail';
+import { handleContactForm } from './contact-form';
 import { isAdminHost, isCrawler, isLocalHost, isStaticAssetPath } from './hosts';
 import { applySecurityHeaders, redirectHttpToHttps } from './security';
 import { recordPageView } from './visits';
@@ -70,18 +72,6 @@ async function readSession(request: Request, env: Env) {
   const session = JSON.parse(raw) as { email: string; exp: number };
   if (session.exp < Date.now()) return null;
   return session;
-}
-
-async function sendMail(env: Env, to: string, subject: string, text: string) {
-  if (!env.EMAIL) throw new Error('EMAIL binding missing');
-  const from = env.PLAYBOOK_FROM || 'hello@dynasai.ai';
-  await env.EMAIL.send({
-    to,
-    from: { email: from, name: 'DynasAI' },
-    subject,
-    text,
-    html: `<p>${text.replace(/\n/g, '<br/>')}</p>`,
-  });
 }
 
 async function handleRequestOtp(request: Request, env: Env) {
@@ -331,6 +321,7 @@ async function routeRequest(request: Request, env: Env, ctx?: ExecutionContext) 
       if (path.startsWith('/api/track')) return await handleTrack(request, env);
       if (path.startsWith('/api/chat')) return await handleChat(request, env);
       if (path.startsWith('/api/contact-quick')) return await handleQuickContact(request, env);
+      if (path.startsWith('/api/contact')) return await handleContactForm(request, env);
       if (path.startsWith('/api/admin')) {
         if (!local) return json({ ok: false, error: 'Not found' }, 404);
         return await handleAdmin(request, env, ctx);

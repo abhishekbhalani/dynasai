@@ -7,18 +7,21 @@ import { site } from '../config';
     <button class="qc-close" type="button" data-qc-close aria-label="Close quick contact">×</button>
     <h2 id="qc-title">Need a quick answer?</h2>
     <p>You stayed on this for a moment. Send a short note and we will reply at {site.email}.</p>
-    <form data-qc-form>
-      <label>
-        Name
-        <input name="name" type="text" required minlength="2" maxlength="80" autocomplete="name" />
+    <form data-qc-form novalidate>
+      <p class="form-req-note"><span class="req" aria-hidden="true">*</span> Required</p>
+      <label for="qc-name">
+        <span class="field-caption">Name <span class="req" aria-hidden="true">*</span></span>
+        <input id="qc-name" name="name" type="text" required minlength="2" maxlength="80" autocomplete="name" aria-required="true" aria-describedby="qc-name-error" />
+        <span class="field-error" id="qc-name-error" role="alert"></span>
       </label>
-      <label>
-        Email
-        <input name="email" type="email" required maxlength="120" autocomplete="email" />
+      <label for="qc-email">
+        <span class="field-caption">Email <span class="req" aria-hidden="true">*</span></span>
+        <input id="qc-email" name="email" type="email" required maxlength="120" autocomplete="email" aria-required="true" aria-describedby="qc-email-error" />
+        <span class="field-error" id="qc-email-error" role="alert"></span>
       </label>
-      <label>
-        Message
-        <textarea name="message" required minlength="8" maxlength="500" rows="3"></textarea>
+      <label for="qc-message">
+        <span class="field-caption">Message <span class="optional">optional</span></span>
+        <textarea id="qc-message" name="message" maxlength="500" rows="3"></textarea>
       </label>
       <p class="qc-status" data-qc-status hidden></p>
       <button class="cookie-btn cookie-btn-primary" type="submit">Send</button>
@@ -94,9 +97,52 @@ import { site } from '../config';
     if (target.closest('[data-qc-close]')) close();
   });
 
+  function visitorMeta() {
+    const fn = (window as Window & { dynasaiVisitor?: () => Record<string, unknown> }).dynasaiVisitor;
+    return typeof fn === 'function' ? fn() : {};
+  }
+
+  function clearField(field: HTMLInputElement) {
+    field.setCustomValidity('');
+    field.classList.remove('is-invalid');
+    field.removeAttribute('aria-invalid');
+    field.closest('label')?.classList.remove('is-invalid');
+    const err = document.getElementById(`${field.id}-error`);
+    if (err) err.textContent = '';
+  }
+
+  function markInvalid(field: HTMLInputElement, message: string) {
+    field.setCustomValidity(message);
+    field.classList.add('is-invalid');
+    field.setAttribute('aria-invalid', 'true');
+    field.closest('label')?.classList.add('is-invalid');
+    const err = document.getElementById(`${field.id}-error`);
+    if (err) err.textContent = message;
+  }
+
+  form?.addEventListener('input', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLInputElement && target.classList.contains('is-invalid')) {
+      clearField(target);
+    }
+  });
+
   form?.addEventListener('submit', async (event) => {
     event.preventDefault();
     if (!form || !status) return;
+    const name = form.elements.namedItem('name') as HTMLInputElement;
+    const email = form.elements.namedItem('email') as HTMLInputElement;
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    clearField(name);
+    clearField(email);
+    if (name.value.trim().length < 2) markInvalid(name, 'Enter your name.');
+    if (!email.value.trim()) markInvalid(email, 'Enter your email.');
+    else if (!emailRe.test(email.value.trim())) markInvalid(email, 'Enter a valid email address.');
+    const first = form.querySelector<HTMLInputElement>('.is-invalid');
+    if (first) {
+      first.focus();
+      return;
+    }
     const data = new FormData(form);
     status.hidden = false;
     status.textContent = 'Sending…';
@@ -108,6 +154,7 @@ import { site } from '../config';
         email: data.get('email'),
         message: data.get('message'),
         path: location.pathname,
+        ...visitorMeta(),
       }),
     });
     const json = (await res.json()) as { ok?: boolean; error?: string; message?: string };

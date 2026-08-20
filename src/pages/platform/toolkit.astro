@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
-import { site } from '../../config';
 import { toolkitModules, toolkitAccess, differentiators } from '../../content/site-content';
 
 const title = 'Dynas Toolkit';
@@ -78,12 +77,11 @@ const description =
       <div class="cta-band">
         <div class="cta-band-inner">
           <div class="cta-band-copy">
-            <h2>Start in the workspace</h2>
-            <p class="muted">Open a demo environment on {site.appUrl.replace('https://', '')} or talk to our team about a guided rollout.</p>
+            <h2>Talk to our team</h2>
+            <p class="muted">The product workspace is not live yet. Contact us for a guided rollout or wait for the demo on app.dynasai.ai.</p>
           </div>
           <div class="cta-band-actions">
-            <a class="btn btn-primary" href={site.appUrl}>Open workspace</a>
-            <a class="btn btn-secondary" href="/contact">Talk to an expert</a>
+            <a class="btn btn-primary" href="/contact">Talk to an expert</a>
           </div>
         </div>
       </div>

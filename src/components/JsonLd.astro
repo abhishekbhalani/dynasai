@@ -34,7 +34,7 @@ const data = {
       name: `${site.name} Workspace`,
       applicationCategory: 'DeveloperApplication',
       operatingSystem: 'Web',
-      url: site.appUrl,
+      url: site.appEnabled ? site.appUrl : `${site.url}/contact`,
       offers: {
         '@type': 'Offer',
         url: `${site.url}/pricing`,

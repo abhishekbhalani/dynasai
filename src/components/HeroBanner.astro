@@ -30,7 +30,11 @@ const lede =
       </h1>
       <p class="hero-banner-lede">{lede}</p>
       <div class="hero-actions">
-        <a class="btn btn-primary btn-lg" href={site.appUrl}>Start Building</a>
+        {site.appEnabled ? (
+          <a class="btn btn-primary btn-lg" href={site.appUrl}>Start Building</a>
+        ) : (
+          <a class="btn btn-primary btn-lg" href="/contact">Contact Sales</a>
+        )}
         <a class="btn btn-secondary btn-lg btn-secondary--on-dark" href="/pricing">Our Services</a>
       </div>
 

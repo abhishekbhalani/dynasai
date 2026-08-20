@@ -107,6 +107,12 @@
   outline-offset: 2px;
 }
 
+.qc-panel input.is-invalid:focus-visible,
+.qc-panel textarea.is-invalid:focus-visible {
+  outline-color: var(--danger);
+  border-color: var(--danger);
+}
+
 .vc-root {
   position: fixed;
   right: 16px;

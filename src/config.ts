@@ -3,6 +3,8 @@ export const site = {
   legalName: 'DynasAI',
   url: 'https://dynasai.ai',
   appUrl: 'https://app.dynasai.ai',
+  /** Product workspace is not live. Hide Start Building / app CTAs until demo ships. */
+  appEnabled: false,
   locale: 'en_US',
   description:
     'DynasAI is the easy front layer for enterprise AI — governed agents, data processing, and automation on AWS, Azure, or GCP. You keep data control; we handle orchestration, evaluation, and compliance.',
@@ -20,6 +22,10 @@ export const site = {
     'https://github.com/abhishekbhalani/dynasai',
   ],
 } as const;
+
+export function isAppHref(href: string) {
+  return /app\.dynasai\.ai/i.test(href);
+}
 
 export const nav = [
   { href: '/features', label: 'Platform', mega: 'platform' },

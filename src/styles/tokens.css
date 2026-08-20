@@ -57,6 +57,7 @@
   --card-hover-border: color-mix(in srgb, var(--accent) 50%, var(--border));
   --card-hover-shadow: 0 12px 28px rgba(0, 0, 0, 0.4), 0 0 0 1px color-mix(in srgb, var(--accent) 28%, transparent);
   --focus: #4cd7f6;
+  --danger: #f87171;
   --gradient-text: linear-gradient(to right, #4cd7f6, #c0c1ff);
 }
 

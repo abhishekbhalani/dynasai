@@ -58,6 +58,24 @@ export function redirectHttpToHttps(request: Request) {
   });
 }
 
+function withNoTransform(headers: Headers) {
+  // Stops Cloudflare JavaScript Detections injecting /cdn-cgi/challenge-platform/scripts/jsd/main.js
+  // (deprecated Shared Storage / Protected Audience APIs that fail Lighthouse best-practices).
+  const current = headers.get('cache-control') || '';
+  if (/\bno-transform\b/i.test(current)) return;
+  headers.set('cache-control', current ? `${current}, no-transform` : 'no-transform');
+}
+
+async function htmlBody(html: string, headers: Headers, request?: Request) {
+  withNoTransform(headers);
+  headers.delete('content-length');
+  const accept = request?.headers.get('accept-encoding') || '';
+  if (!/\bgzip\b/i.test(accept)) return html;
+  const body = new Blob([html], { type: 'text/html; charset=utf-8' }).stream().pipeThrough(new CompressionStream('gzip'));
+  headers.set('content-encoding', 'gzip');
+  return body;
+}
+
 export async function applySecurityHeaders(res: Response, request?: Request) {
   const headers = new Headers(res.headers);
   const token = nonce();
@@ -79,6 +97,6 @@ export async function applySecurityHeaders(res: Response, request?: Request) {
   let html = await res.text();
   if (admin) html = withTrustedTypesPolicy(html, token);
   html = withScriptNonces(html, token);
-  headers.delete('content-length');
-  return new Response(html, { status: res.status, statusText: res.statusText, headers });
+  const body = await htmlBody(html, headers, request);
+  return new Response(body, { status: res.status, statusText: res.statusText, headers });
 }

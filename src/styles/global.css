@@ -970,6 +970,64 @@ label {
   font-weight: 550;
 }
 
+.field-caption {
+  display: block;
+  line-height: 1.4;
+}
+
+.req {
+  display: inline;
+  color: var(--danger);
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+.optional {
+  display: inline;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 500;
+  margin-left: 6px;
+}
+
+.form-req-note {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.field-error {
+  min-height: 1.2em;
+  color: var(--danger);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.field-error:empty {
+  display: none;
+}
+
+label.is-invalid .field-caption {
+  color: var(--danger);
+}
+
+input.is-invalid,
+textarea.is-invalid,
+select.is-invalid {
+  border-color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 8%, var(--surface));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--danger) 22%, transparent);
+}
+
+input.is-invalid:focus-visible,
+textarea.is-invalid:focus-visible,
+select.is-invalid:focus-visible {
+  border-color: var(--danger);
+  outline: 2px solid var(--danger);
+  outline-offset: 2px;
+}
+
 input,
 textarea,
 select {
@@ -1067,7 +1125,8 @@ select:focus-visible {
   font-size: 14px;
 }
 
-.onboarding-fallback {
+.onboarding-fallback,
+.onboarding-status {
   margin: 0;
   font-size: 14px;
 }
